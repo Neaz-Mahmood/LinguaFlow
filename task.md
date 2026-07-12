@@ -1,0 +1,21 @@
+# LinguaFlow NestJS + PostgreSQL Tasks
+
+- `[x]` Setup database and clean up Python backend
+  - `[x]` Create `docker-compose.yml` for PostgreSQL service
+  - `[x]` Delete old Python files (`backend/`, `venv/`, `linguaflow.db`)
+  - `[x]` Start local PostgreSQL database container via Docker
+- `[x]` Scaffold NestJS backend
+  - `[x]` Scaffold NestJS project in `backend/` folder using `@nestjs/cli`
+  - `[x]` Install TypeORM, pg, and Config packages in `backend/` using pnpm
+  - `[x]` Configure `AppModule` with dynamic Config and TypeORM connections
+- `[x]` Implement NestJS Code
+  - `[x]` Create TypeORM database entities (`User`, `Story`, `Flashcard`, `FlowSession`)
+  - `[x]` Create Modules, Services, Controllers for Onboarding/User management
+  - `[x]` Create Modules, Services, Controllers for Stories & Comprehensible Input
+  - `[x]` Create Modules, Services, Controllers for Flashcards & SM-2 scheduling
+  - `[x]` Create Modules, Services, Controllers for Shadowing & Quick Output simulation
+  - `[x]` Create Database Seeding script for initial Spanish content
+- `[x]` Verification and validation
+  - `[x]` Create and run NestJS unit test verifying SM-2 algorithm math
+  - `[x]` Run backend and verify connection/seed in PostgreSQL database
+  - `[x]` Confirm frontend integration with new NestJS endpoints
