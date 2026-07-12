@@ -42,9 +42,20 @@ let UsersService = class UsersService {
     async onboardUser(data) {
         let user = await this.getDefaultUser();
         user.targetLanguage = data.target_language || 'Spanish';
+        user.nativeLanguage = data.native_language || 'English';
         user.currentLevel = data.current_level || 'A1';
         user.dailyCommitment = Number(data.daily_commitment) || 15;
         user.strategyPreference = data.strategy_preference || 'input';
+        user.goals = data.goals || [];
+        if (user.strategyPreference === 'input-heavy') {
+            user.contentRatios = { input: 0.6, srs: 0.2, output: 0.2 };
+        }
+        else if (user.strategyPreference === 'output-first') {
+            user.contentRatios = { input: 0.3, srs: 0.2, output: 0.5 };
+        }
+        else {
+            user.contentRatios = { input: 0.4, srs: 0.3, output: 0.3 };
+        }
         await this.usersRepository.save(user);
         const today = new Date().toISOString().split('T')[0];
         const session = await this.sessionsRepository.findOne({

@@ -8,8 +8,10 @@ export declare class UsersService {
     getDefaultUser(): Promise<User>;
     onboardUser(data: {
         target_language: string;
+        native_language?: string;
         current_level: string;
         daily_commitment: number;
         strategy_preference: string;
+        goals?: string[];
     }): Promise<User>;
 }

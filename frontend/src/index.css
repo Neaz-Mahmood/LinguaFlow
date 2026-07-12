@@ -263,6 +263,26 @@ button, input, select, textarea {
   line-height: 1.4;
 }
 
+/* Segmented Control and Flag Grid */
+.segmented-btn {
+  transition: var(--transition-fast);
+}
+
+.segmented-btn:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: var(--text-primary) !important;
+}
+
+.flag-grid .option-card {
+  transition: var(--transition-fast);
+}
+
+.flag-grid .option-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+
 /* Premium Buttons */
 .btn {
   display: inline-flex;

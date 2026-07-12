@@ -1,21 +1,14 @@
-# LinguaFlow NestJS + PostgreSQL Tasks
+# LinguaFlow Adaptive Onboarding Tasks
 
-- `[x]` Setup database and clean up Python backend
-  - `[x]` Create `docker-compose.yml` for PostgreSQL service
-  - `[x]` Delete old Python files (`backend/`, `venv/`, `linguaflow.db`)
-  - `[x]` Start local PostgreSQL database container via Docker
-- `[x]` Scaffold NestJS backend
-  - `[x]` Scaffold NestJS project in `backend/` folder using `@nestjs/cli`
-  - `[x]` Install TypeORM, pg, and Config packages in `backend/` using pnpm
-  - `[x]` Configure `AppModule` with dynamic Config and TypeORM connections
-- `[x]` Implement NestJS Code
-  - `[x]` Create TypeORM database entities (`User`, `Story`, `Flashcard`, `FlowSession`)
-  - `[x]` Create Modules, Services, Controllers for Onboarding/User management
-  - `[x]` Create Modules, Services, Controllers for Stories & Comprehensible Input
-  - `[x]` Create Modules, Services, Controllers for Flashcards & SM-2 scheduling
-  - `[x]` Create Modules, Services, Controllers for Shadowing & Quick Output simulation
-  - `[x]` Create Database Seeding script for initial Spanish content
+- `[x]` Database & Backend Schema updates
+  - `[x]` Update `User` entity with `nativeLanguage`, `goals`, and `contentRatios` columns
+  - `[x]` Update `UsersService` onboarding logic to calculate content ratios
+  - `[x]` Verify NestJS compile stability and PostgreSQL compatibility
+- `[x]` Frontend UI & Styles updates
+  - `[x]` Update `Onboarding.jsx` to support the full 4-step stepper wizard
+  - `[x]` Implement visual assets in `Onboarding.jsx` (Flags grid, Time cards with tooltip, preference toggle cards, goal multiselect)
+  - `[x]` Style Flag grid, segmented controls, tooltips, goals select, and spinners in `index.css`
+  - `[x]` Integrate state updates in `App.jsx`
 - `[x]` Verification and validation
-  - `[x]` Create and run NestJS unit test verifying SM-2 algorithm math
-  - `[x]` Run backend and verify connection/seed in PostgreSQL database
-  - `[x]` Confirm frontend integration with new NestJS endpoints
+  - `[x]` Re-run backend test suites to confirm compile stability
+  - `[x]` Verify frontend local server functionality

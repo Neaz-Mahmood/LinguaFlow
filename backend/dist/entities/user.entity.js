@@ -16,9 +16,12 @@ const flow_session_entity_1 = require("./flow-session.entity");
 let User = class User {
     id;
     targetLanguage;
+    nativeLanguage;
     currentLevel;
     dailyCommitment;
     strategyPreference;
+    goals;
+    contentRatios;
     createdAt;
     flashcards;
     sessions;
@@ -33,6 +36,10 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "targetLanguage", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ default: 'English' }),
+    __metadata("design:type", String)
+], User.prototype, "nativeLanguage", void 0);
+__decorate([
     (0, typeorm_1.Column)({ default: 'A1' }),
     __metadata("design:type", String)
 ], User.prototype, "currentLevel", void 0);
@@ -44,6 +51,14 @@ __decorate([
     (0, typeorm_1.Column)({ default: 'input' }),
     __metadata("design:type", String)
 ], User.prototype, "strategyPreference", void 0);
+__decorate([
+    (0, typeorm_1.Column)('simple-array', { nullable: true }),
+    __metadata("design:type", Array)
+], User.prototype, "goals", void 0);
+__decorate([
+    (0, typeorm_1.Column)('jsonb', { nullable: true }),
+    __metadata("design:type", Object)
+], User.prototype, "contentRatios", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)

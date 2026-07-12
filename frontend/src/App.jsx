@@ -75,10 +75,12 @@ export default function App() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            target_language: user?.target_language || "Spanish",
-            current_level: user?.current_level || "A1",
-            daily_commitment: user?.daily_commitment || 20,
-            strategy_preference: user?.strategy_preference || "input"
+            target_language: user?.targetLanguage || "Spanish",
+            native_language: user?.nativeLanguage || "English",
+            current_level: user?.currentLevel || "A1",
+            daily_commitment: user?.dailyCommitment || 20,
+            strategy_preference: user?.strategyPreference || "input-heavy",
+            goals: user?.goals || []
           })
         });
         await fetchInitialData();
@@ -192,12 +194,12 @@ export default function App() {
             <div className="summary-icon">🏆</div>
             <h1 className="onboarding-title">Daily Flow Completed!</h1>
             <p style={{ color: 'var(--text-secondary)' }}>
-              Excellent job! You have fully completed your {user?.daily_commitment} minute sequential flow path for today.
+              Excellent job! You have fully completed your {user?.dailyCommitment} minute sequential flow path for today.
             </p>
 
             <div className="summary-stats">
               <div className="stat-box">
-                <div className="stat-num">{user?.current_level}</div>
+                <div className="stat-num">{user?.currentLevel}</div>
                 <div className="stat-label">Proficiency Level</div>
               </div>
               <div className="stat-box">
