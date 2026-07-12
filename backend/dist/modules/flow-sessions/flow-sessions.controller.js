@@ -23,6 +23,9 @@ let FlowSessionsController = class FlowSessionsController {
     async get() {
         return this.sessionsService.getTodaySession();
     }
+    async getTodayFull() {
+        return this.sessionsService.getTodayFullSession();
+    }
     async update(data) {
         return this.sessionsService.updateSession(data);
     }
@@ -34,6 +37,12 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], FlowSessionsController.prototype, "get", null);
+__decorate([
+    (0, common_1.Get)('today'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], FlowSessionsController.prototype, "getTodayFull", null);
 __decorate([
     (0, common_1.Post)('update'),
     __param(0, (0, common_1.Body)()),

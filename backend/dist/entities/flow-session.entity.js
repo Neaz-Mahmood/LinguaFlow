@@ -16,6 +16,7 @@ let FlowSession = class FlowSession {
     id;
     userId;
     date;
+    stepsCompleted;
     comprehensibleInputCompleted;
     srsCompleted;
     shadowingCompleted;
@@ -38,6 +39,10 @@ __decorate([
     (0, typeorm_1.Column)('date', { default: () => 'CURRENT_DATE' }),
     __metadata("design:type", Date)
 ], FlowSession.prototype, "date", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: 0 }),
+    __metadata("design:type", Number)
+], FlowSession.prototype, "stepsCompleted", void 0);
 __decorate([
     (0, typeorm_1.Column)({ default: false }),
     __metadata("design:type", Boolean)

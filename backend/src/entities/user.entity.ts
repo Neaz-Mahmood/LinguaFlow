@@ -28,6 +28,12 @@ export class User {
   @Column('jsonb', { nullable: true })
   contentRatios: Record<string, number>;
 
+  @Column({ default: 0 })
+  streakCount: number;
+
+  @Column({ type: 'date', nullable: true })
+  lastActiveDate: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

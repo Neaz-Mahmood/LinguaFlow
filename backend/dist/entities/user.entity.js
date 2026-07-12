@@ -22,6 +22,8 @@ let User = class User {
     strategyPreference;
     goals;
     contentRatios;
+    streakCount;
+    lastActiveDate;
     createdAt;
     flashcards;
     sessions;
@@ -59,6 +61,14 @@ __decorate([
     (0, typeorm_1.Column)('jsonb', { nullable: true }),
     __metadata("design:type", Object)
 ], User.prototype, "contentRatios", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: 0 }),
+    __metadata("design:type", Number)
+], User.prototype, "streakCount", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'date', nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "lastActiveDate", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)

@@ -10,6 +10,11 @@ export class FlowSessionsController {
     return this.sessionsService.getTodaySession();
   }
 
+  @Get('today')
+  async getTodayFull() {
+    return this.sessionsService.getTodayFullSession();
+  }
+
   @Post('update')
   async update(@Body() data: any) {
     return this.sessionsService.updateSession(data);

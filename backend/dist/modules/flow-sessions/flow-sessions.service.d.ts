@@ -1,8 +1,15 @@
 import { Repository } from 'typeorm';
 import { FlowSession } from '../../entities/flow-session.entity';
+import { User } from '../../entities/user.entity';
+import { Story } from '../../entities/story.entity';
+import { Flashcard } from '../../entities/flashcard.entity';
 export declare class FlowSessionsService {
     private sessionsRepository;
-    constructor(sessionsRepository: Repository<FlowSession>);
+    private usersRepository;
+    private storiesRepository;
+    private flashcardsRepository;
+    constructor(sessionsRepository: Repository<FlowSession>, usersRepository: Repository<User>, storiesRepository: Repository<Story>, flashcardsRepository: Repository<Flashcard>);
     getTodaySession(): Promise<FlowSession>;
+    getTodayFullSession(): Promise<any>;
     updateSession(data: any): Promise<FlowSession>;
 }

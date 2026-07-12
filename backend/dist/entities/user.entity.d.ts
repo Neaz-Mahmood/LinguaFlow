@@ -9,6 +9,8 @@ export declare class User {
     strategyPreference: string;
     goals: string[];
     contentRatios: Record<string, number>;
+    streakCount: number;
+    lastActiveDate: string;
     createdAt: Date;
     flashcards: Flashcard[];
     sessions: FlowSession[];
