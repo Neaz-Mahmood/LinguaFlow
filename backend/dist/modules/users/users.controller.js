@@ -14,36 +14,42 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersController = void 0;
 const common_1 = require("@nestjs/common");
+const user_entity_1 = require("../../entities/user.entity");
+const current_user_decorator_1 = require("../auth/decorators/current-user.decorator");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const users_service_1 = require("./users.service");
 let UsersController = class UsersController {
     usersService;
     constructor(usersService) {
         this.usersService = usersService;
     }
-    async get() {
-        return this.usersService.getDefaultUser();
+    async get(user) {
+        return this.usersService.getUserById(user.id);
     }
-    async onboard(data) {
-        const user = await this.usersService.onboardUser(data);
-        return { status: 'success', user };
+    async onboard(user, data) {
+        const updated = await this.usersService.onboardUser(user.id, data);
+        return { status: 'success', user: updated };
     }
 };
 exports.UsersController = UsersController;
 __decorate([
     (0, common_1.Get)(),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [user_entity_1.User]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "get", null);
 __decorate([
     (0, common_1.Post)('onboard'),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [user_entity_1.User, Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "onboard", null);
 exports.UsersController = UsersController = __decorate([
     (0, common_1.Controller)('api/user'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __metadata("design:paramtypes", [users_service_1.UsersService])
 ], UsersController);
 //# sourceMappingURL=users.controller.js.map

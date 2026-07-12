@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { apiFetch } from '../lib/api';
 
 export default function SpacedRepetition({ onComplete }) {
   const [cards, setCards] = useState([]);
@@ -13,7 +14,7 @@ export default function SpacedRepetition({ onComplete }) {
   const fetchReviewCards = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:8000/api/flashcards/review");
+      const res = await apiFetch("/api/flashcards/review");
       if (res.ok) {
         const data = await res.json();
         setCards(data);
@@ -32,9 +33,8 @@ export default function SpacedRepetition({ onComplete }) {
   const submitReview = async (quality) => {
     const card = cards[currentIndex];
     try {
-      const res = await fetch(`http://localhost:8000/api/flashcards/review/${card.id}`, {
+      const res = await apiFetch(`/api/flashcards/review/${card.id}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ quality })
       });
       
@@ -61,9 +61,8 @@ export default function SpacedRepetition({ onComplete }) {
 
   const handleCompleteSRS = async () => {
     try {
-      await fetch("http://localhost:8000/api/flow-session/update", {
+      await apiFetch("/api/flow-session/update", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ srs_completed: true })
       });
     } catch (err) {

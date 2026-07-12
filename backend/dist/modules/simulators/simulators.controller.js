@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SimulatorsController = void 0;
 const common_1 = require("@nestjs/common");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const simulators_service_1 = require("./simulators.service");
 let SimulatorsController = class SimulatorsController {
     simulatorsService;
@@ -46,6 +47,7 @@ __decorate([
 ], SimulatorsController.prototype, "quickOutputReply", null);
 exports.SimulatorsController = SimulatorsController = __decorate([
     (0, common_1.Controller)('api'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __metadata("design:paramtypes", [simulators_service_1.SimulatorsService])
 ], SimulatorsController);
 //# sourceMappingURL=simulators.controller.js.map

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { apiFetch } from '../lib/api';
 
 const LANGUAGES = [
   { id: "Spanish", name: "Spanish", flag: "🇪🇸" },
@@ -97,9 +98,8 @@ export default function Onboarding({ onComplete }) {
   const submitOnboarding = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:8000/api/user/onboard", {
+      const res = await apiFetch("/api/user/onboard", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           target_language: formData.target_language,
           native_language: formData.native_language,

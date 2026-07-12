@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { apiFetch } from '../lib/api';
 
 export default function QuickOutput({ onComplete }) {
   const [messages, setMessages] = useState([]);
@@ -13,7 +14,7 @@ export default function QuickOutput({ onComplete }) {
 
   const fetchStory = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/stories");
+      const res = await apiFetch("/api/stories");
       if (res.ok) {
         const stories = await res.json();
         if (stories.length > 0) {
@@ -44,9 +45,8 @@ export default function QuickOutput({ onComplete }) {
     setGrammarFeedback("");
 
     try {
-      const res = await fetch("http://localhost:8000/api/quick-output/reply", {
+      const res = await apiFetch("/api/quick-output/reply", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           message: userMsgText,
           story_title: story ? story.title : "la historia"
@@ -75,9 +75,8 @@ export default function QuickOutput({ onComplete }) {
 
   const handleFinish = async () => {
     try {
-      await fetch("http://localhost:8000/api/flow-session/update", {
+      await apiFetch("/api/flow-session/update", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           output_completed: true,
           quick_output_response: messages.filter(m => m.sender === 'user').map(m => m.text).join(" | "),

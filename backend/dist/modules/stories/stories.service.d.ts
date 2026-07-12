@@ -8,5 +8,5 @@ export declare class StoriesService implements OnApplicationBootstrap {
     constructor(storiesRepository: Repository<Story>, usersRepository: Repository<User>);
     onApplicationBootstrap(): Promise<void>;
     seedDatabase(): Promise<void>;
-    getStoriesForUser(): Promise<any[]>;
+    getStoriesForUser(userId: number): Promise<any[]>;
 }

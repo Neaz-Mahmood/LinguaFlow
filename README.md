@@ -89,6 +89,23 @@ docker compose up -d
 
 ---
 
+### Step 4: Run the Expo Mobile Application
+1. Navigate to the mobile application directory:
+   ```bash
+   cd mobile
+   ```
+2. Install dependencies:
+   ```bash
+   pnpm install
+   ```
+3. Start the Metro Bundler development process:
+   ```bash
+   pnpm run start
+   ```
+   *This starts the Expo CLI server. Press `i` to launch in the iOS Simulator, `a` for Android, or scan the QR code using the **Expo Go** application on your physical device.*
+
+---
+
 ## 🧪 Verification & Testing
 
 To run the NestJS unit test suites verifying the SuperMemo SM-2 flashcard scheduler logic, run the following command in the `backend/` directory:

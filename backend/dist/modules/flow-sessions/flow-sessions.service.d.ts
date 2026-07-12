@@ -9,7 +9,7 @@ export declare class FlowSessionsService {
     private storiesRepository;
     private flashcardsRepository;
     constructor(sessionsRepository: Repository<FlowSession>, usersRepository: Repository<User>, storiesRepository: Repository<Story>, flashcardsRepository: Repository<Flashcard>);
-    getTodaySession(): Promise<FlowSession>;
-    getTodayFullSession(): Promise<any>;
-    updateSession(data: any): Promise<FlowSession>;
+    getTodaySession(userId: number): Promise<FlowSession>;
+    getTodayFullSession(userId: number): Promise<any>;
+    updateSession(userId: number, data: any): Promise<FlowSession>;
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../../entities/user.entity';
@@ -13,39 +13,35 @@ export class UsersService {
     private sessionsRepository: Repository<FlowSession>,
   ) {}
 
-  async getDefaultUser(): Promise<User> {
-    let user = await this.usersRepository.findOne({ where: { id: 1 } });
+  async getUserById(userId: number): Promise<User> {
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
     if (!user) {
-      user = this.usersRepository.create({
-        id: 1,
-        targetLanguage: 'Spanish',
-        currentLevel: 'A1',
-        dailyCommitment: 15,
-        strategyPreference: 'input',
-      });
-      await this.usersRepository.save(user);
+      throw new NotFoundException('User not found');
     }
     return user;
   }
 
-  async onboardUser(data: {
-    target_language: string;
-    native_language?: string;
-    current_level: string;
-    daily_commitment: number;
-    strategy_preference: string;
-    goals?: string[];
-  }): Promise<User> {
-    let user = await this.getDefaultUser();
-    
+  async onboardUser(
+    userId: number,
+    data: {
+      target_language: string;
+      native_language?: string;
+      current_level: string;
+      daily_commitment: number;
+      strategy_preference: string;
+      goals?: string[];
+    },
+  ): Promise<User> {
+    const user = await this.getUserById(userId);
+
     user.targetLanguage = data.target_language || 'Spanish';
     user.nativeLanguage = data.native_language || 'English';
     user.currentLevel = data.current_level || 'A1';
     user.dailyCommitment = Number(data.daily_commitment) || 15;
     user.strategyPreference = data.strategy_preference || 'input';
     user.goals = data.goals || [];
+    user.onboardingCompleted = true;
 
-    // Calculate dynamic ratios
     if (user.strategyPreference === 'input-heavy') {
       user.contentRatios = { input: 0.6, srs: 0.2, output: 0.2 };
     } else if (user.strategyPreference === 'output-first') {
@@ -53,10 +49,9 @@ export class UsersService {
     } else {
       user.contentRatios = { input: 0.4, srs: 0.3, output: 0.3 };
     }
-    
+
     await this.usersRepository.save(user);
 
-    // Reset today's session
     const today = new Date().toISOString().split('T')[0];
     const session = await this.sessionsRepository.findOne({
       where: { userId: user.id, date: today as any },

@@ -15,6 +15,10 @@ const flashcard_entity_1 = require("./flashcard.entity");
 const flow_session_entity_1 = require("./flow-session.entity");
 let User = class User {
     id;
+    email;
+    name;
+    googleSub;
+    onboardingCompleted;
     targetLanguage;
     nativeLanguage;
     currentLevel;
@@ -33,6 +37,22 @@ __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
 ], User.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', unique: true, nullable: true }),
+    __metadata("design:type", Object)
+], User.prototype, "email", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', nullable: true }),
+    __metadata("design:type", Object)
+], User.prototype, "name", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', unique: true, nullable: true }),
+    __metadata("design:type", Object)
+], User.prototype, "googleSub", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: false }),
+    __metadata("design:type", Boolean)
+], User.prototype, "onboardingCompleted", void 0);
 __decorate([
     (0, typeorm_1.Column)({ default: 'Spanish' }),
     __metadata("design:type", String)

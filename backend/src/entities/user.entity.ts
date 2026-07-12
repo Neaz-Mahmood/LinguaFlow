@@ -7,6 +7,18 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ type: 'varchar', unique: true, nullable: true })
+  email: string | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  name: string | null;
+
+  @Column({ type: 'varchar', unique: true, nullable: true })
+  googleSub: string | null;
+
+  @Column({ default: false })
+  onboardingCompleted: boolean;
+
   @Column({ default: 'Spanish' })
   targetLanguage: string;
 

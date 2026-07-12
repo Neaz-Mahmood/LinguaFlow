@@ -25,28 +25,22 @@ let UsersService = class UsersService {
         this.usersRepository = usersRepository;
         this.sessionsRepository = sessionsRepository;
     }
-    async getDefaultUser() {
-        let user = await this.usersRepository.findOne({ where: { id: 1 } });
+    async getUserById(userId) {
+        const user = await this.usersRepository.findOne({ where: { id: userId } });
         if (!user) {
-            user = this.usersRepository.create({
-                id: 1,
-                targetLanguage: 'Spanish',
-                currentLevel: 'A1',
-                dailyCommitment: 15,
-                strategyPreference: 'input',
-            });
-            await this.usersRepository.save(user);
+            throw new common_1.NotFoundException('User not found');
         }
         return user;
     }
-    async onboardUser(data) {
-        let user = await this.getDefaultUser();
+    async onboardUser(userId, data) {
+        const user = await this.getUserById(userId);
         user.targetLanguage = data.target_language || 'Spanish';
         user.nativeLanguage = data.native_language || 'English';
         user.currentLevel = data.current_level || 'A1';
         user.dailyCommitment = Number(data.daily_commitment) || 15;
         user.strategyPreference = data.strategy_preference || 'input';
         user.goals = data.goals || [];
+        user.onboardingCompleted = true;
         if (user.strategyPreference === 'input-heavy') {
             user.contentRatios = { input: 0.6, srs: 0.2, output: 0.2 };
         }

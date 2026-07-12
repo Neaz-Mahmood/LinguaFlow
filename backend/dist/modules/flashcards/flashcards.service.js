@@ -55,17 +55,17 @@ let FlashcardsService = class FlashcardsService {
             repetitions: newRepetitions,
         };
     }
-    async mineCard(data) {
+    async mineCard(userId, data) {
         const cleanWord = data.word.trim();
         let existing = await this.flashcardRepository.findOne({
-            where: { userId: 1, word: cleanWord },
+            where: { userId, word: cleanWord },
         });
         if (existing) {
             return existing;
         }
         const todayStr = new Date().toISOString().split('T')[0];
         const card = this.flashcardRepository.create({
-            userId: 1,
+            userId,
             word: cleanWord,
             translation: data.translation,
             contextSentence: data.context_sentence || '',
@@ -77,18 +77,18 @@ let FlashcardsService = class FlashcardsService {
         });
         return this.flashcardRepository.save(card);
     }
-    async getReviewCards() {
+    async getReviewCards(userId) {
         const todayStr = new Date().toISOString().split('T')[0];
         return this.flashcardRepository.find({
             where: {
-                userId: 1,
+                userId,
                 nextReviewDate: (0, typeorm_2.LessThanOrEqual)(todayStr),
             },
         });
     }
-    async reviewCard(cardId, quality) {
+    async reviewCard(userId, cardId, quality) {
         const card = await this.flashcardRepository.findOne({
-            where: { id: cardId, userId: 1 },
+            where: { id: cardId, userId },
         });
         if (!card) {
             throw new common_1.NotFoundException('Flashcard not found');
