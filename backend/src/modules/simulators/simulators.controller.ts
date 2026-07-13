@@ -1,7 +1,9 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { SimulatorsService } from './simulators.service';
 
 @Controller('api')
+@UseGuards(JwtAuthGuard)
 export class SimulatorsController {
   constructor(private readonly simulatorsService: SimulatorsService) {}
 
@@ -10,7 +12,6 @@ export class SimulatorsController {
     @Body('target_sentence') targetSentence: string,
     @Body('transcript') transcript?: string,
   ) {
-    // In NestJS express parser, if sent via urlencoded/json, it populates @Body
     return this.simulatorsService.evaluateShadowing(targetSentence, transcript);
   }
 

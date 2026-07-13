@@ -135,8 +135,8 @@ export class StoriesService implements OnApplicationBootstrap {
     console.log('PostgreSQL database successfully seeded with stories.');
   }
 
-  async getStoriesForUser(): Promise<any[]> {
-    const user = await this.usersRepository.findOne({ where: { id: 1 } });
+  async getStoriesForUser(userId: number): Promise<any[]> {
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
     const level = user ? user.currentLevel : 'A1';
 
     const stories = await this.storiesRepository.find({

@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { apiFetch } from '../lib/api';
 
 export default function ComprehensibleInput({ onComplete }) {
   const [stories, setStories] = useState([]);
@@ -16,7 +17,7 @@ export default function ComprehensibleInput({ onComplete }) {
 
   const fetchStories = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/stories");
+      const res = await apiFetch("/api/stories");
       if (res.ok) {
         const data = await res.json();
         setStories(data);
@@ -71,9 +72,8 @@ export default function ComprehensibleInput({ onComplete }) {
     if (!selectedWord) return;
 
     try {
-      const res = await fetch("http://localhost:8000/api/flashcards/mine", {
+      const res = await apiFetch("/api/flashcards/mine", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           word: selectedWord.clean,
           translation: selectedWord.translation,
@@ -107,9 +107,8 @@ export default function ComprehensibleInput({ onComplete }) {
 
   const handleNextStep = async () => {
     try {
-      await fetch("http://localhost:8000/api/flow-session/update", {
+      await apiFetch("/api/flow-session/update", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ comprehensible_input_completed: true })
       });
     } catch (err) {

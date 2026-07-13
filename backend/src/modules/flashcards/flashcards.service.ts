@@ -46,28 +46,29 @@ export class FlashcardsService {
     };
   }
 
-  async mineCard(data: {
-    word: string;
-    translation: string;
-    context_sentence?: string;
-    context_translation?: string;
-  }): Promise<Flashcard> {
+  async mineCard(
+    userId: number,
+    data: {
+      word: string;
+      translation: string;
+      context_sentence?: string;
+      context_translation?: string;
+    },
+  ): Promise<Flashcard> {
     const cleanWord = data.word.trim();
-    
-    // Check if card already exists
+
     let existing = await this.flashcardRepository.findOne({
-      where: { userId: 1, word: cleanWord },
+      where: { userId, word: cleanWord },
     });
 
     if (existing) {
       return existing;
     }
 
-    // Set nextReviewDate to today's date formatted as YYYY-MM-DD
     const todayStr = new Date().toISOString().split('T')[0];
 
     const card = this.flashcardRepository.create({
-      userId: 1,
+      userId,
       word: cleanWord,
       translation: data.translation,
       contextSentence: data.context_sentence || '',
@@ -81,20 +82,24 @@ export class FlashcardsService {
     return this.flashcardRepository.save(card);
   }
 
-  async getReviewCards(): Promise<Flashcard[]> {
+  async getReviewCards(userId: number): Promise<Flashcard[]> {
     const todayStr = new Date().toISOString().split('T')[0];
-    
+
     return this.flashcardRepository.find({
       where: {
-        userId: 1,
+        userId,
         nextReviewDate: LessThanOrEqual(todayStr as any),
       },
     });
   }
 
-  async reviewCard(cardId: number, quality: number): Promise<Flashcard> {
+  async reviewCard(
+    userId: number,
+    cardId: number,
+    quality: number,
+  ): Promise<Flashcard> {
     const card = await this.flashcardRepository.findOne({
-      where: { id: cardId, userId: 1 },
+      where: { id: cardId, userId },
     });
 
     if (!card) {

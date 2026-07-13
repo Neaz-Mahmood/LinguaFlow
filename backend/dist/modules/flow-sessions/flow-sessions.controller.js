@@ -14,35 +14,51 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FlowSessionsController = void 0;
 const common_1 = require("@nestjs/common");
+const user_entity_1 = require("../../entities/user.entity");
+const current_user_decorator_1 = require("../auth/decorators/current-user.decorator");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const flow_sessions_service_1 = require("./flow-sessions.service");
 let FlowSessionsController = class FlowSessionsController {
     sessionsService;
     constructor(sessionsService) {
         this.sessionsService = sessionsService;
     }
-    async get() {
-        return this.sessionsService.getTodaySession();
+    async get(user) {
+        return this.sessionsService.getTodaySession(user.id);
     }
-    async update(data) {
-        return this.sessionsService.updateSession(data);
+    async getTodayFull(user) {
+        return this.sessionsService.getTodayFullSession(user.id);
+    }
+    async update(user, data) {
+        return this.sessionsService.updateSession(user.id, data);
     }
 };
 exports.FlowSessionsController = FlowSessionsController;
 __decorate([
     (0, common_1.Get)(),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [user_entity_1.User]),
     __metadata("design:returntype", Promise)
 ], FlowSessionsController.prototype, "get", null);
 __decorate([
-    (0, common_1.Post)('update'),
-    __param(0, (0, common_1.Body)()),
+    (0, common_1.Get)('today'),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [user_entity_1.User]),
+    __metadata("design:returntype", Promise)
+], FlowSessionsController.prototype, "getTodayFull", null);
+__decorate([
+    (0, common_1.Post)('update'),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [user_entity_1.User, Object]),
     __metadata("design:returntype", Promise)
 ], FlowSessionsController.prototype, "update", null);
 exports.FlowSessionsController = FlowSessionsController = __decorate([
     (0, common_1.Controller)('api/flow-session'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __metadata("design:paramtypes", [flow_sessions_service_1.FlowSessionsService])
 ], FlowSessionsController);
 //# sourceMappingURL=flow-sessions.controller.js.map

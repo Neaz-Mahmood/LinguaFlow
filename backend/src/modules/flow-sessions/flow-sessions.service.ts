@@ -1,53 +1,155 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, LessThanOrEqual } from 'typeorm';
 import { FlowSession } from '../../entities/flow-session.entity';
+import { User } from '../../entities/user.entity';
+import { Story } from '../../entities/story.entity';
+import { Flashcard } from '../../entities/flashcard.entity';
 
 @Injectable()
 export class FlowSessionsService {
   constructor(
     @InjectRepository(FlowSession)
     private sessionsRepository: Repository<FlowSession>,
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
+    @InjectRepository(Story)
+    private storiesRepository: Repository<Story>,
+    @InjectRepository(Flashcard)
+    private flashcardsRepository: Repository<Flashcard>,
   ) {}
 
-  async getTodaySession(): Promise<FlowSession> {
+  async getTodaySession(userId: number): Promise<FlowSession> {
     const today = new Date().toISOString().split('T')[0];
     let session = await this.sessionsRepository.findOne({
-      where: { userId: 1, date: today as any },
+      where: { userId, date: today as any },
     });
 
     if (!session) {
       session = this.sessionsRepository.create({
-        userId: 1,
+        userId,
         date: today as any,
         comprehensibleInputCompleted: false,
         srsCompleted: false,
         shadowingCompleted: false,
         outputCompleted: false,
+        stepsCompleted: 0,
       });
       await this.sessionsRepository.save(session);
     }
     return session;
   }
 
-  async updateSession(data: any): Promise<FlowSession> {
-    const session = await this.getTodaySession();
-    if (!session) {
-      throw new NotFoundException('Flow session not found');
+  async getTodayFullSession(userId: number): Promise<any> {
+    const session = await this.getTodaySession(userId);
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    const level = user ? user.currentLevel : 'A1';
+
+    const stories = await this.storiesRepository.find({ where: { level } });
+    const story = stories[0]
+      ? {
+          id: stories[0].id,
+          title: stories[0].title,
+          level: stories[0].level,
+          content_target: stories[0].contentTarget,
+          content_english: stories[0].contentEnglish,
+          words: stories[0].wordsJson ? JSON.parse(stories[0].wordsJson) : {},
+          sentences: stories[0].sentencesJson
+            ? JSON.parse(stories[0].sentencesJson)
+            : [],
+        }
+      : null;
+
+    const todayStr = new Date().toISOString().split('T')[0];
+    const dueCards = await this.flashcardsRepository.find({
+      where: {
+        userId,
+        nextReviewDate: LessThanOrEqual(todayStr as any),
+      },
+    });
+
+    const shadowPhrase =
+      story && story.sentences && story.sentences[0]
+        ? story.sentences[0]
+        : {
+            target: 'Sofía va a la cafetería todas las mañanas.',
+            english: 'Sofía goes to the coffee shop every morning.',
+          };
+
+    const outputPrompt = story
+      ? `¿Qué compró el personaje principal en la historia "${story.title}"?`
+      : '¿Qué hiciste hoy? Responde en español.';
+
+    return {
+      story,
+      dueCards,
+      shadowPhrase,
+      outputPrompt,
+      streakCount: user ? user.streakCount : 0,
+      stepsCompleted: session.stepsCompleted,
+      session,
+    };
+  }
+
+  async updateSession(userId: number, data: any): Promise<FlowSession> {
+    const session = await this.getTodaySession(userId);
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+
+    if (
+      data.comprehensible_input_completed !== undefined &&
+      data.comprehensible_input_completed !== session.comprehensibleInputCompleted
+    ) {
+      session.comprehensibleInputCompleted = data.comprehensible_input_completed;
+      if (session.comprehensibleInputCompleted && session.stepsCompleted < 1) {
+        session.stepsCompleted = 1;
+      }
+    }
+    if (
+      data.srs_completed !== undefined &&
+      data.srs_completed !== session.srsCompleted
+    ) {
+      session.srsCompleted = data.srs_completed;
+      if (session.srsCompleted && session.stepsCompleted < 2) {
+        session.stepsCompleted = 2;
+      }
+    }
+    if (
+      data.shadowing_completed !== undefined &&
+      data.shadowing_completed !== session.shadowingCompleted
+    ) {
+      session.shadowingCompleted = data.shadowing_completed;
+      if (session.shadowingCompleted && session.stepsCompleted < 3) {
+        session.stepsCompleted = 3;
+      }
+    }
+    if (
+      data.output_completed !== undefined &&
+      data.output_completed !== session.outputCompleted
+    ) {
+      session.outputCompleted = data.output_completed;
+      if (session.outputCompleted && session.stepsCompleted < 4) {
+        session.stepsCompleted = 4;
+
+        if (user) {
+          const todayStr = new Date().toISOString().split('T')[0];
+
+          if (user.lastActiveDate !== todayStr) {
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+            if (user.lastActiveDate === yesterdayStr) {
+              user.streakCount += 1;
+            } else {
+              user.streakCount = 1;
+            }
+            user.lastActiveDate = todayStr;
+            await this.usersRepository.save(user);
+          }
+        }
+      }
     }
 
-    if (data.comprehensible_input_completed !== undefined) {
-      session.comprehensibleInputCompleted = data.comprehensible_input_completed;
-    }
-    if (data.srs_completed !== undefined) {
-      session.srsCompleted = data.srs_completed;
-    }
-    if (data.shadowing_completed !== undefined) {
-      session.shadowingCompleted = data.shadowing_completed;
-    }
-    if (data.output_completed !== undefined) {
-      session.outputCompleted = data.output_completed;
-    }
     if (data.shadowing_score !== undefined) {
       session.shadowingScore = Number(data.shadowing_score);
     }

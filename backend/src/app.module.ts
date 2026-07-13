@@ -7,6 +7,7 @@ import { Story } from './entities/story.entity';
 import { Flashcard } from './entities/flashcard.entity';
 import { FlowSession } from './entities/flow-session.entity';
 
+import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { StoriesModule } from './modules/stories/stories.module';
 import { FlashcardsModule } from './modules/flashcards/flashcards.module';
@@ -33,6 +34,7 @@ import { SimulatorsModule } from './modules/simulators/simulators.module';
         synchronize: true, // Automatically synchronize tables for local dev MVP
       }),
     }),
+    AuthModule,
     UsersModule,
     StoriesModule,
     FlashcardsModule,

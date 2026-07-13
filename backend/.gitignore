@@ -23,16 +23,19 @@ yarn-error.log*
 coverage/
 .nyc_output/
 
-# OS / editor
+# OS / Editor
 .DS_Store
 .idea/
-.vscode/*
+.vscode/
 !.vscode/extensions.json
 *.sw?
+*.swp
 
-# Temp
+# Temp / Nest
 tmp/
 temp/
+.tmp/
+.temp/
 *.pid
 *.seed
 *.pid.lock

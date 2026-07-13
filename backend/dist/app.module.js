@@ -14,6 +14,7 @@ const user_entity_1 = require("./entities/user.entity");
 const story_entity_1 = require("./entities/story.entity");
 const flashcard_entity_1 = require("./entities/flashcard.entity");
 const flow_session_entity_1 = require("./entities/flow-session.entity");
+const auth_module_1 = require("./modules/auth/auth.module");
 const users_module_1 = require("./modules/users/users.module");
 const stories_module_1 = require("./modules/stories/stories.module");
 const flashcards_module_1 = require("./modules/flashcards/flashcards.module");
@@ -43,6 +44,7 @@ exports.AppModule = AppModule = __decorate([
                     synchronize: true,
                 }),
             }),
+            auth_module_1.AuthModule,
             users_module_1.UsersModule,
             stories_module_1.StoriesModule,
             flashcards_module_1.FlashcardsModule,
