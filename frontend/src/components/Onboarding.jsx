@@ -1,85 +1,79 @@
 import React, { useState } from 'react';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Button } from '@astryxdesign/core/Button';
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { Heading } from '@astryxdesign/core/Heading';
+import { HStack, VStack } from '@astryxdesign/core/Layout';
+import { SelectableCard } from '@astryxdesign/core/SelectableCard';
+import { Text } from '@astryxdesign/core/Text';
+import { ToggleButton, ToggleButtonGroup } from '@astryxdesign/core/ToggleButton';
 import { apiFetch } from '../lib/api';
 
 const LANGUAGES = [
-  { id: "Spanish", name: "Spanish", flag: "🇪🇸" },
-  { id: "French", name: "French", flag: "🇫🇷" },
-  { id: "German", name: "German", flag: "🇩🇪" },
-  { id: "Japanese", name: "Japanese", flag: "🇯🇵" }
+  { id: 'Spanish', name: 'Spanish', flag: '🇪🇸' },
+  { id: 'French', name: 'French', flag: '🇫🇷' },
+  { id: 'German', name: 'German', flag: '🇩🇪' },
+  { id: 'Japanese', name: 'Japanese', flag: '🇯🇵' },
 ];
 
-const LEVELS = ["A1", "A2", "B1", "B2"];
+const LEVELS = ['A1', 'A2', 'B1', 'B2'];
 
 const TIME_COMMITS = [
-  { id: 10, title: "10 min", label: "Casual", desc: "Light focus. Ideal for busy schedules." },
-  { id: 20, title: "20 min", label: "Regular", desc: "Steady progress. Highly recommended.", recommended: true },
-  { id: 30, title: "30 min", label: "Dedicated", desc: "Polyglot sprint. Immersive output focus." }
+  { id: 10, title: '10 min', label: 'Casual', desc: 'Light focus. Ideal for busy schedules.' },
+  {
+    id: 20,
+    title: '20 min',
+    label: 'Regular',
+    desc: 'Steady progress. Highly recommended.',
+    recommended: true,
+  },
+  {
+    id: 30,
+    title: '30 min',
+    label: 'Dedicated',
+    desc: 'Polyglot sprint. Immersive output focus.',
+  },
 ];
 
 const PREFERENCES = [
-  { 
-    id: "input-heavy", 
-    title: "Input-Heavy (Krashen)", 
-    icon: "🎧📚", 
-    desc: "Focuses heavily on reading and listening. Ratios: 60% Input, 20% SRS, 20% Output." 
+  {
+    id: 'input-heavy',
+    title: 'Input-Heavy (Krashen)',
+    icon: '🎧📚',
+    desc: 'Focuses heavily on reading and listening. Ratios: 60% Input, 20% SRS, 20% Output.',
   },
-  { 
-    id: "output-first", 
-    title: "Output-First (Lewis)", 
-    icon: "🎤💬", 
-    desc: "Early speaking focus. Speak from day one. Ratios: 30% Input, 20% SRS, 50% Output." 
+  {
+    id: 'output-first',
+    title: 'Output-First (Lewis)',
+    icon: '🎤💬',
+    desc: 'Early speaking focus. Speak from day one. Ratios: 30% Input, 20% SRS, 50% Output.',
   },
-  { 
-    id: "balanced", 
-    title: "Balanced Path", 
-    icon: "⚖️🌊", 
-    desc: "A harmonious split. Ratios: 40% Input, 30% SRS, 30% Output." 
-  }
+  {
+    id: 'balanced',
+    title: 'Balanced Path',
+    icon: '⚖️🌊',
+    desc: 'A harmonious split. Ratios: 40% Input, 30% SRS, 30% Output.',
+  },
 ];
 
 const GOAL_OPTIONS = [
-  { id: "travel", label: "Travel & Culture ✈️" },
-  { id: "conversation", label: "Conversation Practice 🗣️" },
-  { id: "exam", label: "Exam Preparation 🎓" },
-  { id: "polyglot", label: "Polyglot Journey 🗺️" }
+  { id: 'travel', label: 'Travel & Culture ✈️' },
+  { id: 'conversation', label: 'Conversation Practice 🗣️' },
+  { id: 'exam', label: 'Exam Preparation 🎓' },
+  { id: 'polyglot', label: 'Polyglot Journey 🗺️' },
 ];
 
 export default function Onboarding({ onComplete }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    target_language: "Spanish",
-    native_language: "English",
-    current_level: "A1",
+    target_language: 'Spanish',
+    native_language: 'English',
+    current_level: 'A1',
     daily_commitment: 20,
-    strategy_preference: "input-heavy",
-    goals: []
+    strategy_preference: 'input-heavy',
+    goals: [],
   });
-
-  const handleSelectLanguage = (langId) => {
-    setFormData(prev => ({ ...prev, target_language: langId }));
-  };
-
-  const handleSelectLevel = (level) => {
-    setFormData(prev => ({ ...prev, current_level: level }));
-  };
-
-  const handleSelectTime = (time) => {
-    setFormData(prev => ({ ...prev, daily_commitment: time }));
-  };
-
-  const handleSelectPref = (prefId) => {
-    setFormData(prev => ({ ...prev, strategy_preference: prefId }));
-  };
-
-  const handleToggleGoal = (goalId) => {
-    setFormData(prev => {
-      const goals = prev.goals.includes(goalId)
-        ? prev.goals.filter(g => g !== goalId)
-        : [...prev.goals, goalId];
-      return { ...prev, goals };
-    });
-  };
 
   const handleNext = () => {
     if (currentStep < 4) {
@@ -98,200 +92,239 @@ export default function Onboarding({ onComplete }) {
   const submitOnboarding = async () => {
     setLoading(true);
     try {
-      const res = await apiFetch("/api/user/onboard", {
-        method: "POST",
+      const res = await apiFetch('/api/user/onboard', {
+        method: 'POST',
         body: JSON.stringify({
           target_language: formData.target_language,
           native_language: formData.native_language,
           current_level: formData.current_level,
           daily_commitment: formData.daily_commitment,
           strategy_preference: formData.strategy_preference,
-          goals: formData.goals
-        })
+          goals: formData.goals,
+        }),
       });
       if (res.ok) {
         const result = await res.json();
-        // Give a slight simulated delay for premium loader experience
         setTimeout(() => {
           onComplete(result.user);
         }, 1500);
       } else {
-        console.error("Failed to submit onboarding profile");
+        console.error('Failed to submit onboarding profile');
         onComplete(formData);
       }
     } catch (err) {
-      console.error("Error submitting onboarding:", err);
+      console.error('Error submitting onboarding:', err);
       onComplete(formData);
     }
   };
 
   if (loading) {
     return (
-      <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '4rem 2rem', textAlign: 'center' }}>
-        <div className="logo" style={{ fontSize: '2.5rem', animation: 'float 2s ease-in-out infinite' }}>🌊</div>
-        <h2 style={{ fontFamily: 'var(--font-display)', marginTop: '1.5rem', fontSize: '1.5rem' }}>Personalizing Your Flow...</h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.5rem', maxWidth: '300px' }}>
+      <div className="lf-card" style={{ textAlign: 'center', padding: '4rem 2rem' }}>
+        <div style={{ fontSize: '2.5rem', animation: 'float 2s ease-in-out infinite' }}>🌊</div>
+        <Heading level={2}>Personalizing Your Flow...</Heading>
+        <Text type="supporting" color="secondary" as="p" display="block">
           Calibrating content ratios and setting up your learning workspace.
-        </p>
+        </Text>
       </div>
     );
   }
 
   return (
-    <div className="card" style={{ animation: 'fadeIn 0.4s ease-out' }}>
-      <h1 className="onboarding-title">Construct Your Path</h1>
-      <p className="onboarding-subtitle">Step {currentStep} of 4</p>
+    <div className="lf-card" style={{ animation: 'fadeIn 0.4s ease-out' }}>
+      <VStack gap={2} style={{ textAlign: 'center', marginBottom: '2rem' }}>
+        <Heading level={1} justify="center">
+          Construct Your Path
+        </Heading>
+        <Text type="supporting" color="secondary" display="block" justify="center">
+          Step {currentStep} of 4
+        </Text>
+      </VStack>
 
-      {/* STEP 1: TARGET LANGUAGE & LEVEL */}
       {currentStep === 1 && (
-        <div style={{ animation: 'fadeIn 0.3s ease-out' }}>
-          <h3 style={{ fontFamily: 'var(--font-display)', marginBottom: '1rem', color: 'var(--text-secondary)' }}>Select Target Language</h3>
-          <div className="flag-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.75rem', marginBottom: '2rem' }}>
-            {LANGUAGES.map(lang => (
-              <div
+        <VStack gap={4}>
+          <Heading level={3} color="secondary">
+            Select Target Language
+          </Heading>
+          <div className="flag-grid">
+            {LANGUAGES.map((lang) => (
+              <SelectableCard
                 key={lang.id}
-                className={`option-card ${formData.target_language === lang.id ? 'selected' : ''}`}
-                onClick={() => handleSelectLanguage(lang.id)}
-                style={{ alignItems: 'center', padding: '1rem' }}
+                label={lang.name}
+                isSelected={formData.target_language === lang.id}
+                onChange={(selected) => {
+                  if (selected) {
+                    setFormData((prev) => ({ ...prev, target_language: lang.id }));
+                  }
+                }}
+                padding={3}
               >
-                <span style={{ fontSize: '2rem' }}>{lang.flag}</span>
-                <span style={{ fontSize: '0.85rem', fontWeight: '500', marginTop: '0.25rem' }}>{lang.name}</span>
-              </div>
+                <VStack gap={1}>
+                  <Text size="2xl" display="block" justify="center">
+                    {lang.flag}
+                  </Text>
+                  <Text type="label" display="block" justify="center">
+                    {lang.name}
+                  </Text>
+                </VStack>
+              </SelectableCard>
             ))}
           </div>
 
-          <h3 style={{ fontFamily: 'var(--font-display)', marginBottom: '1rem', color: 'var(--text-secondary)' }}>Current Level</h3>
-          <div className="segmented-control" style={{ display: 'flex', background: 'var(--bg-secondary)', padding: '4px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)', gap: '2px' }}>
-            {LEVELS.map(level => (
-              <button
-                key={level}
-                type="button"
-                className={`segmented-btn ${formData.current_level === level ? 'active' : ''}`}
-                onClick={() => handleSelectLevel(level)}
-                style={{
-                  flex: 1,
-                  background: formData.current_level === level ? 'var(--accent-primary)' : 'transparent',
-                  border: 'none',
-                  color: formData.current_level === level ? 'var(--text-primary)' : 'var(--text-secondary)',
-                  padding: '0.6rem',
-                  borderRadius: 'var(--radius-sm)',
-                  cursor: 'pointer',
-                  fontWeight: '600',
-                  transition: 'var(--transition-fast)'
+          <Heading level={3} color="secondary">
+            Current Level
+          </Heading>
+          <ToggleButtonGroup
+            label="Current level"
+            type="single"
+            value={formData.current_level}
+            onChange={(value) => {
+              if (value) {
+                setFormData((prev) => ({ ...prev, current_level: value }));
+              }
+            }}
+          >
+            {LEVELS.map((level) => (
+              <ToggleButton key={level} label={level} value={level} />
+            ))}
+          </ToggleButtonGroup>
+        </VStack>
+      )}
+
+      {currentStep === 2 && (
+        <VStack gap={4}>
+          <Heading level={3} color="secondary">
+            Daily Time Commitment
+          </Heading>
+          <div className="option-grid">
+            {TIME_COMMITS.map((tc) => (
+              <SelectableCard
+                key={tc.id}
+                label={tc.title}
+                isSelected={formData.daily_commitment === tc.id}
+                onChange={(selected) => {
+                  if (selected) {
+                    setFormData((prev) => ({ ...prev, daily_commitment: tc.id }));
+                  }
                 }}
               >
-                {level}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* STEP 2: TIME COMMITMENT */}
-      {currentStep === 2 && (
-        <div style={{ animation: 'fadeIn 0.3s ease-out' }}>
-          <h3 style={{ fontFamily: 'var(--font-display)', marginBottom: '1.5rem', color: 'var(--text-secondary)' }}>Daily Time Commitment</h3>
-          <div className="option-grid">
-            {TIME_COMMITS.map(tc => (
-              <div
-                key={tc.id}
-                className={`option-card ${formData.daily_commitment === tc.id ? 'selected' : ''}`}
-                onClick={() => handleSelectTime(tc.id)}
-              >
-                <div style={{ display: 'flex', justifyContent: 'between', alignItems: 'center', width: '100%' }}>
-                  <div className="option-card-title">{tc.title}</div>
-                  {tc.recommended && (
-                    <span style={{ fontSize: '0.65rem', background: 'var(--accent-secondary)', color: 'var(--bg-primary)', padding: '0.2rem 0.5rem', borderRadius: '20px', fontWeight: '700', marginLeft: 'auto' }}>
-                      REC
-                    </span>
-                  )}
-                </div>
-                <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: '600' }}>{tc.label}</span>
-                <div className="option-card-desc" style={{ marginTop: '0.25rem' }}>{tc.desc}</div>
-              </div>
+                <VStack gap={1}>
+                  <HStack gap={2}>
+                    <Text type="large" weight="semibold">
+                      {tc.title}
+                    </Text>
+                    {tc.recommended && <Badge label="REC" variant="cyan" />}
+                  </HStack>
+                  <Text type="label">{tc.label}</Text>
+                  <Text type="supporting" color="secondary" display="block">
+                    {tc.desc}
+                  </Text>
+                </VStack>
+              </SelectableCard>
             ))}
           </div>
 
-          <div className="feedback-box" style={{ marginTop: '1.5rem', borderLeft: '3px solid var(--accent-secondary)' }}>
-            💡 **Pro Tip**: Consistent short sessions beat long irregular ones. 15–20 minutes daily is the sweet spot for learning retention.
+          <div className="feedback-box">
+            Pro tip: Consistent short sessions beat long irregular ones. 15–20 minutes daily is the
+            sweet spot for learning retention.
           </div>
-        </div>
+        </VStack>
       )}
 
-      {/* STEP 3: PREFERENCE METHODOLOGY */}
       {currentStep === 3 && (
-        <div style={{ animation: 'fadeIn 0.3s ease-out' }}>
-          <h3 style={{ fontFamily: 'var(--font-display)', marginBottom: '1.5rem', color: 'var(--text-secondary)' }}>Select Learning Style</h3>
-          <div className="option-grid" style={{ gridTemplateColumns: '1fr' }}>
-            {PREFERENCES.map(pref => (
-              <div
+        <VStack gap={4}>
+          <Heading level={3} color="secondary">
+            Select Learning Style
+          </Heading>
+          <VStack gap={3}>
+            {PREFERENCES.map((pref) => (
+              <SelectableCard
                 key={pref.id}
-                className={`option-card ${formData.strategy_preference === pref.id ? 'selected' : ''}`}
-                onClick={() => handleSelectPref(pref.id)}
-                style={{ flexDirection: 'row', gap: '1rem', alignItems: 'center', padding: '1.25rem' }}
+                label={pref.title}
+                isSelected={formData.strategy_preference === pref.id}
+                onChange={(selected) => {
+                  if (selected) {
+                    setFormData((prev) => ({ ...prev, strategy_preference: pref.id }));
+                  }
+                }}
               >
-                <span style={{ fontSize: '2.2rem' }}>{pref.icon}</span>
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <div className="option-card-title">{pref.title}</div>
-                  <div className="option-card-desc">{pref.desc}</div>
-                </div>
-              </div>
+                <HStack gap={3}>
+                  <Text size="2xl">{pref.icon}</Text>
+                  <VStack gap={1}>
+                    <Text type="large" weight="semibold" display="block">
+                      {pref.title}
+                    </Text>
+                    <Text type="supporting" color="secondary" display="block">
+                      {pref.desc}
+                    </Text>
+                  </VStack>
+                </HStack>
+              </SelectableCard>
             ))}
-          </div>
-        </div>
+          </VStack>
+        </VStack>
       )}
 
-      {/* STEP 4: GOALS & CONFIRMATION */}
       {currentStep === 4 && (
-        <div style={{ animation: 'fadeIn 0.3s ease-out' }}>
-          <h3 style={{ fontFamily: 'var(--font-display)', marginBottom: '1rem', color: 'var(--text-secondary)' }}>What is your primary goal?</h3>
-          <div className="option-grid" style={{ marginBottom: '2rem' }}>
-            {GOAL_OPTIONS.map(goal => (
-              <div
+        <VStack gap={4}>
+          <Heading level={3} color="secondary">
+            What is your primary goal?
+          </Heading>
+          <div className="option-grid">
+            {GOAL_OPTIONS.map((goal) => (
+              <SelectableCard
                 key={goal.id}
-                className={`option-card ${formData.goals.includes(goal.id) ? 'selected' : ''}`}
-                onClick={() => handleToggleGoal(goal.id)}
-                style={{ padding: '1rem', cursor: 'pointer' }}
+                label={goal.label}
+                isSelected={formData.goals.includes(goal.id)}
+                onChange={(selected) => {
+                  setFormData((prev) => {
+                    const goals = selected
+                      ? [...prev.goals, goal.id]
+                      : prev.goals.filter((g) => g !== goal.id);
+                    return { ...prev, goals };
+                  });
+                }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', justifyItems: 'center', gap: '0.5rem' }}>
-                  <input
-                    type="checkbox"
-                    checked={formData.goals.includes(goal.id)}
-                    onChange={() => {}} // handled by div click
-                    style={{ accentColor: 'var(--accent-secondary)' }}
-                  />
-                  <span style={{ fontSize: '0.95rem', fontWeight: '500' }}>{goal.label}</span>
-                </div>
-              </div>
+                <CheckboxInput
+                  label={goal.label}
+                  value={formData.goals.includes(goal.id)}
+                  onChange={() => {}}
+                  isReadOnly
+                />
+              </SelectableCard>
             ))}
           </div>
 
-          <h3 style={{ fontFamily: 'var(--font-display)', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>Profile Summary</h3>
-          <div className="feedback-box" style={{ background: 'var(--bg-secondary)', fontSize: '0.85rem' }}>
-            🌐 **Target**: {formData.target_language} ({formData.current_level})<br />
-            ⏳ **Time**: {formData.daily_commitment} mins/day<br />
-            🧠 **Methodology**: {formData.strategy_preference === 'input-heavy' ? 'Input-Heavy (Krashen)' : formData.strategy_preference === 'output-first' ? 'Output-First (Lewis)' : 'Balanced Path'}
+          <Heading level={3} color="secondary">
+            Profile Summary
+          </Heading>
+          <div className="feedback-box">
+            Target: {formData.target_language} ({formData.current_level})
+            <br />
+            Time: {formData.daily_commitment} mins/day
+            <br />
+            Methodology:{' '}
+            {formData.strategy_preference === 'input-heavy'
+              ? 'Input-Heavy (Krashen)'
+              : formData.strategy_preference === 'output-first'
+                ? 'Output-First (Lewis)'
+                : 'Balanced Path'}
           </div>
-        </div>
+        </VStack>
       )}
 
-      {/* FOOTER NAV BUTTONS */}
       <div className="btn-row">
-        <button
-          className="btn btn-secondary"
+        <Button
+          label="Back"
+          variant="secondary"
           onClick={handleBack}
-          disabled={currentStep === 1}
-          style={{ visibility: currentStep === 1 ? 'hidden' : 'visible' }}
-        >
-          Back
-        </button>
-
-        <button
-          className="btn btn-primary"
+          isDisabled={currentStep === 1}
+        />
+        <Button
+          label={currentStep === 4 ? 'Create My Profile' : 'Continue'}
+          variant="primary"
           onClick={handleNext}
-        >
-          {currentStep === 4 ? "Create My Profile" : "Continue"}
-        </button>
+        />
       </div>
     </div>
   );

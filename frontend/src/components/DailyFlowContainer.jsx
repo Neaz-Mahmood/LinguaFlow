@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { Button } from '@astryxdesign/core/Button';
+import { Heading } from '@astryxdesign/core/Heading';
+import { Text } from '@astryxdesign/core/Text';
+import { VStack } from '@astryxdesign/core/Layout';
 import ComprehensibleInput from './ComprehensibleInput';
 import SpacedRepetition from './SpacedRepetition';
 import Shadowing from './Shadowing';
@@ -54,46 +58,23 @@ export default function DailyFlowContainer({ onResetProfile }) {
 
   if (loading) {
     return (
-      <div
-        className="card"
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '4rem 2rem',
-          textAlign: 'center',
-        }}
-      >
-        <div
-          className="logo"
-          style={{ fontSize: '2.5rem', animation: 'float 2s ease-in-out infinite' }}
-        >
-          🌊
-        </div>
-        <h2
-          style={{
-            fontFamily: 'var(--font-display)',
-            marginTop: '1.5rem',
-            fontSize: '1.2rem',
-          }}
-        >
-          Loading Today's Flow...
-        </h2>
+      <div className="lf-card" style={{ textAlign: 'center', padding: '4rem 2rem' }}>
+        <div style={{ fontSize: '2.5rem', animation: 'float 2s ease-in-out infinite' }}>🌊</div>
+        <Heading level={2}>Loading Today&apos;s Flow...</Heading>
       </div>
     );
   }
 
   if (!sessionData || !sessionData.story) {
     return (
-      <div className="card" style={{ textAlign: 'center', padding: '3rem' }}>
-        <h2>Setup Required</h2>
-        <p style={{ color: 'var(--text-secondary)', margin: '1rem 0' }}>
-          Please complete your onboarding profile to generate your first session.
-        </p>
-        <button className="btn btn-primary" onClick={onResetProfile}>
-          Go to Onboarding
-        </button>
+      <div className="lf-card" style={{ textAlign: 'center', padding: '3rem' }}>
+        <VStack gap={3}>
+          <Heading level={2}>Setup Required</Heading>
+          <Text type="supporting" color="secondary" as="p" display="block">
+            Please complete your onboarding profile to generate your first session.
+          </Text>
+          <Button label="Go to Onboarding" variant="primary" onClick={onResetProfile} />
+        </VStack>
       </div>
     );
   }

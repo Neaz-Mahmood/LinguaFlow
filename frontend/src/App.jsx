@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
+import { Button } from '@astryxdesign/core/Button';
+import { Text } from '@astryxdesign/core/Text';
+import { HStack } from '@astryxdesign/core/Layout';
 import Onboarding from './components/Onboarding';
 import DailyFlowContainer from './components/DailyFlowContainer';
 import SignIn from './components/SignIn';
@@ -97,11 +100,11 @@ export default function App() {
         style={{ justifyContent: 'center', alignItems: 'center' }}
       >
         <div className="logo" style={{ fontSize: '3rem', animation: 'pulse 1.5s infinite' }}>
-          🌊 LinguaFlow
+          LinguaFlow
         </div>
-        <p style={{ color: 'var(--text-secondary)', marginTop: '1rem' }}>
+        <Text type="supporting" color="secondary" as="p">
           Loading Daily Flow Engine...
-        </p>
+        </Text>
       </div>
     );
   }
@@ -114,33 +117,20 @@ export default function App() {
     <div className="app-container">
       <header className="header" style={{ animation: 'fadeIn 0.3s ease-out' }}>
         <div className="logo" onClick={bootstrap} style={{ cursor: 'pointer' }}>
-          🌊 LinguaFlow
+          LinguaFlow
         </div>
 
         {viewState !== VIEW_STATES.ONBOARDING && (
-          <div style={{ display: 'flex', gap: '0.75rem' }}>
-            <button
-              className="btn btn-secondary"
-              style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}
-              onClick={resetSession}
-            >
-              Reset Session
-            </button>
-            <button
-              className="btn btn-primary"
-              style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}
+          <HStack gap={2}>
+            <Button label="Reset Session" variant="secondary" size="sm" onClick={resetSession} />
+            <Button
+              label="Set Profile"
+              variant="primary"
+              size="sm"
               onClick={() => setViewState(VIEW_STATES.ONBOARDING)}
-            >
-              Set Profile
-            </button>
-            <button
-              className="btn btn-secondary"
-              style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}
-              onClick={handleSignOut}
-            >
-              Sign out
-            </button>
-          </div>
+            />
+            <Button label="Sign out" variant="secondary" size="sm" onClick={handleSignOut} />
+          </HStack>
         )}
       </header>
 

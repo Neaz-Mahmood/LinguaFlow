@@ -1,41 +1,48 @@
 import React from 'react';
+import { Button } from '@astryxdesign/core/Button';
+import { Heading } from '@astryxdesign/core/Heading';
+import { Text } from '@astryxdesign/core/Text';
+import { VStack } from '@astryxdesign/core/Layout';
 
 export default function FlowCompletion({ streakCount, shadowScore, onRestart }) {
-  // Simple check for default score if not calculated
   const displayScore = shadowScore > 0 ? shadowScore : 85;
 
   return (
-    <div className="card summary-container" style={{ animation: 'fadeIn 0.5s ease-out' }}>
-      <div className="summary-icon" style={{ fontSize: '5rem', animation: 'float 2.5s ease-in-out infinite' }}>🔥</div>
-      
-      <h1 className="onboarding-title" style={{ fontSize: '2.5rem', fontWeight: '800' }}>
-        Today's Flow Complete!
-      </h1>
-      
-      <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem', maxSelfWidth: '400px', margin: '0 auto' }}>
-        Phenomenal work! You have finished all 4 steps of your daily sequential flow path.
-      </p>
+    <div
+      className="lf-card summary-container"
+      style={{ animation: 'fadeIn 0.5s ease-out' }}
+    >
+      <div className="summary-icon" style={{ fontSize: '5rem', animation: 'float 2.5s ease-in-out infinite' }}>
+        🔥
+      </div>
 
-      {/* Streak Badge Card */}
-      <div className="feedback-box" style={{ 
-        background: 'rgba(6, 182, 212, 0.05)', 
-        border: '1px solid var(--accent-secondary)', 
-        padding: '1.5rem', 
-        borderRadius: 'var(--radius-md)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        margin: '1.5rem 0',
-        width: '100%',
-        maxWidth: '350px'
-      }}>
-        <span style={{ fontSize: '3rem' }}>⚡</span>
-        <h3 style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)', marginTop: '0.5rem', fontSize: '1.4rem' }}>
-          {streakCount || 1} Day Streak
-        </h3>
-        <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
-          Come back tomorrow to keep the flame alive!
-        </p>
+      <Heading level={1} type="display-2" justify="center">
+        Today&apos;s Flow Complete!
+      </Heading>
+
+      <Text type="supporting" color="secondary" as="p" display="block" justify="center">
+        Phenomenal work! You have finished all 4 steps of your daily sequential flow path.
+      </Text>
+
+      <div
+        className="feedback-box"
+        style={{
+          width: '100%',
+          maxWidth: 350,
+          textAlign: 'center',
+          borderStyle: 'solid',
+          borderColor: 'var(--color-border-cyan)',
+        }}
+      >
+        <VStack gap={1}>
+          <Text size="3xl" display="block">
+            ⚡
+          </Text>
+          <Heading level={3}>{streakCount || 1} Day Streak</Heading>
+          <Text type="supporting" color="secondary" display="block">
+            Come back tomorrow to keep the flame alive!
+          </Text>
+        </VStack>
       </div>
 
       <div className="summary-stats" style={{ width: '100%' }}>
@@ -50,19 +57,37 @@ export default function FlowCompletion({ streakCount, shadowScore, onRestart }) 
       </div>
 
       <div className="feedback-box" style={{ width: '100%', borderStyle: 'solid', textAlign: 'left' }}>
-        <h3 style={{ fontFamily: 'var(--font-display)', marginBottom: '0.75rem', color: 'var(--accent-secondary)', fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+        <Heading level={4} color="secondary">
           Milestones Met
-        </h3>
-        <ul style={{ listStyleType: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-          <li>📖 **Krashen's CI**: Read interactive texts and mined keywords in context.</li>
-          <li>🗣️ **Lewis' Output**: Practiced writing production and active generation.</li>
-          <li>🎯 **Arguelles Shadowing**: Repeated native phrases and recorded pronunciation.</li>
+        </Heading>
+        <ul
+          style={{
+            listStyleType: 'none',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.5rem',
+            marginTop: '0.75rem',
+          }}
+        >
+          <li>
+            <Text type="supporting" color="secondary" display="block">
+              Krashen&apos;s CI: Read interactive texts and mined keywords in context.
+            </Text>
+          </li>
+          <li>
+            <Text type="supporting" color="secondary" display="block">
+              Lewis&apos; Output: Practiced writing production and active generation.
+            </Text>
+          </li>
+          <li>
+            <Text type="supporting" color="secondary" display="block">
+              Arguelles Shadowing: Repeated native phrases and recorded pronunciation.
+            </Text>
+          </li>
         </ul>
       </div>
 
-      <button className="btn btn-primary btn-full" onClick={onRestart} style={{ marginTop: '1rem' }}>
-        Restart Daily Flow 🌊
-      </button>
+      <Button label="Restart Daily Flow" variant="primary" onClick={onRestart} />
     </div>
   );
 }

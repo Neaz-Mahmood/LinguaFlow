@@ -15,6 +15,7 @@ import {
 import SignInScreen from './src/screens/SignInScreen';
 import OnboardingScreen from './src/screens/OnboardingScreen';
 import DailyFlowScreen from './src/screens/DailyFlowScreen';
+import { theme } from './src/theme';
 
 type ViewState = 'loading' | 'auth' | 'onboarding' | 'flow';
 
@@ -114,7 +115,7 @@ export default function App() {
     <>
       {view === 'loading' ? (
         <View style={styles.loading}>
-          <ActivityIndicator size="large" color="#7dd3c7" />
+          <ActivityIndicator size="large" color={theme.colors.accent} />
           <StatusBar style="light" />
         </View>
       ) : null}
@@ -137,7 +138,7 @@ export default function App() {
             onComplete={() => setView('flow')}
             onSignOut={handleSignOut}
           />
-          <StatusBar style="dark" />
+          <StatusBar style="light" />
         </>
       ) : null}
 
@@ -156,7 +157,7 @@ export default function App() {
 const styles = StyleSheet.create({
   loading: {
     flex: 1,
-    backgroundColor: '#0b1f2a',
+    backgroundColor: theme.colors.backgroundBody,
     alignItems: 'center',
     justifyContent: 'center',
   },

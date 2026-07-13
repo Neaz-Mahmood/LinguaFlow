@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { GoogleLogin } from '@react-oauth/google';
 import { toast } from 'sonner';
+import { Button } from '@astryxdesign/core/Button';
+import { Text } from '@astryxdesign/core/Text';
+import { TextInput } from '@astryxdesign/core/TextInput';
+import { VStack } from '@astryxdesign/core/Layout';
 import {
   signInWithEmail,
   signInWithGoogleIdToken,
@@ -89,127 +93,110 @@ export default function SignIn({ onSuccess }) {
       style={{ justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}
     >
       <div className="logo" style={{ fontSize: '3rem', marginBottom: '0.75rem' }}>
-        🌊 LinguaFlow
+        LinguaFlow
       </div>
-      <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem', maxWidth: 420 }}>
+      <Text type="supporting" color="secondary" as="p" display="block">
         {isSignUp
           ? 'Create an account to sync your profile and open your Daily Flow.'
           : 'Sign in to sync your profile and open your Daily Flow.'}
-      </p>
+      </Text>
 
-      <form className="auth-form" onSubmit={handleEmailSubmit}>
-        {isSignUp && (
-          <>
-            <label className="auth-label" htmlFor="auth-name">
-              Full name
-            </label>
-            <input
-              id="auth-name"
-              className={`auth-input${fieldErrors.name ? ' auth-input-error' : ''}`}
-              type="text"
-              autoComplete="name"
+      <form className="auth-form" onSubmit={handleEmailSubmit} style={{ marginTop: '2rem' }}>
+        <VStack gap={3}>
+          {isSignUp && (
+            <TextInput
+              label="Full name"
               value={name}
-              onChange={(e) => {
-                setName(e.target.value);
+              onChange={(value) => {
+                setName(value);
                 clearFieldError('name');
               }}
-              disabled={loading}
-              aria-invalid={Boolean(fieldErrors.name)}
+              isDisabled={loading}
+              status={fieldErrors.name ? { type: 'error', message: fieldErrors.name } : undefined}
+              htmlName="name"
             />
-            {fieldErrors.name && <p className="auth-field-error">{fieldErrors.name}</p>}
-          </>
-        )}
+          )}
 
-        <label className="auth-label" htmlFor="auth-email">
-          Email
-        </label>
-        <input
-          id="auth-email"
-          className={`auth-input${fieldErrors.email ? ' auth-input-error' : ''}`}
-          type="email"
-          autoComplete="email"
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-            clearFieldError('email');
-          }}
-          disabled={loading}
-          aria-invalid={Boolean(fieldErrors.email)}
-        />
-        {fieldErrors.email && <p className="auth-field-error">{fieldErrors.email}</p>}
+          <TextInput
+            type="email"
+            label="Email"
+            value={email}
+            onChange={(value) => {
+              setEmail(value);
+              clearFieldError('email');
+            }}
+            isDisabled={loading}
+            status={fieldErrors.email ? { type: 'error', message: fieldErrors.email } : undefined}
+            htmlName="email"
+          />
 
-        <label className="auth-label" htmlFor="auth-password">
-          Password
-        </label>
-        <input
-          id="auth-password"
-          className={`auth-input${fieldErrors.password ? ' auth-input-error' : ''}`}
-          type="password"
-          autoComplete={isSignUp ? 'new-password' : 'current-password'}
-          value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-            clearFieldError('password');
-          }}
-          disabled={loading}
-          aria-invalid={Boolean(fieldErrors.password)}
-        />
-        {fieldErrors.password && <p className="auth-field-error">{fieldErrors.password}</p>}
+          <TextInput
+            type="password"
+            label="Password"
+            value={password}
+            onChange={(value) => {
+              setPassword(value);
+              clearFieldError('password');
+            }}
+            isDisabled={loading}
+            status={
+              fieldErrors.password ? { type: 'error', message: fieldErrors.password } : undefined
+            }
+            htmlName="password"
+          />
 
-        {isSignUp && (
-          <>
-            <label className="auth-label" htmlFor="auth-confirm-password">
-              Confirm password
-            </label>
-            <input
-              id="auth-confirm-password"
-              className={`auth-input${fieldErrors.confirmPassword ? ' auth-input-error' : ''}`}
+          {isSignUp && (
+            <TextInput
               type="password"
-              autoComplete="new-password"
+              label="Confirm password"
               value={confirmPassword}
-              onChange={(e) => {
-                setConfirmPassword(e.target.value);
+              onChange={(value) => {
+                setConfirmPassword(value);
                 clearFieldError('confirmPassword');
               }}
-              disabled={loading}
-              aria-invalid={Boolean(fieldErrors.confirmPassword)}
+              isDisabled={loading}
+              status={
+                fieldErrors.confirmPassword
+                  ? { type: 'error', message: fieldErrors.confirmPassword }
+                  : undefined
+              }
+              htmlName="confirmPassword"
             />
-            {fieldErrors.confirmPassword && (
-              <p className="auth-field-error">{fieldErrors.confirmPassword}</p>
-            )}
-          </>
-        )}
+          )}
 
-        <button
-          type="submit"
-          className={`btn btn-primary btn-full${loading ? ' btn-disabled' : ''}`}
-          disabled={loading}
-        >
-          {loading ? 'Please wait…' : isSignUp ? 'Sign up' : 'Sign in'}
-        </button>
+          <Button
+            type="submit"
+            label={loading ? 'Please wait…' : isSignUp ? 'Sign up' : 'Sign in'}
+            variant="primary"
+            isLoading={loading}
+            isDisabled={loading}
+          />
+        </VStack>
       </form>
 
-      <p style={{ color: 'var(--text-secondary)', marginTop: '1rem' }}>
+      <Text type="supporting" color="secondary" as="p" display="block">
         {isSignUp ? 'Already have an account?' : 'Need an account?'}{' '}
-        <button
+        <Button
           type="button"
-          className="auth-toggle"
+          label={isSignUp ? 'Sign in' : 'Sign up'}
+          variant="ghost"
+          size="sm"
+          isDisabled={loading}
           onClick={() => {
             setMode(isSignUp ? 'signin' : 'signup');
             resetForm();
           }}
-          disabled={loading}
-        >
-          {isSignUp ? 'Sign in' : 'Sign up'}
-        </button>
-      </p>
+        />
+      </Text>
 
       <div className="auth-divider">
         <span>or</span>
       </div>
 
       {loading ? (
-        <p style={{ color: 'var(--text-secondary)' }}>Signing you in…</p>
+        <Text type="supporting" color="secondary">
+          Signing you in…
+        </Text>
       ) : (
         <GoogleLogin
           onSuccess={handleCredential}

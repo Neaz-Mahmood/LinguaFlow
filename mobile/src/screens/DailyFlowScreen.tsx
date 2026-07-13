@@ -1,5 +1,7 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { Button, Card, Screen, Text } from '../components/ui';
+import { theme } from '../theme';
 import { AuthUser } from '../lib/api';
 
 type Props = {
@@ -9,48 +11,42 @@ type Props = {
 
 export default function DailyFlowScreen({ user, onSignOut }: Props) {
   return (
-    <View style={styles.container}>
-      <Text style={styles.brand}>LinguaFlow</Text>
-      <Text style={styles.title}>Daily Flow</Text>
-      <Text style={styles.body}>
-        You are signed in
-        {user.email ? ` as ${user.email}` : ''}. The mobile Daily Flow
-        experience will connect here next.
+    <Screen style={styles.container}>
+      <Text variant="label" style={styles.brand}>
+        LinguaFlow
       </Text>
-      <Pressable onPress={onSignOut}>
-        <Text style={styles.link}>Sign out</Text>
-      </Pressable>
-    </View>
+      <Card style={styles.card}>
+        <Text variant="title" style={styles.title}>
+          Daily Flow
+        </Text>
+        <Text variant="secondary" style={styles.body}>
+          You are signed in
+          {user.email ? ` as ${user.email}` : ''}. The mobile Daily Flow experience
+          will connect here next.
+        </Text>
+        <Button label="Sign out" variant="secondary" onPress={onSignOut} />
+      </Card>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#0b1f2a',
-    padding: 28,
     justifyContent: 'center',
   },
   brand: {
-    color: '#7dd3c7',
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 8,
+    marginBottom: theme.spacing[3],
+    color: theme.colors.cyan,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  },
+  card: {
+    width: '100%',
   },
   title: {
-    fontSize: 32,
-    fontWeight: '700',
-    color: '#fff',
-    marginBottom: 12,
+    marginBottom: theme.spacing[3],
   },
   body: {
-    fontSize: 16,
-    color: '#c8d6dc',
-    lineHeight: 24,
-    marginBottom: 28,
-  },
-  link: {
-    color: '#7dd3c7',
-    textDecorationLine: 'underline',
+    marginBottom: theme.spacing[6],
   },
 });
