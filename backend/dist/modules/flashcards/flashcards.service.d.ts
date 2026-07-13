@@ -8,12 +8,12 @@ export declare class FlashcardsService {
         interval: number;
         repetitions: number;
     };
-    mineCard(data: {
+    mineCard(userId: number, data: {
         word: string;
         translation: string;
         context_sentence?: string;
         context_translation?: string;
     }): Promise<Flashcard>;
-    getReviewCards(): Promise<Flashcard[]>;
-    reviewCard(cardId: number, quality: number): Promise<Flashcard>;
+    getReviewCards(userId: number): Promise<Flashcard[]>;
+    reviewCard(userId: number, cardId: number, quality: number): Promise<Flashcard>;
 }

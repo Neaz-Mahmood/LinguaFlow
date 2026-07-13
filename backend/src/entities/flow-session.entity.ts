@@ -12,6 +12,9 @@ export class FlowSession {
   @Column('date', { default: () => 'CURRENT_DATE' })
   date: Date;
 
+  @Column({ default: 0 })
+  stepsCompleted: number;
+
   @Column({ default: false })
   comprehensibleInputCompleted: boolean;
 

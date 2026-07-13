@@ -143,8 +143,8 @@ let StoriesService = class StoriesService {
         }
         console.log('PostgreSQL database successfully seeded with stories.');
     }
-    async getStoriesForUser() {
-        const user = await this.usersRepository.findOne({ where: { id: 1 } });
+    async getStoriesForUser(userId) {
+        const user = await this.usersRepository.findOne({ where: { id: userId } });
         const level = user ? user.currentLevel : 'A1';
         const stories = await this.storiesRepository.find({
             where: { level },

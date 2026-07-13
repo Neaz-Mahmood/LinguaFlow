@@ -3,6 +3,7 @@ export declare class FlowSession {
     id: number;
     userId: number;
     date: Date;
+    stepsCompleted: number;
     comprehensibleInputCompleted: boolean;
     srsCompleted: boolean;
     shadowingCompleted: boolean;

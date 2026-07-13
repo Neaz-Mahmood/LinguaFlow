@@ -8,7 +8,7 @@ This guide documents the recommended greenfield architecture stack optimized for
 
 ```mermaid
 graph TD
-  subgraph Client (Vite 8 / Rolldown / Oxc)
+  subgraph client ["Client (Vite 8 / Rolldown / Oxc)"]
     BaseUI[Base UI Primitives]
     Tailwind[Tailwind CSS v4]
     Motion[Motion Animations]
@@ -16,21 +16,23 @@ graph TD
     TQ[TanStack Query / Fate]
   end
 
-  subgraph Bridge
+  subgraph bridge [Bridge]
     tRPC[tRPC End-to-End Types]
   end
 
-  subgraph Server & Database
-    FastAPI[FastAPI / Next.js / TanStack Start]
+  subgraph server ["Server and Database"]
+    FastAPI["FastAPI / Next.js / TanStack Start"]
     Drizzle[Drizzle ORM]
-    DB[(PostgreSQL / SQLite)]
+    DB[("PostgreSQL / SQLite")]
   end
 
   BaseUI --> Tailwind
   Motion --> BaseUI
-  Zustand & TQ --> tRPC
+  Zustand --> tRPC
+  TQ --> tRPC
   tRPC --> FastAPI
-  FastAPI --> Drizzle --> DB
+  FastAPI --> Drizzle
+  Drizzle --> DB
 ```
 
 ---

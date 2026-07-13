@@ -5,8 +5,8 @@ export declare class UsersService {
     private usersRepository;
     private sessionsRepository;
     constructor(usersRepository: Repository<User>, sessionsRepository: Repository<FlowSession>);
-    getDefaultUser(): Promise<User>;
-    onboardUser(data: {
+    getUserById(userId: number): Promise<User>;
+    onboardUser(userId: number, data: {
         target_language: string;
         native_language?: string;
         current_level: string;

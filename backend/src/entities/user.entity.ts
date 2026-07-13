@@ -7,6 +7,21 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ type: 'varchar', unique: true, nullable: true })
+  email: string | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  name: string | null;
+
+  @Column({ type: 'varchar', unique: true, nullable: true })
+  googleSub: string | null;
+
+  @Column({ type: 'varchar', nullable: true, select: false })
+  passwordHash: string | null;
+
+  @Column({ default: false })
+  onboardingCompleted: boolean;
+
   @Column({ default: 'Spanish' })
   targetLanguage: string;
 
@@ -27,6 +42,12 @@ export class User {
 
   @Column('jsonb', { nullable: true })
   contentRatios: Record<string, number>;
+
+  @Column({ default: 0 })
+  streakCount: number;
+
+  @Column({ type: 'date', nullable: true })
+  lastActiveDate: string;
 
   @CreateDateColumn()
   createdAt: Date;

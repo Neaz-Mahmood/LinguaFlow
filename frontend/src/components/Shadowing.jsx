@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { apiFetch } from '../lib/api';
 
 export default function Shadowing({ onComplete }) {
   const [sentences, setSentences] = useState([]);
@@ -23,7 +24,7 @@ export default function Shadowing({ onComplete }) {
 
   const fetchStoriesAndSentences = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/stories");
+      const res = await apiFetch("/api/stories");
       if (res.ok) {
         const stories = await res.json();
         if (stories.length > 0) {
@@ -109,7 +110,7 @@ export default function Shadowing({ onComplete }) {
     }
 
     try {
-      const res = await fetch("http://localhost:8000/api/shadowing/evaluate", {
+      const res = await apiFetch("/api/shadowing/evaluate", {
         method: "POST",
         body: formData
       });
@@ -141,9 +142,8 @@ export default function Shadowing({ onComplete }) {
   const handleCompleteShadowing = async () => {
     try {
       const avgScore = evaluation ? evaluation.score : 85;
-      await fetch("http://localhost:8000/api/flow-session/update", {
+      await apiFetch("/api/flow-session/update", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           shadowing_completed: true,
           shadowing_score: avgScore

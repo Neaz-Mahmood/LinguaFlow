@@ -14,16 +14,16 @@ LinguaFlow is a language-learning MVP built on **polyglot methodologies** (Steph
 
 ```mermaid
 graph TD
-  subgraph Frontend (Port 5173)
+  subgraph frontend ["Frontend (Port 5173)"]
     ReactApp[React + Vite client]
   end
 
-  subgraph Backend (Port 8000)
+  subgraph backend ["Backend (Port 8000)"]
     NestApp[NestJS Backend API]
     TypeORM[TypeORM service]
   end
 
-  subgraph Database (Port 5432)
+  subgraph database ["Database (Port 5432)"]
     PG[(PostgreSQL Docker)]
   end
 
@@ -86,6 +86,23 @@ docker compose up -d
    pnpm run dev
    ```
    *The frontend client runs on **http://localhost:5173/**.*
+
+---
+
+### Step 4: Run the Expo Mobile Application
+1. Navigate to the mobile application directory:
+   ```bash
+   cd mobile
+   ```
+2. Install dependencies:
+   ```bash
+   pnpm install
+   ```
+3. Start the Metro Bundler development process:
+   ```bash
+   pnpm run start
+   ```
+   *This starts the Expo CLI server. Press `i` to launch in the iOS Simulator, `a` for Android, or scan the QR code using the **Expo Go** application on your physical device.*
 
 ---
 
