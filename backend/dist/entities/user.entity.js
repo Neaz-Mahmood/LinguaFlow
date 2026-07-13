@@ -18,6 +18,7 @@ let User = class User {
     email;
     name;
     googleSub;
+    passwordHash;
     onboardingCompleted;
     targetLanguage;
     nativeLanguage;
@@ -49,6 +50,10 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', unique: true, nullable: true }),
     __metadata("design:type", Object)
 ], User.prototype, "googleSub", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', nullable: true, select: false }),
+    __metadata("design:type", Object)
+], User.prototype, "passwordHash", void 0);
 __decorate([
     (0, typeorm_1.Column)({ default: false }),
     __metadata("design:type", Boolean)

@@ -1,10 +1,17 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcryptjs';
 import { OAuth2Client } from 'google-auth-library';
 import { Repository } from 'typeorm';
 import { User } from '../../entities/user.entity';
+
+type PublicUser = Omit<User, 'passwordHash'>;
 
 @Injectable()
 export class AuthService {
@@ -26,6 +33,79 @@ export class AuthService {
       this.config.get<string>('GOOGLE_IOS_CLIENT_ID'),
       this.config.get<string>('GOOGLE_ANDROID_CLIENT_ID'),
     ].filter((id): id is string => Boolean(id));
+  }
+
+  private toPublicUser(user: User): PublicUser {
+    const { passwordHash: _passwordHash, ...publicUser } = user as User & {
+      passwordHash?: string | null;
+    };
+    return publicUser;
+  }
+
+  private async issueAuthResponse(user: User) {
+    const accessToken = await this.jwtService.signAsync({ sub: user.id });
+    return {
+      accessToken,
+      user: this.toPublicUser(user),
+      needsOnboarding: !user.onboardingCompleted,
+    };
+  }
+
+  private createDefaultProfile(overrides: Partial<User>): User {
+    return this.usersRepository.create({
+      nativeLanguage: 'English',
+      goals: ['general'],
+      contentRatios: { input: 0.5, output: 0.5 },
+      onboardingCompleted: false,
+      targetLanguage: 'Spanish',
+      currentLevel: 'A1',
+      dailyCommitment: 15,
+      strategyPreference: 'input',
+      ...overrides,
+    });
+  }
+
+  async signUp(email: string, password: string) {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const existing = await this.usersRepository.findOne({
+      where: { email: normalizedEmail },
+    });
+    if (existing) {
+      throw new ConflictException('An account with this email already exists');
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    const user = await this.usersRepository.save(
+      this.createDefaultProfile({
+        email: normalizedEmail,
+        name: normalizedEmail.split('@')[0] || 'Language Learner',
+        passwordHash,
+      }),
+    );
+
+    return this.issueAuthResponse(user);
+  }
+
+  async signIn(email: string, password: string) {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const user = await this.usersRepository
+      .createQueryBuilder('user')
+      .addSelect('user.passwordHash')
+      .where('user.email = :email', { email: normalizedEmail })
+      .getOne();
+
+    if (!user?.passwordHash) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+
+    const valid = await bcrypt.compare(password, user.passwordHash);
+    if (!valid) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+
+    return this.issueAuthResponse(user);
   }
 
   async signInWithGoogle(idToken: string) {
@@ -65,18 +145,10 @@ export class AuthService {
     }
 
     if (!user) {
-      user = this.usersRepository.create({
+      user = this.createDefaultProfile({
         googleSub: payload.sub,
         email: payload.email,
         name: payload.name || payload.email.split('@')[0] || 'Language Learner',
-        nativeLanguage: 'English',
-        goals: ['general'],
-        contentRatios: { input: 0.5, output: 0.5 },
-        onboardingCompleted: false,
-        targetLanguage: 'Spanish',
-        currentLevel: 'A1',
-        dailyCommitment: 15,
-        strategyPreference: 'input',
       });
     } else {
       user.googleSub = user.googleSub || payload.sub;
@@ -86,18 +158,12 @@ export class AuthService {
 
     user = await this.usersRepository.save(user);
 
-    const accessToken = await this.jwtService.signAsync({ sub: user.id });
-
-    return {
-      accessToken,
-      user,
-      needsOnboarding: !user.onboardingCompleted,
-    };
+    return this.issueAuthResponse(user);
   }
 
   async getMe(user: User) {
     return {
-      user,
+      user: this.toPublicUser(user),
       needsOnboarding: !user.onboardingCompleted,
     };
   }

@@ -16,6 +16,9 @@ export class User {
   @Column({ type: 'varchar', unique: true, nullable: true })
   googleSub: string | null;
 
+  @Column({ type: 'varchar', nullable: true, select: false })
+  passwordHash: string | null;
+
   @Column({ default: false })
   onboardingCompleted: boolean;
 

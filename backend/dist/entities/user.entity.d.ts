@@ -5,6 +5,7 @@ export declare class User {
     email: string | null;
     name: string | null;
     googleSub: string | null;
+    passwordHash: string | null;
     onboardingCompleted: boolean;
     targetLanguage: string;
     nativeLanguage: string;
