@@ -374,6 +374,22 @@ button, input, select, textarea {
   box-shadow: 0 0 0 3px var(--accent-primary-glow);
 }
 
+.auth-input-error {
+  border-color: var(--danger);
+}
+
+.auth-input-error:focus {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger) 25%, transparent);
+}
+
+.auth-field-error {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--danger);
+  line-height: 1.3;
+}
+
 .auth-form .btn {
   margin-top: 1rem;
 }

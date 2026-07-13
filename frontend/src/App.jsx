@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import Onboarding from './components/Onboarding';
 import DailyFlowContainer from './components/DailyFlowContainer';
 import SignIn from './components/SignIn';
@@ -58,6 +59,7 @@ export default function App() {
     clearToken();
     setUser(null);
     setViewState(VIEW_STATES.AUTH);
+    toast.success('Signed out');
   };
 
   const resetSession = async () => {

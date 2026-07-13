@@ -65,8 +65,9 @@ export class AuthService {
     });
   }
 
-  async signUp(email: string, password: string) {
+  async signUp(email: string, password: string, name: string) {
     const normalizedEmail = email.trim().toLowerCase();
+    const displayName = name.trim() || normalizedEmail.split('@')[0] || 'Language Learner';
 
     const existing = await this.usersRepository.findOne({
       where: { email: normalizedEmail },
@@ -79,7 +80,7 @@ export class AuthService {
     const user = await this.usersRepository.save(
       this.createDefaultProfile({
         email: normalizedEmail,
-        name: normalizedEmail.split('@')[0] || 'Language Learner',
+        name: displayName,
         passwordHash,
       }),
     );

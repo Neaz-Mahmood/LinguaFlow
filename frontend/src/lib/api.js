@@ -68,10 +68,10 @@ async function parseAuthError(res, fallback) {
   return text || fallback;
 }
 
-export async function signUpWithEmail(email, password) {
+export async function signUpWithEmail(email, password, name) {
   const res = await apiFetch('/api/auth/signup', {
     method: 'POST',
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, name }),
   });
 
   if (!res.ok) {

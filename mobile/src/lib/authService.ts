@@ -56,10 +56,11 @@ export async function signInWithGoogleNative(): Promise<GoogleAuthResult> {
 export async function signUpWithEmail(
   email: string,
   password: string,
+  name: string,
 ): Promise<EmailAuthResult> {
   const data = await apiFetch<EmailAuthResult>('/api/auth/signup', {
     method: 'POST',
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, name }),
   });
   await storeToken(data.accessToken);
   return data;

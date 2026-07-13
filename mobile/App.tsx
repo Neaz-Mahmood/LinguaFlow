@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import Toast from 'react-native-toast-message';
 import { AuthUser } from './src/lib/api';
 import {
   configureGoogleAuth,
@@ -21,7 +22,6 @@ export default function App() {
   const [view, setView] = useState<ViewState>('loading');
   const [user, setUser] = useState<AuthUser | null>(null);
   const [signingIn, setSigningIn] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     configureGoogleAuth();
@@ -53,12 +53,19 @@ export default function App() {
 
   const handleGoogleSignIn = async () => {
     setSigningIn(true);
-    setError(null);
     try {
       const result = await signInWithGoogleNative();
+      Toast.show({
+        type: 'success',
+        text1: 'Signed in successfully',
+      });
       routeForAuth(result.user, result.needsOnboarding);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Google sign-in failed');
+      Toast.show({
+        type: 'error',
+        text1: 'Google sign-in failed',
+        text2: err instanceof Error ? err.message : undefined,
+      });
     } finally {
       setSigningIn(false);
     }
@@ -66,30 +73,28 @@ export default function App() {
 
   const handleEmailAuth = async (
     mode: 'signin' | 'signup',
-    email: string,
-    password: string,
+    payload: { email: string; password: string; name?: string },
   ) => {
-    if (!email || password.length < 8) {
-      setError('Enter a valid email and a password of at least 8 characters.');
-      return;
-    }
-
     setSigningIn(true);
-    setError(null);
     try {
       const result =
         mode === 'signup'
-          ? await signUpWithEmail(email, password)
-          : await signInWithEmail(email, password);
+          ? await signUpWithEmail(payload.email, payload.password, payload.name ?? '')
+          : await signInWithEmail(payload.email, payload.password);
+      Toast.show({
+        type: 'success',
+        text1:
+          mode === 'signup'
+            ? 'Account created successfully'
+            : 'Signed in successfully',
+      });
       routeForAuth(result.user, result.needsOnboarding);
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : mode === 'signup'
-            ? 'Sign-up failed'
-            : 'Sign-in failed',
-      );
+      Toast.show({
+        type: 'error',
+        text1: mode === 'signup' ? 'Sign-up failed' : 'Sign-in failed',
+        text2: err instanceof Error ? err.message : undefined,
+      });
     } finally {
       setSigningIn(false);
     }
@@ -99,54 +104,53 @@ export default function App() {
     await signOut();
     setUser(null);
     setView('auth');
+    Toast.show({
+      type: 'success',
+      text1: 'Signed out',
+    });
   };
 
-  if (view === 'loading') {
-    return (
-      <View style={styles.loading}>
-        <ActivityIndicator size="large" color="#7dd3c7" />
-        <StatusBar style="light" />
-      </View>
-    );
-  }
+  return (
+    <>
+      {view === 'loading' ? (
+        <View style={styles.loading}>
+          <ActivityIndicator size="large" color="#7dd3c7" />
+          <StatusBar style="light" />
+        </View>
+      ) : null}
 
-  if (view === 'auth') {
-    return (
-      <>
-        <SignInScreen
-          loading={signingIn}
-          error={error}
-          onGoogleSignIn={handleGoogleSignIn}
-          onEmailAuth={handleEmailAuth}
-        />
-        <StatusBar style="light" />
-      </>
-    );
-  }
+      {view === 'auth' ? (
+        <>
+          <SignInScreen
+            loading={signingIn}
+            onGoogleSignIn={handleGoogleSignIn}
+            onEmailAuth={handleEmailAuth}
+          />
+          <StatusBar style="light" />
+        </>
+      ) : null}
 
-  if (view === 'onboarding' && user) {
-    return (
-      <>
-        <OnboardingScreen
-          user={user}
-          onComplete={() => setView('flow')}
-          onSignOut={handleSignOut}
-        />
-        <StatusBar style="dark" />
-      </>
-    );
-  }
+      {view === 'onboarding' && user ? (
+        <>
+          <OnboardingScreen
+            user={user}
+            onComplete={() => setView('flow')}
+            onSignOut={handleSignOut}
+          />
+          <StatusBar style="dark" />
+        </>
+      ) : null}
 
-  if (user) {
-    return (
-      <>
-        <DailyFlowScreen user={user} onSignOut={handleSignOut} />
-        <StatusBar style="light" />
-      </>
-    );
-  }
+      {view === 'flow' && user ? (
+        <>
+          <DailyFlowScreen user={user} onSignOut={handleSignOut} />
+          <StatusBar style="light" />
+        </>
+      ) : null}
 
-  return null;
+      <Toast />
+    </>
+  );
 }
 
 const styles = StyleSheet.create({

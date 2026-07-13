@@ -1,33 +1,55 @@
 import React, { useState } from 'react';
 import { GoogleLogin } from '@react-oauth/google';
+import { toast } from 'sonner';
 import {
   signInWithEmail,
   signInWithGoogleIdToken,
   signUpWithEmail,
 } from '../lib/api';
+import { fieldErrorsFromZod, signInSchema, signUpSchema } from '../lib/authSchemas';
 
 export default function SignIn({ onSuccess }) {
   const [mode, setMode] = useState('signin');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(null);
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
   const isSignUp = mode === 'signup';
 
+  const clearFieldError = (field) => {
+    setFieldErrors((prev) => {
+      if (!prev[field]) return prev;
+      const next = { ...prev };
+      delete next[field];
+      return next;
+    });
+  };
+
+  const resetForm = () => {
+    setName('');
+    setEmail('');
+    setPassword('');
+    setConfirmPassword('');
+    setFieldErrors({});
+  };
+
   const handleCredential = async (response) => {
     if (!response.credential) {
-      setError('No credential returned from Google.');
+      toast.error('No credential returned from Google.');
       return;
     }
 
     setLoading(true);
-    setError(null);
+    setFieldErrors({});
     try {
       const data = await signInWithGoogleIdToken(response.credential);
+      toast.success('Signed in successfully');
       onSuccess(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Sign-in failed');
+      toast.error(err instanceof Error ? err.message : 'Sign-in failed');
     } finally {
       setLoading(false);
     }
@@ -35,15 +57,27 @@ export default function SignIn({ onSuccess }) {
 
   const handleEmailSubmit = async (event) => {
     event.preventDefault();
+    setFieldErrors({});
+
+    const parsed = isSignUp
+      ? signUpSchema.safeParse({ name, email, password, confirmPassword })
+      : signInSchema.safeParse({ email, password });
+
+    if (!parsed.success) {
+      setFieldErrors(fieldErrorsFromZod(parsed.error));
+      toast.error('Please fix the form errors');
+      return;
+    }
+
     setLoading(true);
-    setError(null);
     try {
       const data = isSignUp
-        ? await signUpWithEmail(email, password)
-        : await signInWithEmail(email, password);
+        ? await signUpWithEmail(parsed.data.email, parsed.data.password, parsed.data.name)
+        : await signInWithEmail(parsed.data.email, parsed.data.password);
+      toast.success(isSignUp ? 'Account created successfully' : 'Signed in successfully');
       onSuccess(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Authentication failed');
+      toast.error(err instanceof Error ? err.message : 'Authentication failed');
     } finally {
       setLoading(false);
     }
@@ -63,39 +97,88 @@ export default function SignIn({ onSuccess }) {
           : 'Sign in to sync your profile and open your Daily Flow.'}
       </p>
 
-      {error && (
-        <p style={{ color: 'var(--danger)', marginBottom: '1rem', maxWidth: 420 }}>{error}</p>
-      )}
-
       <form className="auth-form" onSubmit={handleEmailSubmit}>
+        {isSignUp && (
+          <>
+            <label className="auth-label" htmlFor="auth-name">
+              Full name
+            </label>
+            <input
+              id="auth-name"
+              className={`auth-input${fieldErrors.name ? ' auth-input-error' : ''}`}
+              type="text"
+              autoComplete="name"
+              value={name}
+              onChange={(e) => {
+                setName(e.target.value);
+                clearFieldError('name');
+              }}
+              disabled={loading}
+              aria-invalid={Boolean(fieldErrors.name)}
+            />
+            {fieldErrors.name && <p className="auth-field-error">{fieldErrors.name}</p>}
+          </>
+        )}
+
         <label className="auth-label" htmlFor="auth-email">
           Email
         </label>
         <input
           id="auth-email"
-          className="auth-input"
+          className={`auth-input${fieldErrors.email ? ' auth-input-error' : ''}`}
           type="email"
           autoComplete="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
+          onChange={(e) => {
+            setEmail(e.target.value);
+            clearFieldError('email');
+          }}
           disabled={loading}
+          aria-invalid={Boolean(fieldErrors.email)}
         />
+        {fieldErrors.email && <p className="auth-field-error">{fieldErrors.email}</p>}
 
         <label className="auth-label" htmlFor="auth-password">
           Password
         </label>
         <input
           id="auth-password"
-          className="auth-input"
+          className={`auth-input${fieldErrors.password ? ' auth-input-error' : ''}`}
           type="password"
           autoComplete={isSignUp ? 'new-password' : 'current-password'}
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          minLength={8}
-          required
+          onChange={(e) => {
+            setPassword(e.target.value);
+            clearFieldError('password');
+          }}
           disabled={loading}
+          aria-invalid={Boolean(fieldErrors.password)}
         />
+        {fieldErrors.password && <p className="auth-field-error">{fieldErrors.password}</p>}
+
+        {isSignUp && (
+          <>
+            <label className="auth-label" htmlFor="auth-confirm-password">
+              Confirm password
+            </label>
+            <input
+              id="auth-confirm-password"
+              className={`auth-input${fieldErrors.confirmPassword ? ' auth-input-error' : ''}`}
+              type="password"
+              autoComplete="new-password"
+              value={confirmPassword}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                clearFieldError('confirmPassword');
+              }}
+              disabled={loading}
+              aria-invalid={Boolean(fieldErrors.confirmPassword)}
+            />
+            {fieldErrors.confirmPassword && (
+              <p className="auth-field-error">{fieldErrors.confirmPassword}</p>
+            )}
+          </>
+        )}
 
         <button
           type="submit"
@@ -113,7 +196,7 @@ export default function SignIn({ onSuccess }) {
           className="auth-toggle"
           onClick={() => {
             setMode(isSignUp ? 'signin' : 'signup');
-            setError(null);
+            resetForm();
           }}
           disabled={loading}
         >
@@ -130,7 +213,7 @@ export default function SignIn({ onSuccess }) {
       ) : (
         <GoogleLogin
           onSuccess={handleCredential}
-          onError={() => setError('Google sign-in was cancelled or failed.')}
+          onError={() => toast.error('Google sign-in was cancelled or failed.')}
           useOneTap={false}
           theme="filled_black"
           size="large"
