@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+
+# Build / cache
+dist/
+build/
+dist-ssr/
+*.tsbuildinfo
+.expo/
+.turbo/
+.cache/
+coverage/
+.nyc_output/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Temp
+tmp/
+temp/
+*.local
+*.pid
+*.seed
+*.pid.lock
+
+# Mobile native build artifacts
+mobile/android/app/build/
+mobile/android/.gradle/
+mobile/ios/Pods/
+mobile/ios/build/
