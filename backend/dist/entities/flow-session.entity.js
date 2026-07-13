@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FlowSession = void 0;
+const openapi = require("@nestjs/swagger");
 const typeorm_1 = require("typeorm");
 const user_entity_1 = require("./user.entity");
 let FlowSession = class FlowSession {
@@ -25,6 +26,9 @@ let FlowSession = class FlowSession {
     quickOutputResponse;
     quickOutputFeedback;
     user;
+    static _OPENAPI_METADATA_FACTORY() {
+        return { id: { required: true, type: () => Number }, userId: { required: true, type: () => Number }, date: { required: true, type: () => Date }, stepsCompleted: { required: true, type: () => Number }, comprehensibleInputCompleted: { required: true, type: () => Boolean }, srsCompleted: { required: true, type: () => Boolean }, shadowingCompleted: { required: true, type: () => Boolean }, outputCompleted: { required: true, type: () => Boolean }, shadowingScore: { required: true, type: () => Number }, quickOutputResponse: { required: true, type: () => String }, quickOutputFeedback: { required: true, type: () => String }, user: { required: true, type: () => require("./user.entity").User } };
+    }
 };
 exports.FlowSession = FlowSession;
 __decorate([

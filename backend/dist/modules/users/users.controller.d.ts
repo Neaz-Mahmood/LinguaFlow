@@ -1,4 +1,5 @@
 import { User } from '../../entities/user.entity';
+import { OnboardUserDto } from './dto/onboard-user.dto';
 import { UpdatePreferencesDto } from './dto/update-preferences.dto';
 import { UsersService } from './users.service';
 export declare class UsersController {
@@ -7,9 +8,9 @@ export declare class UsersController {
     get(user: User): Promise<User>;
     updatePreferences(user: User, data: UpdatePreferencesDto): Promise<{
         status: string;
-        user: any;
+        user: User;
     }>;
-    onboard(user: User, data: any): Promise<{
+    onboard(user: User, data: OnboardUserDto): Promise<{
         status: string;
         user: User;
     }>;
