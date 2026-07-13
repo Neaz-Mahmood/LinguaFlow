@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, ViewProps, ViewStyle } from 'react-native';
-import { theme } from '../../theme';
+import { spacing, radius, useAppTheme } from '../../theme';
 
 type Props = ViewProps & {
   children: React.ReactNode;
@@ -9,16 +9,38 @@ type Props = ViewProps & {
 };
 
 export function Card({ children, padded = true, style, ...rest }: Props) {
+  const { colors } = useAppTheme();
+
   return (
-    <View style={[styles.card, padded && styles.padded, style]} {...rest}>
+    <View
+      style={[
+        styles.card,
+        {
+          backgroundColor: colors.backgroundCard,
+          borderColor: colors.border,
+        },
+        padded && styles.padded,
+        style,
+      ]}
+      {...rest}
+    >
       {children}
     </View>
   );
 }
 
 export function Screen({ children, style, ...rest }: Props) {
+  const { colors } = useAppTheme();
+
   return (
-    <View style={[styles.screen, style]} {...rest}>
+    <View
+      style={[
+        styles.screen,
+        { backgroundColor: colors.backgroundBody },
+        style,
+      ]}
+      {...rest}
+    >
       {children}
     </View>
   );
@@ -27,17 +49,14 @@ export function Screen({ children, style, ...rest }: Props) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: theme.colors.backgroundBody,
-    paddingHorizontal: theme.spacing[6] + theme.spacing[1],
-    paddingVertical: theme.spacing[8],
+    paddingHorizontal: spacing[6] + spacing[1],
+    paddingVertical: spacing[8],
   },
   card: {
-    backgroundColor: theme.colors.backgroundCard,
     borderWidth: 1,
-    borderColor: theme.colors.border,
-    borderRadius: theme.radius.container,
+    borderRadius: radius.container,
   },
   padded: {
-    padding: theme.spacing[6],
+    padding: spacing[6],
   },
 });

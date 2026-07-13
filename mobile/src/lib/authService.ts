@@ -86,6 +86,21 @@ export async function fetchMe(token: string) {
   );
 }
 
+export async function updatePreferences(
+  prefs: { uiLocale?: string; themeMode?: string },
+  token?: string | null,
+) {
+  const authToken = token ?? (await getStoredToken());
+  return apiFetch<{ status: string; user: AuthUser }>(
+    '/api/user/preferences',
+    {
+      method: 'PATCH',
+      body: JSON.stringify(prefs),
+    },
+    authToken,
+  );
+}
+
 export async function signOut(): Promise<void> {
   try {
     await GoogleSignin.signOut();

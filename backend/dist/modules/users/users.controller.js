@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const user_entity_1 = require("../../entities/user.entity");
 const current_user_decorator_1 = require("../auth/decorators/current-user.decorator");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
+const update_preferences_dto_1 = require("./dto/update-preferences.dto");
 const users_service_1 = require("./users.service");
 let UsersController = class UsersController {
     usersService;
@@ -25,6 +26,10 @@ let UsersController = class UsersController {
     }
     async get(user) {
         return this.usersService.getUserById(user.id);
+    }
+    async updatePreferences(user, data) {
+        const updated = await this.usersService.updatePreferences(user.id, data);
+        return { status: 'success', user: updated };
     }
     async onboard(user, data) {
         const updated = await this.usersService.onboardUser(user.id, data);
@@ -39,6 +44,15 @@ __decorate([
     __metadata("design:paramtypes", [user_entity_1.User]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "get", null);
+__decorate([
+    (0, common_1.Patch)('preferences'),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [user_entity_1.User,
+        update_preferences_dto_1.UpdatePreferencesDto]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "updatePreferences", null);
 __decorate([
     (0, common_1.Post)('onboard'),
     __param(0, (0, current_user_decorator_1.CurrentUser)()),

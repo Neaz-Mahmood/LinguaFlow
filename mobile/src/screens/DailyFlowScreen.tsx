@@ -1,7 +1,9 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Button, Card, Screen, Text } from '../components/ui';
-import { theme } from '../theme';
+import PreferencesControls from '../preferences/PreferencesControls';
+import { spacing, useAppTheme } from '../theme';
 import { AuthUser } from '../lib/api';
 
 type Props = {
@@ -10,21 +12,26 @@ type Props = {
 };
 
 export default function DailyFlowScreen({ user, onSignOut }: Props) {
+  const { t } = useTranslation();
+  const { colors } = useAppTheme();
+
   return (
     <Screen style={styles.container}>
-      <Text variant="label" style={styles.brand}>
-        LinguaFlow
+      <Text variant="label" style={[styles.brand, { color: colors.cyan }]}>
+        {t('common.brand')}
       </Text>
       <Card style={styles.card}>
         <Text variant="title" style={styles.title}>
-          Daily Flow
+          {t('mobile.dailyFlow')}
         </Text>
         <Text variant="secondary" style={styles.body}>
-          You are signed in
-          {user.email ? ` as ${user.email}` : ''}. The mobile Daily Flow experience
-          will connect here next.
+          {t('mobile.signedIn', {
+            as: user.email ? t('mobile.signedInAs', { email: user.email }) : '',
+          })}
+          {t('mobile.dailyFlowBody')}
         </Text>
-        <Button label="Sign out" variant="secondary" onPress={onSignOut} />
+        <PreferencesControls />
+        <Button label={t('common.signOut')} variant="secondary" onPress={onSignOut} />
       </Card>
     </Screen>
   );
@@ -35,8 +42,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   brand: {
-    marginBottom: theme.spacing[3],
-    color: theme.colors.cyan,
+    marginBottom: spacing[3],
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
@@ -44,9 +50,9 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   title: {
-    marginBottom: theme.spacing[3],
+    marginBottom: spacing[3],
   },
   body: {
-    marginBottom: theme.spacing[6],
+    marginBottom: spacing[6],
   },
 });

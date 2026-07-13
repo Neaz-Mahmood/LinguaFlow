@@ -9,6 +9,8 @@ export type AuthUser = {
   nativeLanguage?: string;
   currentLevel?: string;
   goals?: string[];
+  uiLocale?: string;
+  themeMode?: string;
 };
 
 function parseErrorMessage(text: string, status: number): string {

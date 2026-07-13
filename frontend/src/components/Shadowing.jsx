@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@astryxdesign/core/Button';
 import { Heading } from '@astryxdesign/core/Heading';
 import { Text } from '@astryxdesign/core/Text';
@@ -7,6 +8,7 @@ import { HStack, VStack } from '@astryxdesign/core/Layout';
 import { apiFetch } from '../lib/api';
 
 export default function Shadowing({ onComplete }) {
+  const { t } = useTranslation();
   const [sentences, setSentences] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
@@ -79,10 +81,7 @@ export default function Shadowing({ onComplete }) {
 
       mediaRecorderRef.current.start();
     } catch (err) {
-      console.warn(
-        'Microphone access denied or unavailable. Fallback to simulator text mode enabled.',
-        err,
-      );
+      console.warn(t('shadowing.micDenied'), err);
       setShowSimInput(true);
     }
   };
@@ -162,7 +161,7 @@ export default function Shadowing({ onComplete }) {
     return (
       <div className="lf-card">
         <Text display="block" justify="center">
-          Loading shadowing materials...
+          {t('shadowing.loading')}
         </Text>
       </div>
     );
@@ -172,13 +171,13 @@ export default function Shadowing({ onComplete }) {
 
   return (
     <div className="lf-card" style={{ animation: 'fadeIn 0.3s ease-out' }}>
-      <Heading level={2}>Shadowing Practice</Heading>
+      <Heading level={2}>{t('shadowing.title')}</Heading>
       <Text type="supporting" color="secondary" as="p" display="block" justify="center">
-        Listen to the native sentence, click record, and repeat it aloud (Arguelles Shadowing).
+        {t('shadowing.subtitle')}
       </Text>
 
       <div className="shadowing-prompt">
-        <Button label="Listen Sentence" variant="secondary" size="sm" onClick={speakSentence} />
+        <Button label={t('shadowing.listen')} variant="secondary" size="sm" onClick={speakSentence} />
         <Text type="large" display="block" weight="medium">
           &quot;{currentSentence.target}&quot;
         </Text>
@@ -193,7 +192,7 @@ export default function Shadowing({ onComplete }) {
             type="button"
             className={`record-btn ${isRecording ? 'recording' : ''}`}
             onClick={isRecording ? stopRecording : startRecording}
-            aria-label={isRecording ? 'Stop recording' : 'Start recording'}
+            aria-label={isRecording ? t('shadowing.stopRecording') : t('shadowing.startRecording')}
           >
             🎤
           </button>
@@ -206,7 +205,9 @@ export default function Shadowing({ onComplete }) {
             color: isRecording ? 'var(--color-error)' : 'var(--color-text-secondary)',
           }}
         >
-          {isRecording ? `Recording... (${recordingSeconds}s)` : 'Click mic to speak'}
+          {isRecording
+            ? t('shadowing.recording', { seconds: recordingSeconds })
+            : t('shadowing.clickMic')}
         </div>
       </div>
 
@@ -214,22 +215,26 @@ export default function Shadowing({ onComplete }) {
         <div className="feedback-box">
           <VStack gap={2}>
             <Text type="label" weight="semibold" display="block">
-              Simulator Text Mode (for environments without microphone access)
+              {t('shadowing.simulatorTitle')}
             </Text>
             <HStack gap={2}>
               <div style={{ flex: 1 }}>
                 <TextInput
-                  label="Transcript"
+                  label={t('shadowing.transcript')}
                   isLabelHidden
                   value={typedTranscript}
                   onChange={setTypedTranscript}
-                  placeholder="Type target sentence to simulate speaking..."
+                  placeholder={t('shadowing.transcriptPlaceholder')}
                 />
               </div>
-              <Button label="Evaluate" variant="primary" onClick={handleSimulatedSubmit} />
+              <Button
+                label={t('shadowing.evaluate')}
+                variant="primary"
+                onClick={handleSimulatedSubmit}
+              />
             </HStack>
             <Button
-              label="Auto-fill target"
+              label={t('shadowing.autoFill')}
               variant="ghost"
               size="sm"
               onClick={() => setTypedTranscript(currentSentence.target)}
@@ -253,7 +258,7 @@ export default function Shadowing({ onComplete }) {
               {evaluation.score}%
             </div>
             <Text type="supporting" color="secondary">
-              Accuracy Evaluation Score
+              {t('shadowing.accuracyScore')}
             </Text>
           </div>
 
@@ -269,13 +274,15 @@ export default function Shadowing({ onComplete }) {
 
       <div className="btn-row" style={{ marginTop: '2.5rem' }}>
         <Button
-          label={showSimInput ? 'Hide Simulator' : 'Simulator Mode'}
+          label={showSimInput ? t('shadowing.hideSimulator') : t('shadowing.simulatorMode')}
           variant="secondary"
           onClick={() => setShowSimInput(!showSimInput)}
         />
         <Button
           label={
-            currentIndex < sentences.length - 1 ? 'Next Sentence' : 'Complete Shadowing'
+            currentIndex < sentences.length - 1
+              ? t('shadowing.nextSentence')
+              : t('shadowing.complete')
           }
           variant="primary"
           onClick={handleNextSentence}

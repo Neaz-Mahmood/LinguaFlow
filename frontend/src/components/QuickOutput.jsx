@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@astryxdesign/core/Button';
 import { Heading } from '@astryxdesign/core/Heading';
 import { Text } from '@astryxdesign/core/Text';
@@ -6,6 +7,7 @@ import { TextInput } from '@astryxdesign/core/TextInput';
 import { apiFetch } from '../lib/api';
 
 export default function QuickOutput({ onComplete }) {
+  const { t } = useTranslation();
   const [messages, setMessages] = useState([]);
   const [inputVal, setInputVal] = useState('');
   const [grammarFeedback, setGrammarFeedback] = useState('');
@@ -98,9 +100,9 @@ export default function QuickOutput({ onComplete }) {
 
   return (
     <div className="lf-card" style={{ animation: 'fadeIn 0.3s ease-out' }}>
-      <Heading level={2}>Quick Output</Heading>
+      <Heading level={2}>{t('output.title')}</Heading>
       <Text type="supporting" color="secondary" as="p" display="block" justify="center">
-        Practice speaking or typing from Day One. Speak/type a response to the prompt.
+        {t('output.subtitle')}
       </Text>
 
       <div className="quick-output-chat">
@@ -111,7 +113,7 @@ export default function QuickOutput({ onComplete }) {
         ))}
         {loading && (
           <div className="chat-bubble ai" style={{ opacity: 0.7 }}>
-            Typing feedback...
+            {t('output.typingFeedback')}
           </div>
         )}
       </div>
@@ -127,16 +129,16 @@ export default function QuickOutput({ onComplete }) {
       <div className="chat-input-wrapper">
         <div style={{ flex: 1 }}>
           <TextInput
-            label="Response"
+            label={t('output.response')}
             isLabelHidden
             value={inputVal}
             onChange={setInputVal}
-            placeholder="Type your response in Spanish..."
+            placeholder={t('output.placeholder')}
             isDisabled={loading}
           />
         </div>
         <Button
-          label="Send"
+          label={t('output.send')}
           variant="primary"
           onClick={handleSend}
           isDisabled={loading || !inputVal.trim()}
@@ -146,7 +148,7 @@ export default function QuickOutput({ onComplete }) {
 
       <div className="btn-row" style={{ marginTop: '2rem' }}>
         <Button
-          label="Complete Today's Flow"
+          label={t('output.completeFlow')}
           variant="secondary"
           onClick={handleFinish}
           isDisabled={messages.length < 2}

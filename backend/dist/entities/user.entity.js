@@ -28,6 +28,8 @@ let User = class User {
     goals;
     contentRatios;
     streakCount;
+    uiLocale;
+    themeMode;
     lastActiveDate;
     createdAt;
     flashcards;
@@ -90,6 +92,14 @@ __decorate([
     (0, typeorm_1.Column)({ default: 0 }),
     __metadata("design:type", Number)
 ], User.prototype, "streakCount", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', default: 'en' }),
+    __metadata("design:type", String)
+], User.prototype, "uiLocale", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', default: 'system' }),
+    __metadata("design:type", String)
+], User.prototype, "themeMode", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'date', nullable: true }),
     __metadata("design:type", String)

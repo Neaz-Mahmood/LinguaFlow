@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import Toast from 'react-native-toast-message';
 import { Button, Screen, Text, TextField } from '../components/ui';
-import { theme } from '../theme';
+import PreferencesControls from '../preferences/PreferencesControls';
+import { spacing, useAppTheme } from '../theme';
 import {
   fieldErrorsFromZod,
+  getSignInSchema,
+  getSignUpSchema,
   SignUpInput,
-  signInSchema,
-  signUpSchema,
 } from '../lib/authSchemas';
 
 type Mode = 'signin' | 'signup';
@@ -26,6 +28,8 @@ export default function SignInScreen({
   onGoogleSignIn,
   onEmailAuth,
 }: Props) {
+  const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const [mode, setMode] = useState<Mode>('signin');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -50,7 +54,7 @@ export default function SignInScreen({
     setFieldErrors({});
 
     if (isSignUp) {
-      const parsed = signUpSchema.safeParse({
+      const parsed = getSignUpSchema().safeParse({
         name,
         email,
         password,
@@ -60,7 +64,7 @@ export default function SignInScreen({
         setFieldErrors(fieldErrorsFromZod(parsed.error));
         Toast.show({
           type: 'error',
-          text1: 'Please fix the form errors',
+          text1: t('auth.formErrors'),
         });
         return;
       }
@@ -72,12 +76,12 @@ export default function SignInScreen({
       return;
     }
 
-    const parsed = signInSchema.safeParse({ email, password });
+    const parsed = getSignInSchema().safeParse({ email, password });
     if (!parsed.success) {
       setFieldErrors(fieldErrorsFromZod(parsed.error));
       Toast.show({
         type: 'error',
-        text1: 'Please fix the form errors',
+        text1: t('auth.formErrors'),
       });
       return;
     }
@@ -100,18 +104,18 @@ export default function SignInScreen({
   return (
     <Screen style={styles.container}>
       <Text variant="brand" style={styles.brand}>
-        LinguaFlow
+        {t('common.brand')}
       </Text>
       <Text variant="secondary" style={styles.subtitle}>
-        {isSignUp
-          ? 'Create an account to start your daily language flow.'
-          : 'Sign in to start your daily language flow.'}
+        {isSignUp ? t('auth.mobileSignUpTitle') : t('auth.mobileSignInTitle')}
       </Text>
 
       <View style={styles.form}>
+        <PreferencesControls />
+
         {isSignUp ? (
           <TextField
-            label="Full name"
+            label={t('auth.fullName')}
             autoCapitalize="words"
             autoCorrect={false}
             textContentType="name"
@@ -126,7 +130,7 @@ export default function SignInScreen({
         ) : null}
 
         <TextField
-          label="Email"
+          label={t('auth.email')}
           autoCapitalize="none"
           autoCorrect={false}
           keyboardType="email-address"
@@ -141,7 +145,7 @@ export default function SignInScreen({
         />
 
         <TextField
-          label="Password"
+          label={t('auth.password')}
           secureTextEntry
           textContentType={isSignUp ? 'newPassword' : 'password'}
           value={password}
@@ -151,12 +155,12 @@ export default function SignInScreen({
           }}
           editable={!loading}
           error={fieldErrors.password}
-          placeholder="Min 8 characters"
+          placeholder={t('auth.passwordPlaceholder')}
         />
 
         {isSignUp ? (
           <TextField
-            label="Confirm password"
+            label={t('auth.confirmPassword')}
             secureTextEntry
             textContentType="newPassword"
             value={confirmPassword}
@@ -170,7 +174,7 @@ export default function SignInScreen({
         ) : null}
 
         <Button
-          label={isSignUp ? 'Sign up' : 'Sign in'}
+          label={isSignUp ? t('auth.signUp') : t('auth.signIn')}
           variant="primary"
           onPress={handleSubmit}
           isDisabled={loading}
@@ -179,9 +183,7 @@ export default function SignInScreen({
         />
 
         <Button
-          label={
-            isSignUp ? 'Already have an account? Sign in' : 'Need an account? Sign up'
-          }
+          label={isSignUp ? t('auth.toggleToSignIn') : t('auth.toggleToSignUp')}
           variant="ghost"
           onPress={switchMode}
           isDisabled={loading}
@@ -189,13 +191,13 @@ export default function SignInScreen({
         />
 
         <View style={styles.dividerRow}>
-          <View style={styles.dividerLine} />
-          <Text variant="label">or</Text>
-          <View style={styles.dividerLine} />
+          <View style={[styles.dividerLine, { backgroundColor: colors.borderEmphasized }]} />
+          <Text variant="label">{t('common.or')}</Text>
+          <View style={[styles.dividerLine, { backgroundColor: colors.borderEmphasized }]} />
         </View>
 
         <Button
-          label="Continue with Google"
+          label={t('auth.continueWithGoogle')}
           variant="secondary"
           onPress={onGoogleSignIn}
           isDisabled={loading}
@@ -212,11 +214,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   brand: {
-    marginBottom: theme.spacing[3],
+    marginBottom: spacing[3],
   },
   subtitle: {
     textAlign: 'center',
-    marginBottom: theme.spacing[8],
+    marginBottom: spacing[6],
     maxWidth: 320,
   },
   form: {
@@ -225,20 +227,19 @@ const styles = StyleSheet.create({
   },
   fullWidth: {
     width: '100%',
-    marginTop: theme.spacing[1],
+    marginTop: spacing[1],
   },
   toggle: {
-    marginTop: theme.spacing[4],
+    marginTop: spacing[4],
   },
   dividerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: theme.spacing[5],
-    gap: theme.spacing[3],
+    marginVertical: spacing[5],
+    gap: spacing[3],
   },
   dividerLine: {
     flex: 1,
     height: StyleSheet.hairlineWidth,
-    backgroundColor: theme.colors.borderEmphasized,
   },
 });

@@ -4,18 +4,30 @@ import { GoogleOAuthProvider } from '@react-oauth/google'
 import { Theme } from '@astryxdesign/core/theme'
 import { gothicTheme } from '@astryxdesign/theme-gothic/built'
 import { Toaster } from 'sonner'
+import './i18n'
 import './index.css'
 import App from './App.jsx'
+import { PreferencesProvider, usePreferences } from './preferences/PreferencesProvider.jsx'
 
 const googleClientId = import.meta.env.VITE_GOOGLE_WEB_CLIENT_ID || ''
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <Theme theme={gothicTheme}>
+function ThemedApp() {
+  const { themeMode } = usePreferences()
+
+  return (
+    <Theme theme={gothicTheme} mode={themeMode}>
       <GoogleOAuthProvider clientId={googleClientId}>
         <App />
         <Toaster richColors position="top-center" closeButton />
       </GoogleOAuthProvider>
     </Theme>
+  )
+}
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <PreferencesProvider>
+      <ThemedApp />
+    </PreferencesProvider>
   </StrictMode>,
 )

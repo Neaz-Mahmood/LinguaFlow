@@ -6,7 +6,7 @@ import {
   Text as RNText,
   ViewStyle,
 } from 'react-native';
-import { theme } from '../../theme';
+import { spacing, radius, typography, useAppTheme } from '../../theme';
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'destructive';
 type Size = 'sm' | 'md' | 'lg';
@@ -30,7 +30,34 @@ export function Button({
   isLoading = false,
   style,
 }: Props) {
+  const { colors } = useAppTheme();
   const disabled = isDisabled || isLoading;
+
+  const variantStyle = {
+    primary: {
+      backgroundColor: colors.accent,
+      borderColor: colors.accent,
+    },
+    secondary: {
+      backgroundColor: colors.backgroundMuted,
+      borderColor: colors.border,
+    },
+    ghost: {
+      backgroundColor: 'transparent',
+      borderColor: 'transparent',
+    },
+    destructive: {
+      backgroundColor: colors.error,
+      borderColor: colors.error,
+    },
+  }[variant];
+
+  const labelColor = {
+    primary: colors.onAccent,
+    secondary: colors.textPrimary,
+    ghost: colors.textSecondary,
+    destructive: colors.onError,
+  }[variant];
 
   return (
     <Pressable
@@ -40,7 +67,7 @@ export function Button({
       style={({ pressed }) => [
         styles.base,
         sizeStyles[size],
-        variantStyles[variant],
+        variantStyle,
         pressed && !disabled && styles.pressed,
         disabled && styles.disabled,
         style,
@@ -48,10 +75,12 @@ export function Button({
     >
       {isLoading ? (
         <ActivityIndicator
-          color={variant === 'primary' ? theme.colors.onAccent : theme.colors.textPrimary}
+          color={variant === 'primary' ? colors.onAccent : colors.textPrimary}
         />
       ) : (
-        <RNText style={[styles.label, labelStyles[variant], sizeLabelStyles[size]]}>
+        <RNText
+          style={[styles.label, { color: labelColor }, sizeLabelStyles[size]]}
+        >
           {label}
         </RNText>
       )}
@@ -63,7 +92,7 @@ const styles = StyleSheet.create({
   base: {
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: theme.radius.element,
+    borderRadius: radius.element,
     borderWidth: 1,
   },
   pressed: {
@@ -73,56 +102,30 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   label: {
-    fontWeight: theme.typography.weight.semibold,
+    fontWeight: typography.weight.semibold,
   },
 });
 
 const sizeStyles = StyleSheet.create({
   sm: {
-    paddingVertical: theme.spacing[2],
-    paddingHorizontal: theme.spacing[3],
+    paddingVertical: spacing[2],
+    paddingHorizontal: spacing[3],
     minHeight: 36,
   },
   md: {
-    paddingVertical: theme.spacing[3],
-    paddingHorizontal: theme.spacing[5],
+    paddingVertical: spacing[3],
+    paddingHorizontal: spacing[5],
     minHeight: 44,
   },
   lg: {
-    paddingVertical: theme.spacing[4],
-    paddingHorizontal: theme.spacing[6],
+    paddingVertical: spacing[4],
+    paddingHorizontal: spacing[6],
     minHeight: 52,
   },
 });
 
 const sizeLabelStyles = StyleSheet.create({
-  sm: { fontSize: theme.typography.size.sm },
-  md: { fontSize: theme.typography.size.base },
-  lg: { fontSize: theme.typography.size.lg },
-});
-
-const variantStyles = StyleSheet.create({
-  primary: {
-    backgroundColor: theme.colors.accent,
-    borderColor: theme.colors.accent,
-  },
-  secondary: {
-    backgroundColor: theme.colors.backgroundMuted,
-    borderColor: theme.colors.border,
-  },
-  ghost: {
-    backgroundColor: 'transparent',
-    borderColor: 'transparent',
-  },
-  destructive: {
-    backgroundColor: theme.colors.error,
-    borderColor: theme.colors.error,
-  },
-});
-
-const labelStyles = StyleSheet.create({
-  primary: { color: theme.colors.onAccent },
-  secondary: { color: theme.colors.textPrimary },
-  ghost: { color: theme.colors.textSecondary },
-  destructive: { color: theme.colors.onError },
+  sm: { fontSize: typography.size.sm },
+  md: { fontSize: typography.size.base },
+  lg: { fontSize: typography.size.lg },
 });

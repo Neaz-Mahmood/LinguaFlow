@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { Heading } from '@astryxdesign/core/Heading';
@@ -6,6 +7,7 @@ import { Text } from '@astryxdesign/core/Text';
 import { apiFetch } from '../lib/api';
 
 export default function ComprehensibleInput({ onComplete }) {
+  const { t } = useTranslation();
   const [stories, setStories] = useState([]);
   const [currentStoryIdx, setCurrentStoryIdx] = useState(0);
   const [selectedWord, setSelectedWord] = useState(null);
@@ -44,7 +46,7 @@ export default function ComprehensibleInput({ onComplete }) {
     if (!word || !story) return;
 
     const translation =
-      story.words[word] || story.words[word.toLowerCase()] || 'Translation not found';
+      story.words[word] || story.words[word.toLowerCase()] || t('input.translationNotFound');
 
     let contextSentence = '';
     let contextTranslation = '';
@@ -93,7 +95,7 @@ export default function ComprehensibleInput({ onComplete }) {
           next.add(selectedWord.clean);
           return next;
         });
-        setNotification(`Mined "${selectedWord.clean}" into Flashcards!`);
+        setNotification(t('input.wordMined', { word: selectedWord.clean }));
         setTimeout(() => setNotification(''), 3000);
       }
     } catch (err) {
@@ -125,7 +127,7 @@ export default function ComprehensibleInput({ onComplete }) {
     return (
       <div className="lf-card">
         <Text display="block" justify="center">
-          Loading story list...
+          {t('input.loading')}
         </Text>
       </div>
     );
@@ -161,7 +163,7 @@ export default function ComprehensibleInput({ onComplete }) {
   return (
     <div className="lf-card" ref={containerRef} style={{ animation: 'fadeIn 0.3s ease-out' }}>
       <div className="story-header">
-        <Badge label={`${story.level} Comprehensible Input`} variant="cyan" />
+        <Badge label={t('input.badge', { level: story.level })} variant="cyan" />
         <Heading level={2}>{story.title}</Heading>
       </div>
 
@@ -176,7 +178,9 @@ export default function ComprehensibleInput({ onComplete }) {
           <div className="tooltip-target">{selectedWord.raw}</div>
           <div className="tooltip-translation">{selectedWord.translation}</div>
           <Button
-            label={minedWords.has(selectedWord.clean) ? 'Added to SRS' : 'Add to Flashcards (Mine)'}
+            label={
+              minedWords.has(selectedWord.clean) ? t('input.alreadyMined') : t('input.mineWord')
+            }
             variant="primary"
             size="sm"
             onClick={handleMineWord}
@@ -187,7 +191,7 @@ export default function ComprehensibleInput({ onComplete }) {
       {notification && <div className="mined-notification">{notification}</div>}
 
       <Button
-        label={showFullTranslation ? 'Hide English Translation' : 'Show English Translation'}
+        label={showFullTranslation ? t('input.hideTranslation') : t('input.showTranslation')}
         variant="secondary"
         onClick={() => setShowFullTranslation(!showFullTranslation)}
       />
@@ -200,12 +204,12 @@ export default function ComprehensibleInput({ onComplete }) {
 
       <div className="btn-row" style={{ marginTop: '2.5rem' }}>
         <Button
-          label="Next Story"
+          label={t('input.nextStory')}
           variant="secondary"
           onClick={() => setCurrentStoryIdx((currentStoryIdx + 1) % stories.length)}
           isDisabled={stories.length <= 1}
         />
-        <Button label="Mark Read & Continue" variant="primary" onClick={handleNextStep} />
+        <Button label={t('input.completeInput')} variant="primary" onClick={handleNextStep} />
       </div>
     </div>
   );

@@ -1,27 +1,38 @@
 import { z } from 'zod';
+import i18n from '../i18n';
 
-export const signInSchema = z.object({
-  email: z
-    .string()
-    .trim()
-    .min(1, 'Email is required')
-    .email('Enter a valid email'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-});
-
-export const signUpSchema = signInSchema
-  .extend({
-    name: z
+export function getSignInSchema() {
+  return z.object({
+    email: z
       .string()
       .trim()
-      .min(2, 'Name must be at least 2 characters')
-      .max(80, 'Name must be 80 characters or fewer'),
-    confirmPassword: z.string().min(8, 'Confirm your password'),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
+      .min(1, i18n.t('auth.emailRequired'))
+      .email(i18n.t('auth.emailInvalid')),
+    password: z.string().min(8, i18n.t('auth.passwordMin')),
   });
+}
+
+export function getSignUpSchema() {
+  return getSignInSchema()
+    .extend({
+      name: z
+        .string()
+        .trim()
+        .min(2, i18n.t('auth.nameMin'))
+        .max(80, i18n.t('auth.nameMax')),
+      confirmPassword: z.string().min(8, i18n.t('auth.confirmRequired')),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: i18n.t('auth.passwordsMismatch'),
+      path: ['confirmPassword'],
+    });
+}
+
+/** @deprecated Use getSignInSchema() for localized messages */
+export const signInSchema = getSignInSchema();
+
+/** @deprecated Use getSignUpSchema() for localized messages */
+export const signUpSchema = getSignUpSchema();
 
 export function formatZodError(error) {
   return error.issues.map((issue) => issue.message).join(', ');

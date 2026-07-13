@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text as RNText, TextProps, TextStyle } from 'react-native';
-import { theme } from '../../theme';
+import { StyleSheet, Text as RNText, TextProps } from 'react-native';
+import { typography, useAppTheme } from '../../theme';
 
 type Variant = 'title' | 'heading' | 'body' | 'secondary' | 'label' | 'brand';
 
@@ -10,51 +10,51 @@ type Props = TextProps & {
 };
 
 export function Text({ variant = 'body', style, children, ...rest }: Props) {
+  const { colors } = useAppTheme();
+
+  const variantStyle = {
+    brand: {
+      fontSize: typography.size['3xl'],
+      fontWeight: typography.weight.bold,
+      color: colors.textPrimary,
+      letterSpacing: -0.5,
+    },
+    title: {
+      fontSize: typography.size['2xl'],
+      fontWeight: typography.weight.bold,
+      color: colors.textPrimary,
+    },
+    heading: {
+      fontSize: typography.size.xl,
+      fontWeight: typography.weight.semibold,
+      color: colors.textPrimary,
+    },
+    body: {
+      fontSize: typography.size.base,
+      fontWeight: typography.weight.normal,
+      color: colors.textPrimary,
+      lineHeight: 24,
+    },
+    secondary: {
+      fontSize: typography.size.base,
+      fontWeight: typography.weight.normal,
+      color: colors.textSecondary,
+      lineHeight: 24,
+    },
+    label: {
+      fontSize: typography.size.sm,
+      fontWeight: typography.weight.medium,
+      color: colors.textSecondary,
+    },
+  }[variant];
+
   return (
-    <RNText style={[styles.base, variantStyles[variant], style]} {...rest}>
+    <RNText style={[styles.base, variantStyle, style]} {...rest}>
       {children}
     </RNText>
   );
 }
 
 const styles = StyleSheet.create({
-  base: {
-    color: theme.colors.textPrimary,
-  },
-});
-
-const variantStyles = StyleSheet.create({
-  brand: {
-    fontSize: theme.typography.size['3xl'],
-    fontWeight: theme.typography.weight.bold,
-    color: theme.colors.textPrimary,
-    letterSpacing: -0.5,
-  },
-  title: {
-    fontSize: theme.typography.size['2xl'],
-    fontWeight: theme.typography.weight.bold,
-    color: theme.colors.textPrimary,
-  },
-  heading: {
-    fontSize: theme.typography.size.xl,
-    fontWeight: theme.typography.weight.semibold,
-    color: theme.colors.textPrimary,
-  },
-  body: {
-    fontSize: theme.typography.size.base,
-    fontWeight: theme.typography.weight.normal,
-    color: theme.colors.textPrimary,
-    lineHeight: 24,
-  },
-  secondary: {
-    fontSize: theme.typography.size.base,
-    fontWeight: theme.typography.weight.normal,
-    color: theme.colors.textSecondary,
-    lineHeight: 24,
-  },
-  label: {
-    fontSize: theme.typography.size.sm,
-    fontWeight: theme.typography.weight.medium,
-    color: theme.colors.textSecondary,
-  },
+  base: {},
 });

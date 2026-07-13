@@ -5,7 +5,7 @@ import {
   TextInputProps,
   View,
 } from 'react-native';
-import { theme } from '../../theme';
+import { spacing, radius, typography, useAppTheme } from '../../theme';
 import { Text } from './Text';
 
 type Props = TextInputProps & {
@@ -21,16 +21,28 @@ export function TextField({
   style,
   ...rest
 }: Props) {
+  const { colors } = useAppTheme();
+
   return (
     <View style={styles.wrap}>
       {!hideLabel ? <Text variant="label" style={styles.label}>{label}</Text> : null}
       <RNTextInput
         accessibilityLabel={label}
-        placeholderTextColor={theme.colors.textPlaceholder}
-        style={[styles.input, error ? styles.inputError : null, style]}
+        placeholderTextColor={colors.textPlaceholder}
+        style={[
+          styles.input,
+          {
+            backgroundColor: colors.backgroundMuted,
+            borderColor: error ? colors.error : colors.border,
+            color: colors.textPrimary,
+          },
+          style,
+        ]}
         {...rest}
       />
-      {error ? <Text style={styles.error}>{error}</Text> : null}
+      {error ? (
+        <Text style={[styles.error, { color: colors.error }]}>{error}</Text>
+      ) : null}
     </View>
   );
 }
@@ -38,28 +50,21 @@ export function TextField({
 const styles = StyleSheet.create({
   wrap: {
     width: '100%',
-    marginBottom: theme.spacing[3],
+    marginBottom: spacing[3],
   },
   label: {
-    marginBottom: theme.spacing[1.5],
+    marginBottom: spacing[1.5],
   },
   input: {
     width: '100%',
-    backgroundColor: theme.colors.backgroundMuted,
     borderWidth: 1,
-    borderColor: theme.colors.border,
-    borderRadius: theme.radius.element,
-    paddingHorizontal: theme.spacing[4],
-    paddingVertical: theme.spacing[3],
-    color: theme.colors.textPrimary,
-    fontSize: theme.typography.size.base,
-  },
-  inputError: {
-    borderColor: theme.colors.error,
+    borderRadius: radius.element,
+    paddingHorizontal: spacing[4],
+    paddingVertical: spacing[3],
+    fontSize: typography.size.base,
   },
   error: {
-    color: theme.colors.error,
-    fontSize: theme.typography.size.sm,
-    marginTop: theme.spacing[1.5],
+    fontSize: typography.size.sm,
+    marginTop: spacing[1.5],
   },
 });

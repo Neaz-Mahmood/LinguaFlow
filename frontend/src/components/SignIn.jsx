@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { GoogleLogin } from '@react-oauth/google';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { Button } from '@astryxdesign/core/Button';
 import { Text } from '@astryxdesign/core/Text';
@@ -10,9 +11,11 @@ import {
   signInWithGoogleIdToken,
   signUpWithEmail,
 } from '../lib/api';
-import { fieldErrorsFromZod, signInSchema, signUpSchema } from '../lib/authSchemas';
+import { fieldErrorsFromZod, getSignInSchema, getSignUpSchema } from '../lib/authSchemas';
+import PreferencesControls from '../preferences/PreferencesControls';
 
 export default function SignIn({ onSuccess }) {
+  const { t } = useTranslation();
   const [mode, setMode] = useState('signin');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -42,7 +45,7 @@ export default function SignIn({ onSuccess }) {
 
   const handleCredential = async (response) => {
     if (!response.credential) {
-      toast.error('No credential returned from Google.');
+      toast.error(t('auth.noGoogleCredential'));
       return;
     }
 
@@ -50,10 +53,10 @@ export default function SignIn({ onSuccess }) {
     setFieldErrors({});
     try {
       const data = await signInWithGoogleIdToken(response.credential);
-      toast.success('Signed in successfully');
+      toast.success(t('auth.signedInSuccess'));
       onSuccess(data);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Sign-in failed');
+      toast.error(err instanceof Error ? err.message : t('auth.signInFailed'));
     } finally {
       setLoading(false);
     }
@@ -64,12 +67,12 @@ export default function SignIn({ onSuccess }) {
     setFieldErrors({});
 
     const parsed = isSignUp
-      ? signUpSchema.safeParse({ name, email, password, confirmPassword })
-      : signInSchema.safeParse({ email, password });
+      ? getSignUpSchema().safeParse({ name, email, password, confirmPassword })
+      : getSignInSchema().safeParse({ email, password });
 
     if (!parsed.success) {
       setFieldErrors(fieldErrorsFromZod(parsed.error));
-      toast.error('Please fix the form errors');
+      toast.error(t('auth.formErrors'));
       return;
     }
 
@@ -78,10 +81,10 @@ export default function SignIn({ onSuccess }) {
       const data = isSignUp
         ? await signUpWithEmail(parsed.data.email, parsed.data.password, parsed.data.name)
         : await signInWithEmail(parsed.data.email, parsed.data.password);
-      toast.success(isSignUp ? 'Account created successfully' : 'Signed in successfully');
+      toast.success(isSignUp ? t('auth.accountCreated') : t('auth.signedInSuccess'));
       onSuccess(data);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Authentication failed');
+      toast.error(err instanceof Error ? err.message : t('auth.authFailed'));
     } finally {
       setLoading(false);
     }
@@ -93,19 +96,19 @@ export default function SignIn({ onSuccess }) {
       style={{ justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}
     >
       <div className="logo" style={{ fontSize: '3rem', marginBottom: '0.75rem' }}>
-        LinguaFlow
+        {t('common.brand')}
       </div>
       <Text type="supporting" color="secondary" as="p" display="block">
-        {isSignUp
-          ? 'Create an account to sync your profile and open your Daily Flow.'
-          : 'Sign in to sync your profile and open your Daily Flow.'}
+        {isSignUp ? t('auth.signUpTitle') : t('auth.signInTitle')}
       </Text>
 
-      <form className="auth-form" onSubmit={handleEmailSubmit} style={{ marginTop: '2rem' }}>
+      <PreferencesControls />
+
+      <form className="auth-form" onSubmit={handleEmailSubmit} style={{ marginTop: '1.5rem' }}>
         <VStack gap={3}>
           {isSignUp && (
             <TextInput
-              label="Full name"
+              label={t('auth.fullName')}
               value={name}
               onChange={(value) => {
                 setName(value);
@@ -119,7 +122,7 @@ export default function SignIn({ onSuccess }) {
 
           <TextInput
             type="email"
-            label="Email"
+            label={t('auth.email')}
             value={email}
             onChange={(value) => {
               setEmail(value);
@@ -132,7 +135,7 @@ export default function SignIn({ onSuccess }) {
 
           <TextInput
             type="password"
-            label="Password"
+            label={t('auth.password')}
             value={password}
             onChange={(value) => {
               setPassword(value);
@@ -148,7 +151,7 @@ export default function SignIn({ onSuccess }) {
           {isSignUp && (
             <TextInput
               type="password"
-              label="Confirm password"
+              label={t('auth.confirmPassword')}
               value={confirmPassword}
               onChange={(value) => {
                 setConfirmPassword(value);
@@ -166,7 +169,13 @@ export default function SignIn({ onSuccess }) {
 
           <Button
             type="submit"
-            label={loading ? 'Please wait…' : isSignUp ? 'Sign up' : 'Sign in'}
+            label={
+              loading
+                ? t('common.pleaseWait')
+                : isSignUp
+                  ? t('auth.signUp')
+                  : t('auth.signIn')
+            }
             variant="primary"
             isLoading={loading}
             isDisabled={loading}
@@ -175,10 +184,10 @@ export default function SignIn({ onSuccess }) {
       </form>
 
       <Text type="supporting" color="secondary" as="p" display="block">
-        {isSignUp ? 'Already have an account?' : 'Need an account?'}{' '}
+        {isSignUp ? t('auth.haveAccount') : t('auth.needAccount')}{' '}
         <Button
           type="button"
-          label={isSignUp ? 'Sign in' : 'Sign up'}
+          label={isSignUp ? t('auth.signIn') : t('auth.signUp')}
           variant="ghost"
           size="sm"
           isDisabled={loading}
@@ -190,17 +199,17 @@ export default function SignIn({ onSuccess }) {
       </Text>
 
       <div className="auth-divider">
-        <span>or</span>
+        <span>{t('common.or')}</span>
       </div>
 
       {loading ? (
         <Text type="supporting" color="secondary">
-          Signing you in…
+          {t('auth.signingIn')}
         </Text>
       ) : (
         <GoogleLogin
           onSuccess={handleCredential}
-          onError={() => toast.error('Google sign-in was cancelled or failed.')}
+          onError={() => toast.error(t('auth.googleCancelled'))}
           useOneTap={false}
           theme="filled_black"
           size="large"

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
@@ -9,61 +10,20 @@ import { Text } from '@astryxdesign/core/Text';
 import { ToggleButton, ToggleButtonGroup } from '@astryxdesign/core/ToggleButton';
 import { apiFetch } from '../lib/api';
 
-const LANGUAGES = [
-  { id: 'Spanish', name: 'Spanish', flag: '🇪🇸' },
-  { id: 'French', name: 'French', flag: '🇫🇷' },
-  { id: 'German', name: 'German', flag: '🇩🇪' },
-  { id: 'Japanese', name: 'Japanese', flag: '🇯🇵' },
-];
-
+const LANGUAGE_IDS = ['Spanish', 'French', 'German', 'Japanese'];
+const LANGUAGE_FLAGS = {
+  Spanish: '🇪🇸',
+  French: '🇫🇷',
+  German: '🇩🇪',
+  Japanese: '🇯🇵',
+};
 const LEVELS = ['A1', 'A2', 'B1', 'B2'];
-
-const TIME_COMMITS = [
-  { id: 10, title: '10 min', label: 'Casual', desc: 'Light focus. Ideal for busy schedules.' },
-  {
-    id: 20,
-    title: '20 min',
-    label: 'Regular',
-    desc: 'Steady progress. Highly recommended.',
-    recommended: true,
-  },
-  {
-    id: 30,
-    title: '30 min',
-    label: 'Dedicated',
-    desc: 'Polyglot sprint. Immersive output focus.',
-  },
-];
-
-const PREFERENCES = [
-  {
-    id: 'input-heavy',
-    title: 'Input-Heavy (Krashen)',
-    icon: '🎧📚',
-    desc: 'Focuses heavily on reading and listening. Ratios: 60% Input, 20% SRS, 20% Output.',
-  },
-  {
-    id: 'output-first',
-    title: 'Output-First (Lewis)',
-    icon: '🎤💬',
-    desc: 'Early speaking focus. Speak from day one. Ratios: 30% Input, 20% SRS, 50% Output.',
-  },
-  {
-    id: 'balanced',
-    title: 'Balanced Path',
-    icon: '⚖️🌊',
-    desc: 'A harmonious split. Ratios: 40% Input, 30% SRS, 30% Output.',
-  },
-];
-
-const GOAL_OPTIONS = [
-  { id: 'travel', label: 'Travel & Culture ✈️' },
-  { id: 'conversation', label: 'Conversation Practice 🗣️' },
-  { id: 'exam', label: 'Exam Preparation 🎓' },
-  { id: 'polyglot', label: 'Polyglot Journey 🗺️' },
-];
+const TIME_IDS = [10, 20, 30];
+const STRATEGY_IDS = ['input-heavy', 'output-first', 'balanced'];
+const GOAL_IDS = ['travel', 'conversation', 'exam', 'polyglot'];
 
 export default function Onboarding({ onComplete }) {
+  const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -74,6 +34,49 @@ export default function Onboarding({ onComplete }) {
     strategy_preference: 'input-heavy',
     goals: [],
   });
+
+  const strategyLabel = (id) => {
+    if (id === 'input-heavy') return t('onboarding.strategies.inputHeavy');
+    if (id === 'output-first') return t('onboarding.strategies.outputFirst');
+    return t('onboarding.strategies.balanced');
+  };
+
+  const strategyDesc = (id) => {
+    if (id === 'input-heavy') return t('onboarding.strategies.inputHeavyDesc');
+    if (id === 'output-first') return t('onboarding.strategies.outputFirstDesc');
+    return t('onboarding.strategies.balancedDesc');
+  };
+
+  const strategyIcon = (id) => {
+    if (id === 'input-heavy') return '🎧📚';
+    if (id === 'output-first') return '🎤💬';
+    return '⚖️🌊';
+  };
+
+  const timeMeta = (id) => {
+    if (id === 10) {
+      return {
+        title: t('onboarding.time.mins', { count: 10 }),
+        label: t('onboarding.time.casual'),
+        desc: t('onboarding.time.casualDesc'),
+      };
+    }
+    if (id === 20) {
+      return {
+        title: t('onboarding.time.mins', { count: 20 }),
+        label: t('onboarding.time.regular'),
+        desc: t('onboarding.time.regularDesc'),
+        recommended: true,
+      };
+    }
+    return {
+      title: t('onboarding.time.mins', { count: 30 }),
+      label: t('onboarding.time.dedicated'),
+      desc: t('onboarding.time.dedicatedDesc'),
+    };
+  };
+
+  const goalLabel = (id) => t(`onboarding.goals.${id}`);
 
   const handleNext = () => {
     if (currentStep < 4) {
@@ -122,9 +125,9 @@ export default function Onboarding({ onComplete }) {
     return (
       <div className="lf-card" style={{ textAlign: 'center', padding: '4rem 2rem' }}>
         <div style={{ fontSize: '2.5rem', animation: 'float 2s ease-in-out infinite' }}>🌊</div>
-        <Heading level={2}>Personalizing Your Flow...</Heading>
+        <Heading level={2}>{t('onboarding.personalizing')}</Heading>
         <Text type="supporting" color="secondary" as="p" display="block">
-          Calibrating content ratios and setting up your learning workspace.
+          {t('onboarding.calibrating')}
         </Text>
       </div>
     );
@@ -134,37 +137,37 @@ export default function Onboarding({ onComplete }) {
     <div className="lf-card" style={{ animation: 'fadeIn 0.4s ease-out' }}>
       <VStack gap={2} style={{ textAlign: 'center', marginBottom: '2rem' }}>
         <Heading level={1} justify="center">
-          Construct Your Path
+          {t('onboarding.title')}
         </Heading>
         <Text type="supporting" color="secondary" display="block" justify="center">
-          Step {currentStep} of 4
+          {t('onboarding.stepOf', { current: currentStep, total: 4 })}
         </Text>
       </VStack>
 
       {currentStep === 1 && (
         <VStack gap={4}>
           <Heading level={3} color="secondary">
-            Select Target Language
+            {t('onboarding.selectTargetLanguage')}
           </Heading>
           <div className="flag-grid">
-            {LANGUAGES.map((lang) => (
+            {LANGUAGE_IDS.map((langId) => (
               <SelectableCard
-                key={lang.id}
-                label={lang.name}
-                isSelected={formData.target_language === lang.id}
+                key={langId}
+                label={t(`onboarding.languages.${langId}`)}
+                isSelected={formData.target_language === langId}
                 onChange={(selected) => {
                   if (selected) {
-                    setFormData((prev) => ({ ...prev, target_language: lang.id }));
+                    setFormData((prev) => ({ ...prev, target_language: langId }));
                   }
                 }}
                 padding={3}
               >
                 <VStack gap={1}>
                   <Text size="2xl" display="block" justify="center">
-                    {lang.flag}
+                    {LANGUAGE_FLAGS[langId]}
                   </Text>
                   <Text type="label" display="block" justify="center">
-                    {lang.name}
+                    {t(`onboarding.languages.${langId}`)}
                   </Text>
                 </VStack>
               </SelectableCard>
@@ -172,10 +175,10 @@ export default function Onboarding({ onComplete }) {
           </div>
 
           <Heading level={3} color="secondary">
-            Current Level
+            {t('onboarding.currentLevel')}
           </Heading>
           <ToggleButtonGroup
-            label="Current level"
+            label={t('onboarding.currentLevel')}
             type="single"
             value={formData.current_level}
             onChange={(value) => {
@@ -194,68 +197,68 @@ export default function Onboarding({ onComplete }) {
       {currentStep === 2 && (
         <VStack gap={4}>
           <Heading level={3} color="secondary">
-            Daily Time Commitment
+            {t('onboarding.dailyCommitment')}
           </Heading>
           <div className="option-grid">
-            {TIME_COMMITS.map((tc) => (
-              <SelectableCard
-                key={tc.id}
-                label={tc.title}
-                isSelected={formData.daily_commitment === tc.id}
-                onChange={(selected) => {
-                  if (selected) {
-                    setFormData((prev) => ({ ...prev, daily_commitment: tc.id }));
-                  }
-                }}
-              >
-                <VStack gap={1}>
-                  <HStack gap={2}>
-                    <Text type="large" weight="semibold">
-                      {tc.title}
+            {TIME_IDS.map((tcId) => {
+              const tc = timeMeta(tcId);
+              return (
+                <SelectableCard
+                  key={tcId}
+                  label={tc.title}
+                  isSelected={formData.daily_commitment === tcId}
+                  onChange={(selected) => {
+                    if (selected) {
+                      setFormData((prev) => ({ ...prev, daily_commitment: tcId }));
+                    }
+                  }}
+                >
+                  <VStack gap={1}>
+                    <HStack gap={2}>
+                      <Text type="large" weight="semibold">
+                        {tc.title}
+                      </Text>
+                      {tc.recommended && <Badge label={t('onboarding.rec')} variant="cyan" />}
+                    </HStack>
+                    <Text type="label">{tc.label}</Text>
+                    <Text type="supporting" color="secondary" display="block">
+                      {tc.desc}
                     </Text>
-                    {tc.recommended && <Badge label="REC" variant="cyan" />}
-                  </HStack>
-                  <Text type="label">{tc.label}</Text>
-                  <Text type="supporting" color="secondary" display="block">
-                    {tc.desc}
-                  </Text>
-                </VStack>
-              </SelectableCard>
-            ))}
+                  </VStack>
+                </SelectableCard>
+              );
+            })}
           </div>
 
-          <div className="feedback-box">
-            Pro tip: Consistent short sessions beat long irregular ones. 15–20 minutes daily is the
-            sweet spot for learning retention.
-          </div>
+          <div className="feedback-box">{t('onboarding.proTip')}</div>
         </VStack>
       )}
 
       {currentStep === 3 && (
         <VStack gap={4}>
           <Heading level={3} color="secondary">
-            Select Learning Style
+            {t('onboarding.selectLearningStyle')}
           </Heading>
           <VStack gap={3}>
-            {PREFERENCES.map((pref) => (
+            {STRATEGY_IDS.map((prefId) => (
               <SelectableCard
-                key={pref.id}
-                label={pref.title}
-                isSelected={formData.strategy_preference === pref.id}
+                key={prefId}
+                label={strategyLabel(prefId)}
+                isSelected={formData.strategy_preference === prefId}
                 onChange={(selected) => {
                   if (selected) {
-                    setFormData((prev) => ({ ...prev, strategy_preference: pref.id }));
+                    setFormData((prev) => ({ ...prev, strategy_preference: prefId }));
                   }
                 }}
               >
                 <HStack gap={3}>
-                  <Text size="2xl">{pref.icon}</Text>
+                  <Text size="2xl">{strategyIcon(prefId)}</Text>
                   <VStack gap={1}>
                     <Text type="large" weight="semibold" display="block">
-                      {pref.title}
+                      {strategyLabel(prefId)}
                     </Text>
                     <Text type="supporting" color="secondary" display="block">
-                      {pref.desc}
+                      {strategyDesc(prefId)}
                     </Text>
                   </VStack>
                 </HStack>
@@ -268,26 +271,26 @@ export default function Onboarding({ onComplete }) {
       {currentStep === 4 && (
         <VStack gap={4}>
           <Heading level={3} color="secondary">
-            What is your primary goal?
+            {t('onboarding.primaryGoal')}
           </Heading>
           <div className="option-grid">
-            {GOAL_OPTIONS.map((goal) => (
+            {GOAL_IDS.map((goalId) => (
               <SelectableCard
-                key={goal.id}
-                label={goal.label}
-                isSelected={formData.goals.includes(goal.id)}
+                key={goalId}
+                label={goalLabel(goalId)}
+                isSelected={formData.goals.includes(goalId)}
                 onChange={(selected) => {
                   setFormData((prev) => {
                     const goals = selected
-                      ? [...prev.goals, goal.id]
-                      : prev.goals.filter((g) => g !== goal.id);
+                      ? [...prev.goals, goalId]
+                      : prev.goals.filter((g) => g !== goalId);
                     return { ...prev, goals };
                   });
                 }}
               >
                 <CheckboxInput
-                  label={goal.label}
-                  value={formData.goals.includes(goal.id)}
+                  label={goalLabel(goalId)}
+                  value={formData.goals.includes(goalId)}
                   onChange={() => {}}
                   isReadOnly
                 />
@@ -296,32 +299,32 @@ export default function Onboarding({ onComplete }) {
           </div>
 
           <Heading level={3} color="secondary">
-            Profile Summary
+            {t('onboarding.profileSummary')}
           </Heading>
           <div className="feedback-box">
-            Target: {formData.target_language} ({formData.current_level})
+            {t('onboarding.summaryTarget', {
+              language: t(`onboarding.languages.${formData.target_language}`),
+              level: formData.current_level,
+            })}
             <br />
-            Time: {formData.daily_commitment} mins/day
+            {t('onboarding.summaryTime', { minutes: formData.daily_commitment })}
             <br />
-            Methodology:{' '}
-            {formData.strategy_preference === 'input-heavy'
-              ? 'Input-Heavy (Krashen)'
-              : formData.strategy_preference === 'output-first'
-                ? 'Output-First (Lewis)'
-                : 'Balanced Path'}
+            {t('onboarding.summaryMethod', {
+              method: strategyLabel(formData.strategy_preference),
+            })}
           </div>
         </VStack>
       )}
 
       <div className="btn-row">
         <Button
-          label="Back"
+          label={t('common.back')}
           variant="secondary"
           onClick={handleBack}
           isDisabled={currentStep === 1}
         />
         <Button
-          label={currentStep === 4 ? 'Create My Profile' : 'Continue'}
+          label={currentStep === 4 ? t('onboarding.createProfile') : t('common.continue')}
           variant="primary"
           onClick={handleNext}
         />

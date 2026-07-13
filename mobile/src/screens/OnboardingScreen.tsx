@@ -1,7 +1,9 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Button, Card, Screen, Text } from '../components/ui';
-import { theme } from '../theme';
+import PreferencesControls from '../preferences/PreferencesControls';
+import { spacing } from '../theme';
 import { AuthUser } from '../lib/api';
 
 type Props = {
@@ -11,23 +13,27 @@ type Props = {
 };
 
 export default function OnboardingScreen({ user, onComplete, onSignOut }: Props) {
+  const { t } = useTranslation();
+
   return (
     <Screen style={styles.container}>
       <Card style={styles.card}>
         <Text variant="title" style={styles.title}>
-          Welcome{user.name ? `, ${user.name}` : ''}
+          {t('mobile.welcome', {
+            name: user.name ? t('mobile.welcomeName', { name: user.name }) : '',
+          })}
         </Text>
         <Text variant="secondary" style={styles.body}>
-          Complete onboarding to set your target language, level, and daily goals.
-          Full wizard UI will land with the Expo Daily Flow port.
+          {t('mobile.onboardingBody')}
         </Text>
+        <PreferencesControls />
         <Button
-          label="Continue (placeholder)"
+          label={t('mobile.continuePlaceholder')}
           variant="primary"
           onPress={onComplete}
           style={styles.button}
         />
-        <Button label="Sign out" variant="ghost" onPress={onSignOut} />
+        <Button label={t('common.signOut')} variant="ghost" onPress={onSignOut} />
       </Card>
     </Screen>
   );
@@ -41,12 +47,12 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   title: {
-    marginBottom: theme.spacing[3],
+    marginBottom: spacing[3],
   },
   body: {
-    marginBottom: theme.spacing[6],
+    marginBottom: spacing[6],
   },
   button: {
-    marginBottom: theme.spacing[3],
+    marginBottom: spacing[3],
   },
 });

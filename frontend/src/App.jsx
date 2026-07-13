@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { Button } from '@astryxdesign/core/Button';
 import { Text } from '@astryxdesign/core/Text';
@@ -6,6 +7,8 @@ import { HStack } from '@astryxdesign/core/Layout';
 import Onboarding from './components/Onboarding';
 import DailyFlowContainer from './components/DailyFlowContainer';
 import SignIn from './components/SignIn';
+import PreferencesControls from './preferences/PreferencesControls';
+import { usePreferences } from './preferences/PreferencesProvider';
 import { apiFetch, clearToken, fetchMe, getToken } from './lib/api';
 
 const VIEW_STATES = {
@@ -15,6 +18,8 @@ const VIEW_STATES = {
 };
 
 export default function App() {
+  const { t } = useTranslation();
+  const { applyFromUser } = usePreferences();
   const [viewState, setViewState] = useState(VIEW_STATES.AUTH);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -25,6 +30,7 @@ export default function App() {
 
   const routeForUser = (authUser, needsOnboarding) => {
     setUser(authUser);
+    applyFromUser(authUser);
     if (needsOnboarding || !authUser?.onboardingCompleted) {
       setViewState(VIEW_STATES.ONBOARDING);
     } else {
@@ -55,6 +61,7 @@ export default function App() {
 
   const handleOnboardingComplete = (updatedUser) => {
     setUser(updatedUser);
+    applyFromUser(updatedUser);
     setViewState(VIEW_STATES.FLOW);
   };
 
@@ -62,15 +69,11 @@ export default function App() {
     clearToken();
     setUser(null);
     setViewState(VIEW_STATES.AUTH);
-    toast.success('Signed out');
+    toast.success(t('auth.signedOut'));
   };
 
   const resetSession = async () => {
-    if (
-      confirm(
-        "Reset today's flow progress? This will delete flashcards mined today and reset scores.",
-      )
-    ) {
+    if (confirm(t('app.resetConfirm'))) {
       setLoading(true);
       try {
         await apiFetch('/api/user/onboard', {
@@ -100,10 +103,10 @@ export default function App() {
         style={{ justifyContent: 'center', alignItems: 'center' }}
       >
         <div className="logo" style={{ fontSize: '3rem', animation: 'pulse 1.5s infinite' }}>
-          LinguaFlow
+          {t('common.brand')}
         </div>
         <Text type="supporting" color="secondary" as="p">
-          Loading Daily Flow Engine...
+          {t('common.loadingEngine')}
         </Text>
       </div>
     );
@@ -117,19 +120,30 @@ export default function App() {
     <div className="app-container">
       <header className="header" style={{ animation: 'fadeIn 0.3s ease-out' }}>
         <div className="logo" onClick={bootstrap} style={{ cursor: 'pointer' }}>
-          LinguaFlow
+          {t('common.brand')}
         </div>
 
         {viewState !== VIEW_STATES.ONBOARDING && (
           <HStack gap={2}>
-            <Button label="Reset Session" variant="secondary" size="sm" onClick={resetSession} />
+            <PreferencesControls compact />
             <Button
-              label="Set Profile"
+              label={t('common.resetSession')}
+              variant="secondary"
+              size="sm"
+              onClick={resetSession}
+            />
+            <Button
+              label={t('common.setProfile')}
               variant="primary"
               size="sm"
               onClick={() => setViewState(VIEW_STATES.ONBOARDING)}
             />
-            <Button label="Sign out" variant="secondary" size="sm" onClick={handleSignOut} />
+            <Button
+              label={t('common.signOut')}
+              variant="secondary"
+              size="sm"
+              onClick={handleSignOut}
+            />
           </HStack>
         )}
       </header>

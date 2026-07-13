@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { useTranslation } from 'react-i18next';
 import Toast from 'react-native-toast-message';
+import './src/i18n';
 import { AuthUser } from './src/lib/api';
 import {
   configureGoogleAuth,
@@ -15,22 +17,31 @@ import {
 import SignInScreen from './src/screens/SignInScreen';
 import OnboardingScreen from './src/screens/OnboardingScreen';
 import DailyFlowScreen from './src/screens/DailyFlowScreen';
-import { theme } from './src/theme';
+import { PreferencesProvider, usePreferences } from './src/preferences/PreferencesProvider';
+import { ThemeProvider, useAppTheme } from './src/theme';
 
 type ViewState = 'loading' | 'auth' | 'onboarding' | 'flow';
 
-export default function App() {
+function AppShell() {
+  const { t } = useTranslation();
+  const { colorScheme, colors } = useAppTheme();
+  const { ready, applyFromUser } = usePreferences();
   const [view, setView] = useState<ViewState>('loading');
   const [user, setUser] = useState<AuthUser | null>(null);
   const [signingIn, setSigningIn] = useState(false);
 
   useEffect(() => {
     configureGoogleAuth();
-    bootstrap();
   }, []);
+
+  useEffect(() => {
+    if (!ready) return;
+    bootstrap();
+  }, [ready]);
 
   const routeForAuth = (authUser: AuthUser, needsOnboarding: boolean) => {
     setUser(authUser);
+    applyFromUser(authUser);
     setView(
       needsOnboarding || !authUser.onboardingCompleted ? 'onboarding' : 'flow',
     );
@@ -58,13 +69,13 @@ export default function App() {
       const result = await signInWithGoogleNative();
       Toast.show({
         type: 'success',
-        text1: 'Signed in successfully',
+        text1: t('auth.signedInSuccess'),
       });
       routeForAuth(result.user, result.needsOnboarding);
     } catch (err) {
       Toast.show({
         type: 'error',
-        text1: 'Google sign-in failed',
+        text1: t('auth.signInFailed'),
         text2: err instanceof Error ? err.message : undefined,
       });
     } finally {
@@ -85,15 +96,13 @@ export default function App() {
       Toast.show({
         type: 'success',
         text1:
-          mode === 'signup'
-            ? 'Account created successfully'
-            : 'Signed in successfully',
+          mode === 'signup' ? t('auth.accountCreated') : t('auth.signedInSuccess'),
       });
       routeForAuth(result.user, result.needsOnboarding);
     } catch (err) {
       Toast.show({
         type: 'error',
-        text1: mode === 'signup' ? 'Sign-up failed' : 'Sign-in failed',
+        text1: mode === 'signup' ? t('auth.authFailed') : t('auth.signInFailed'),
         text2: err instanceof Error ? err.message : undefined,
       });
     } finally {
@@ -107,19 +116,23 @@ export default function App() {
     setView('auth');
     Toast.show({
       type: 'success',
-      text1: 'Signed out',
+      text1: t('auth.signedOut'),
     });
   };
 
+  const statusStyle = colorScheme === 'dark' ? 'light' : 'dark';
+
+  if (!ready || view === 'loading') {
+    return (
+      <View style={[styles.loading, { backgroundColor: colors.backgroundBody }]}>
+        <ActivityIndicator size="large" color={colors.accent} />
+        <StatusBar style={statusStyle} />
+      </View>
+    );
+  }
+
   return (
     <>
-      {view === 'loading' ? (
-        <View style={styles.loading}>
-          <ActivityIndicator size="large" color={theme.colors.accent} />
-          <StatusBar style="light" />
-        </View>
-      ) : null}
-
       {view === 'auth' ? (
         <>
           <SignInScreen
@@ -127,7 +140,7 @@ export default function App() {
             onGoogleSignIn={handleGoogleSignIn}
             onEmailAuth={handleEmailAuth}
           />
-          <StatusBar style="light" />
+          <StatusBar style={statusStyle} />
         </>
       ) : null}
 
@@ -138,14 +151,14 @@ export default function App() {
             onComplete={() => setView('flow')}
             onSignOut={handleSignOut}
           />
-          <StatusBar style="light" />
+          <StatusBar style={statusStyle} />
         </>
       ) : null}
 
       {view === 'flow' && user ? (
         <>
           <DailyFlowScreen user={user} onSignOut={handleSignOut} />
-          <StatusBar style="light" />
+          <StatusBar style={statusStyle} />
         </>
       ) : null}
 
@@ -154,10 +167,26 @@ export default function App() {
   );
 }
 
+function ThemedRoot() {
+  const { themeMode } = usePreferences();
+  return (
+    <ThemeProvider themeMode={themeMode}>
+      <AppShell />
+    </ThemeProvider>
+  );
+}
+
+export default function App() {
+  return (
+    <PreferencesProvider>
+      <ThemedRoot />
+    </PreferencesProvider>
+  );
+}
+
 const styles = StyleSheet.create({
   loading: {
     flex: 1,
-    backgroundColor: theme.colors.backgroundBody,
     alignItems: 'center',
     justifyContent: 'center',
   },

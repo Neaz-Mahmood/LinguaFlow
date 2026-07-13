@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@astryxdesign/core/Button';
 import { Heading } from '@astryxdesign/core/Heading';
 import { Text } from '@astryxdesign/core/Text';
 import { apiFetch } from '../lib/api';
 
 export default function SpacedRepetition({ onComplete }) {
+  const { t } = useTranslation();
   const [cards, setCards] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -75,7 +77,7 @@ export default function SpacedRepetition({ onComplete }) {
     return (
       <div className="lf-card">
         <Text display="block" justify="center">
-          Loading daily reviews...
+          {t('srs.loading')}
         </Text>
       </div>
     );
@@ -84,26 +86,37 @@ export default function SpacedRepetition({ onComplete }) {
   if (cards.length === 0) {
     return (
       <div className="lf-card" style={{ animation: 'fadeIn 0.3s ease-out', textAlign: 'center' }}>
-        <Heading level={2}>Spaced Repetition (SRS)</Heading>
+        <Heading level={2}>{t('srs.title')}</Heading>
         <div style={{ fontSize: '3rem', margin: '1.5rem 0' }}>🌱</div>
         <Text type="supporting" color="secondary" as="p" display="block">
-          All caught up! You have no flashcards due for review today. Keep reading stories and mining
-          new words to populate your deck.
+          {t('srs.allCaughtUp')}
         </Text>
         <div style={{ marginTop: '2rem' }}>
-          <Button label="Continue to Shadowing" variant="primary" onClick={handleCompleteSRS} />
+          <Button
+            label={t('srs.continueShadowing')}
+            variant="primary"
+            onClick={handleCompleteSRS}
+          />
         </div>
       </div>
     );
   }
 
   const card = cards[currentIndex];
+  const ratings = [
+    [0, t('srs.ratingForgot')],
+    [1, t('srs.ratingWrong')],
+    [2, t('srs.ratingClose')],
+    [3, t('srs.ratingOkay')],
+    [4, t('srs.ratingGood')],
+    [5, t('srs.ratingEasy')],
+  ];
 
   return (
     <div className="lf-card" style={{ animation: 'fadeIn 0.3s ease-out' }}>
-      <Heading level={2}>Spaced Repetition (SRS)</Heading>
+      <Heading level={2}>{t('srs.title')}</Heading>
       <div className="srs-status">
-        Card {currentIndex + 1} of {cards.length} due today
+        {t('srs.cardOf', { current: currentIndex + 1, total: cards.length })}
       </div>
 
       <div
@@ -112,31 +125,31 @@ export default function SpacedRepetition({ onComplete }) {
       >
         <div className="flashcard-inner">
           <div className="flashcard-face flashcard-front">
-            <span className="flashcard-label">Target Word</span>
+            <span className="flashcard-label">{t('srs.targetWord')}</span>
             <div className="flashcard-word">{card.word}</div>
             {card.context_sentence && (
               <>
                 <span className="flashcard-label" style={{ marginTop: '1.5rem' }}>
-                  Context Sentence
+                  {t('srs.contextSentence')}
                 </span>
                 <div className="flashcard-context">&quot;{card.context_sentence}&quot;</div>
               </>
             )}
-            <div className="flashcard-hint">Click card to reveal translation</div>
+            <div className="flashcard-hint">{t('srs.revealHint')}</div>
           </div>
 
           <div className="flashcard-face flashcard-back">
-            <span className="flashcard-label">English Translation</span>
+            <span className="flashcard-label">{t('srs.englishTranslation')}</span>
             <div className="flashcard-word accent">{card.translation}</div>
             {card.context_translation && (
               <>
                 <span className="flashcard-label" style={{ marginTop: '1.5rem' }}>
-                  Sentence Translation
+                  {t('srs.sentenceTranslation')}
                 </span>
                 <div className="flashcard-context">&quot;{card.context_translation}&quot;</div>
               </>
             )}
-            <div className="flashcard-hint">How well did you recall this?</div>
+            <div className="flashcard-hint">{t('srs.recallHint')}</div>
           </div>
         </div>
       </div>
@@ -144,14 +157,7 @@ export default function SpacedRepetition({ onComplete }) {
       {isFlipped && (
         <div className="srs-ratings">
           <div className="ratings-grid">
-            {[
-              [0, 'Forgot'],
-              [1, 'Wrong'],
-              [2, 'Close'],
-              [3, 'Okay'],
-              [4, 'Good'],
-              [5, 'Easy'],
-            ].map(([quality, label]) => (
+            {ratings.map(([quality, label]) => (
               <button
                 key={quality}
                 type="button"
@@ -167,7 +173,7 @@ export default function SpacedRepetition({ onComplete }) {
 
       {!isFlipped && (
         <div className="btn-row" style={{ marginTop: '2.5rem' }}>
-          <Button label="Skip SRS" variant="secondary" onClick={handleCompleteSRS} />
+          <Button label={t('srs.skip')} variant="secondary" onClick={handleCompleteSRS} />
         </div>
       )}
     </div>

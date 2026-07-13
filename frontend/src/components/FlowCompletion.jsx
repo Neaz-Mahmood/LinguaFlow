@@ -1,10 +1,12 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@astryxdesign/core/Button';
 import { Heading } from '@astryxdesign/core/Heading';
 import { Text } from '@astryxdesign/core/Text';
 import { VStack } from '@astryxdesign/core/Layout';
 
 export default function FlowCompletion({ streakCount, shadowScore, onRestart }) {
+  const { t } = useTranslation();
   const displayScore = shadowScore > 0 ? shadowScore : 85;
 
   return (
@@ -17,11 +19,11 @@ export default function FlowCompletion({ streakCount, shadowScore, onRestart }) 
       </div>
 
       <Heading level={1} type="display-2" justify="center">
-        Today&apos;s Flow Complete!
+        {t('completion.title')}
       </Heading>
 
       <Text type="supporting" color="secondary" as="p" display="block" justify="center">
-        Phenomenal work! You have finished all 4 steps of your daily sequential flow path.
+        {t('completion.subtitle')}
       </Text>
 
       <div
@@ -38,9 +40,9 @@ export default function FlowCompletion({ streakCount, shadowScore, onRestart }) 
           <Text size="3xl" display="block">
             ⚡
           </Text>
-          <Heading level={3}>{streakCount || 1} Day Streak</Heading>
+          <Heading level={3}>{t('completion.dayStreak', { count: streakCount || 1 })}</Heading>
           <Text type="supporting" color="secondary" display="block">
-            Come back tomorrow to keep the flame alive!
+            {t('completion.comeBack')}
           </Text>
         </VStack>
       </div>
@@ -48,17 +50,17 @@ export default function FlowCompletion({ streakCount, shadowScore, onRestart }) 
       <div className="summary-stats" style={{ width: '100%' }}>
         <div className="stat-box">
           <div className="stat-num">{displayScore}%</div>
-          <div className="stat-label">Shadowing Accuracy</div>
+          <div className="stat-label">{t('completion.shadowingAccuracy')}</div>
         </div>
         <div className="stat-box">
           <div className="stat-num">4/4</div>
-          <div className="stat-label">Steps Completed</div>
+          <div className="stat-label">{t('completion.stepsCompleted')}</div>
         </div>
       </div>
 
       <div className="feedback-box" style={{ width: '100%', borderStyle: 'solid', textAlign: 'left' }}>
         <Heading level={4} color="secondary">
-          Milestones Met
+          {t('completion.milestones')}
         </Heading>
         <ul
           style={{
@@ -71,23 +73,23 @@ export default function FlowCompletion({ streakCount, shadowScore, onRestart }) 
         >
           <li>
             <Text type="supporting" color="secondary" display="block">
-              Krashen&apos;s CI: Read interactive texts and mined keywords in context.
+              {t('completion.milestoneCi')}
             </Text>
           </li>
           <li>
             <Text type="supporting" color="secondary" display="block">
-              Lewis&apos; Output: Practiced writing production and active generation.
+              {t('completion.milestoneOutput')}
             </Text>
           </li>
           <li>
             <Text type="supporting" color="secondary" display="block">
-              Arguelles Shadowing: Repeated native phrases and recorded pronunciation.
+              {t('completion.milestoneShadow')}
             </Text>
           </li>
         </ul>
       </div>
 
-      <Button label="Restart Daily Flow" variant="primary" onClick={onRestart} />
+      <Button label={t('completion.restart')} variant="primary" onClick={onRestart} />
     </div>
   );
 }
