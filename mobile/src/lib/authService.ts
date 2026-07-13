@@ -1,16 +1,11 @@
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import * as SecureStore from 'expo-secure-store';
-import { apiFetch, AuthUser } from './api';
+import { AuthUser, EmailAuthResult, GoogleAuthResult } from '../model';
+import { apiFetch } from './api';
 
 const TOKEN_KEY = 'linguaflow_access_token';
 
-export type GoogleAuthResult = {
-  accessToken: string;
-  user: AuthUser;
-  needsOnboarding: boolean;
-};
-
-export type EmailAuthResult = GoogleAuthResult;
+export type { AuthUser, EmailAuthResult, GoogleAuthResult };
 
 export function configureGoogleAuth() {
   GoogleSignin.configure({
@@ -83,6 +78,21 @@ export async function fetchMe(token: string) {
     '/api/auth/me',
     {},
     token,
+  );
+}
+
+export async function updatePreferences(
+  prefs: { uiLocale?: string; themeMode?: string },
+  token?: string | null,
+) {
+  const authToken = token ?? (await getStoredToken());
+  return apiFetch<{ status: string; user: AuthUser }>(
+    '/api/user/preferences',
+    {
+      method: 'PATCH',
+      body: JSON.stringify(prefs),
+    },
+    authToken,
   );
 }
 

@@ -1,16 +1,5 @@
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8000';
 
-export type AuthUser = {
-  id: number;
-  email: string | null;
-  name: string | null;
-  onboardingCompleted: boolean;
-  targetLanguage?: string;
-  nativeLanguage?: string;
-  currentLevel?: string;
-  goals?: string[];
-};
-
 function parseErrorMessage(text: string, status: number): string {
   try {
     const json = JSON.parse(text) as { message?: string | string[] };

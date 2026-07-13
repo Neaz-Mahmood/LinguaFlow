@@ -1,30 +1,41 @@
 import { z } from 'zod';
+import i18n from '../i18n';
+import type { SignInInput, SignUpInput } from '../model';
 
-export const signInSchema = z.object({
-  email: z
-    .string()
-    .trim()
-    .min(1, 'Email is required')
-    .email('Enter a valid email'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-});
+export type { SignInInput, SignUpInput };
 
-export const signUpSchema = signInSchema
-  .extend({
-    name: z
+export function getSignInSchema() {
+  return z.object({
+    email: z
       .string()
       .trim()
-      .min(2, 'Name must be at least 2 characters')
-      .max(80, 'Name must be 80 characters or fewer'),
-    confirmPassword: z.string().min(8, 'Confirm your password'),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
+      .min(1, i18n.t('auth.emailRequired'))
+      .email(i18n.t('auth.emailInvalid')),
+    password: z.string().min(8, i18n.t('auth.passwordMin')),
   });
+}
 
-export type SignInInput = z.infer<typeof signInSchema>;
-export type SignUpInput = z.infer<typeof signUpSchema>;
+export function getSignUpSchema() {
+  return getSignInSchema()
+    .extend({
+      name: z
+        .string()
+        .trim()
+        .min(2, i18n.t('auth.nameMin'))
+        .max(80, i18n.t('auth.nameMax')),
+      confirmPassword: z.string().min(8, i18n.t('auth.confirmRequired')),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: i18n.t('auth.passwordsMismatch'),
+      path: ['confirmPassword'],
+    });
+}
+
+/** @deprecated Prefer getSignInSchema() */
+export const signInSchema = getSignInSchema();
+
+/** @deprecated Prefer getSignUpSchema() */
+export const signUpSchema = getSignUpSchema();
 
 export function formatZodError(error: z.ZodError): string {
   return error.issues.map((issue) => issue.message).join(', ');

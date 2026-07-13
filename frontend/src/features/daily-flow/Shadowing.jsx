@@ -1,16 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { apiFetch } from '../lib/api';
+import { useTranslation } from 'react-i18next';
+import { Button } from '@astryxdesign/core/Button';
+import { Heading } from '@astryxdesign/core/Heading';
+import { Text } from '@astryxdesign/core/Text';
+import { TextInput } from '@astryxdesign/core/TextInput';
+import { HStack, VStack } from '@astryxdesign/core/Layout';
+import { apiFetch } from '../../lib/api';
 
 export default function Shadowing({ onComplete }) {
+  const { t } = useTranslation();
   const [sentences, setSentences] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
   const [audioUrl, setAudioUrl] = useState(null);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
   const [evaluation, setEvaluation] = useState(null);
-  const [typedTranscript, setTypedTranscript] = useState("");
+  const [typedTranscript, setTypedTranscript] = useState('');
   const [showSimInput, setShowSimInput] = useState(false);
-  
+
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const timerRef = useRef(null);
@@ -24,17 +31,16 @@ export default function Shadowing({ onComplete }) {
 
   const fetchStoriesAndSentences = async () => {
     try {
-      const res = await apiFetch("/api/stories");
+      const res = await apiFetch('/api/stories');
       if (res.ok) {
         const stories = await res.json();
         if (stories.length > 0) {
-          // Flatten sentences from the current story
           const storySentences = stories[0].sentences || [];
           setSentences(storySentences);
         }
       }
     } catch (err) {
-      console.error("Error fetching sentences:", err);
+      console.error('Error fetching sentences:', err);
     }
   };
 
@@ -42,7 +48,7 @@ export default function Shadowing({ onComplete }) {
     if (sentences.length === 0) return;
     const target = sentences[currentIndex].target;
     const utterance = new SpeechSynthesisUtterance(target);
-    utterance.lang = 'es-ES'; // Spanish voice
+    utterance.lang = 'es-ES';
     window.speechSynthesis.speak(utterance);
   };
 
@@ -52,15 +58,14 @@ export default function Shadowing({ onComplete }) {
     audioChunksRef.current = [];
     setEvaluation(null);
 
-    // Setup timer
     timerRef.current = setInterval(() => {
-      setRecordingSeconds(prev => prev + 1);
+      setRecordingSeconds((prev) => prev + 1);
     }, 1000);
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorderRef.current = new MediaRecorder(stream);
-      
+
       mediaRecorderRef.current.ondataavailable = (event) => {
         if (event.data.size > 0) {
           audioChunksRef.current.push(event.data);
@@ -71,14 +76,12 @@ export default function Shadowing({ onComplete }) {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
         const url = URL.createObjectURL(audioBlob);
         setAudioUrl(url);
-        
-        // Auto-submit audio to backend
         submitEvaluation(audioBlob, null);
       };
 
       mediaRecorderRef.current.start();
     } catch (err) {
-      console.warn("Microphone access denied or unavailable. Fallback to simulator text mode enabled.", err);
+      console.warn(t('shadowing.micDenied'), err);
       setShowSimInput(true);
     }
   };
@@ -92,41 +95,40 @@ export default function Shadowing({ onComplete }) {
 
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
       mediaRecorderRef.current.stop();
-      // Stop all tracks on the stream to release the mic
-      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+      mediaRecorderRef.current.stream.getTracks().forEach((track) => track.stop());
     }
   };
 
   const submitEvaluation = async (blob, transcriptOverride) => {
     const target = sentences[currentIndex].target;
     const formData = new FormData();
-    formData.append("target_sentence", target);
-    
+    formData.append('target_sentence', target);
+
     if (blob) {
-      formData.append("audio", blob, "recording.wav");
+      formData.append('audio', blob, 'recording.wav');
     }
     if (transcriptOverride) {
-      formData.append("transcript", transcriptOverride);
+      formData.append('transcript', transcriptOverride);
     }
 
     try {
-      const res = await apiFetch("/api/shadowing/evaluate", {
-        method: "POST",
-        body: formData
+      const res = await apiFetch('/api/shadowing/evaluate', {
+        method: 'POST',
+        body: formData,
       });
       if (res.ok) {
         const data = await res.json();
         setEvaluation(data);
       }
     } catch (err) {
-      console.error("Evaluation error:", err);
+      console.error('Evaluation error:', err);
     }
   };
 
   const handleSimulatedSubmit = () => {
     if (!typedTranscript.trim()) return;
     submitEvaluation(null, typedTranscript);
-    setTypedTranscript("");
+    setTypedTranscript('');
   };
 
   const handleNextSentence = () => {
@@ -142,12 +144,12 @@ export default function Shadowing({ onComplete }) {
   const handleCompleteShadowing = async () => {
     try {
       const avgScore = evaluation ? evaluation.score : 85;
-      await apiFetch("/api/flow-session/update", {
-        method: "POST",
-        body: JSON.stringify({ 
+      await apiFetch('/api/flow-session/update', {
+        method: 'POST',
+        body: JSON.stringify({
           shadowing_completed: true,
-          shadowing_score: avgScore
-        })
+          shadowing_score: avgScore,
+        }),
       });
     } catch (err) {
       console.error(err);
@@ -157,8 +159,10 @@ export default function Shadowing({ onComplete }) {
 
   if (sentences.length === 0) {
     return (
-      <div className="card">
-        <p style={{ textAlign: 'center' }}>Loading shadowing materials...</p>
+      <div className="lf-card">
+        <Text display="block" justify="center">
+          {t('shadowing.loading')}
+        </Text>
       </div>
     );
   }
@@ -166,63 +170,76 @@ export default function Shadowing({ onComplete }) {
   const currentSentence = sentences[currentIndex];
 
   return (
-    <div className="card" style={{ animation: 'fadeIn 0.3s ease-out' }}>
-      <h2 className="story-title" style={{ marginBottom: '0.25rem' }}>Shadowing Practice</h2>
-      <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1.5rem', textAlign: 'center' }}>
-        Listen to the native sentence, click record, and repeat it aloud (Arguelles Shadowing).
-      </p>
+    <div className="lf-card" style={{ animation: 'fadeIn 0.3s ease-out' }}>
+      <Heading level={2}>{t('shadowing.title')}</Heading>
+      <Text type="supporting" color="secondary" as="p" display="block" justify="center">
+        {t('shadowing.subtitle')}
+      </Text>
 
       <div className="shadowing-prompt">
-        <button className="play-sentence-btn" onClick={speakSentence}>
-          🔊 Listen Sentence
-        </button>
-        <div style={{ fontSize: '1.25rem', fontWeight: '500', color: 'var(--text-primary)', marginTop: '0.5rem' }}>
-          "{currentSentence.target}"
-        </div>
-        <div style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
+        <Button label={t('shadowing.listen')} variant="secondary" size="sm" onClick={speakSentence} />
+        <Text type="large" display="block" weight="medium">
+          &quot;{currentSentence.target}&quot;
+        </Text>
+        <Text type="supporting" color="secondary" display="block">
           ({currentSentence.english})
-        </div>
+        </Text>
       </div>
 
       <div className="voice-recording-area">
         <div className="record-btn-container">
-          <button 
+          <button
+            type="button"
             className={`record-btn ${isRecording ? 'recording' : ''}`}
             onClick={isRecording ? stopRecording : startRecording}
+            aria-label={isRecording ? t('shadowing.stopRecording') : t('shadowing.startRecording')}
           >
             🎤
           </button>
           <div className="record-pulse-ring"></div>
         </div>
 
-        <div className="recording-status" style={{ color: isRecording ? 'var(--danger)' : 'var(--text-secondary)' }}>
-          {isRecording ? `Recording... (${recordingSeconds}s)` : "Click mic to speak"}
+        <div
+          className="recording-status"
+          style={{
+            color: isRecording ? 'var(--color-error)' : 'var(--color-text-secondary)',
+          }}
+        >
+          {isRecording
+            ? t('shadowing.recording', { seconds: recordingSeconds })
+            : t('shadowing.clickMic')}
         </div>
       </div>
 
       {showSimInput && (
-        <div className="feedback-box" style={{ background: 'var(--bg-secondary)', borderStyle: 'solid' }}>
-          <p style={{ fontWeight: '600', marginBottom: '0.5rem', fontSize: '0.85rem' }}>
-            Simulator Text Mode (For environments without microhpone access)
-          </p>
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <input
-              type="text"
-              className="chat-input"
-              value={typedTranscript}
-              onChange={(e) => setTypedTranscript(e.target.value)}
-              placeholder={`Type target sentence to simulate speaking...`}
-              onKeyDown={(e) => e.key === 'Enter' && handleSimulatedSubmit()}
+        <div className="feedback-box">
+          <VStack gap={2}>
+            <Text type="label" weight="semibold" display="block">
+              {t('shadowing.simulatorTitle')}
+            </Text>
+            <HStack gap={2}>
+              <div style={{ flex: 1 }}>
+                <TextInput
+                  label={t('shadowing.transcript')}
+                  isLabelHidden
+                  value={typedTranscript}
+                  onChange={setTypedTranscript}
+                  placeholder={t('shadowing.transcriptPlaceholder')}
+                />
+              </div>
+              <Button
+                label={t('shadowing.evaluate')}
+                variant="primary"
+                onClick={handleSimulatedSubmit}
+              />
+            </HStack>
+            <Button
+              label={t('shadowing.autoFill')}
+              variant="ghost"
+              size="sm"
+              onClick={() => setTypedTranscript(currentSentence.target)}
             />
-            <button className="btn btn-primary" onClick={handleSimulatedSubmit}>Evaluate</button>
-          </div>
-          <button 
-            className="play-sentence-btn"
-            style={{ marginTop: '0.5rem', padding: '0.2rem 0.5rem', fontSize: '0.75rem', background: 'transparent', border: '1px dashed var(--border-color)', color: 'var(--text-muted)' }}
-            onClick={() => setTypedTranscript(currentSentence.target)}
-          >
-            Auto-fill target
-          </button>
+          </VStack>
         </div>
       )}
 
@@ -235,10 +252,14 @@ export default function Shadowing({ onComplete }) {
       {evaluation && (
         <div style={{ animation: 'fadeIn 0.3s ease-out', marginTop: '1rem' }}>
           <div className="shadowing-score-display">
-            <div className={`score-circle ${evaluation.score >= 80 ? 'excellent' : evaluation.score < 50 ? 'needs-work' : ''}`}>
+            <div
+              className={`score-circle ${evaluation.score >= 80 ? 'excellent' : evaluation.score < 50 ? 'needs-work' : ''}`}
+            >
               {evaluation.score}%
             </div>
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Accuracy Evaluation Score</span>
+            <Text type="supporting" color="secondary">
+              {t('shadowing.accuracyScore')}
+            </Text>
           </div>
 
           <div className="feedback-sentence">
@@ -252,19 +273,20 @@ export default function Shadowing({ onComplete }) {
       )}
 
       <div className="btn-row" style={{ marginTop: '2.5rem' }}>
-        <button 
-          className="btn btn-secondary" 
+        <Button
+          label={showSimInput ? t('shadowing.hideSimulator') : t('shadowing.simulatorMode')}
+          variant="secondary"
           onClick={() => setShowSimInput(!showSimInput)}
-        >
-          {showSimInput ? "Hide Simulator" : "Simulator Mode"}
-        </button>
-
-        <button 
-          className="btn btn-primary" 
+        />
+        <Button
+          label={
+            currentIndex < sentences.length - 1
+              ? t('shadowing.nextSentence')
+              : t('shadowing.complete')
+          }
+          variant="primary"
           onClick={handleNextSentence}
-        >
-          {currentIndex < sentences.length - 1 ? "Next Sentence" : "Complete Shadowing"}
-        </button>
+        />
       </div>
     </div>
   );

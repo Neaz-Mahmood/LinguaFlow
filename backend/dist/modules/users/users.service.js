@@ -32,6 +32,16 @@ let UsersService = class UsersService {
         }
         return user;
     }
+    async updatePreferences(userId, data) {
+        const user = await this.getUserById(userId);
+        if (data.uiLocale !== undefined) {
+            user.uiLocale = data.uiLocale;
+        }
+        if (data.themeMode !== undefined) {
+            user.themeMode = data.themeMode;
+        }
+        return this.usersRepository.save(user);
+    }
     async onboardUser(userId, data) {
         const user = await this.getUserById(userId);
         user.targetLanguage = data.target_language || 'Spanish';

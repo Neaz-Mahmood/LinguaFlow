@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Flashcard = void 0;
+const openapi = require("@nestjs/swagger");
 const typeorm_1 = require("typeorm");
 const user_entity_1 = require("./user.entity");
 let Flashcard = class Flashcard {
@@ -24,6 +25,9 @@ let Flashcard = class Flashcard {
     repetitions;
     nextReviewDate;
     user;
+    static _OPENAPI_METADATA_FACTORY() {
+        return { id: { required: true, type: () => Number }, userId: { required: true, type: () => Number }, word: { required: true, type: () => String }, translation: { required: true, type: () => String }, contextSentence: { required: true, type: () => String }, contextTranslation: { required: true, type: () => String }, easiness: { required: true, type: () => Number }, interval: { required: true, type: () => Number }, repetitions: { required: true, type: () => Number }, nextReviewDate: { required: true, type: () => Date }, user: { required: true, type: () => require("./user.entity").User } };
+    }
 };
 exports.Flashcard = Flashcard;
 __decorate([

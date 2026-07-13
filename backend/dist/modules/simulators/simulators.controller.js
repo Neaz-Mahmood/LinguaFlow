@@ -13,39 +13,46 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SimulatorsController = void 0;
+const openapi = require("@nestjs/swagger");
 const common_1 = require("@nestjs/common");
+const swagger_1 = require("@nestjs/swagger");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
+const simulators_dto_1 = require("./dto/simulators.dto");
 const simulators_service_1 = require("./simulators.service");
 let SimulatorsController = class SimulatorsController {
     simulatorsService;
     constructor(simulatorsService) {
         this.simulatorsService = simulatorsService;
     }
-    async evaluateShadowing(targetSentence, transcript) {
-        return this.simulatorsService.evaluateShadowing(targetSentence, transcript);
+    async evaluateShadowing(body) {
+        return this.simulatorsService.evaluateShadowing(body.target_sentence, body.transcript);
     }
-    async quickOutputReply(message, storyTitle) {
-        return this.simulatorsService.evaluateQuickOutput(message, storyTitle);
+    async quickOutputReply(body) {
+        return this.simulatorsService.evaluateQuickOutput(body.message, body.story_title);
     }
 };
 exports.SimulatorsController = SimulatorsController;
 __decorate([
     (0, common_1.Post)('shadowing/evaluate'),
-    __param(0, (0, common_1.Body)('target_sentence')),
-    __param(1, (0, common_1.Body)('transcript')),
+    (0, swagger_1.ApiOperation)({ summary: 'Evaluate a shadowing attempt' }),
+    openapi.ApiResponse({ status: 201, type: Object }),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [simulators_dto_1.EvaluateShadowingDto]),
     __metadata("design:returntype", Promise)
 ], SimulatorsController.prototype, "evaluateShadowing", null);
 __decorate([
     (0, common_1.Post)('quick-output/reply'),
-    __param(0, (0, common_1.Body)('message')),
-    __param(1, (0, common_1.Body)('story_title')),
+    (0, swagger_1.ApiOperation)({ summary: 'Evaluate a quick-output reply' }),
+    openapi.ApiResponse({ status: 201, type: Object }),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [simulators_dto_1.QuickOutputReplyDto]),
     __metadata("design:returntype", Promise)
 ], SimulatorsController.prototype, "quickOutputReply", null);
 exports.SimulatorsController = SimulatorsController = __decorate([
+    (0, swagger_1.ApiTags)('simulators'),
+    (0, swagger_1.ApiBearerAuth)('access-token'),
     (0, common_1.Controller)('api'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __metadata("design:paramtypes", [simulators_service_1.SimulatorsService])

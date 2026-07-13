@@ -1,7 +1,8 @@
+import { EvaluateShadowingDto, QuickOutputReplyDto } from './dto/simulators.dto';
 import { SimulatorsService } from './simulators.service';
 export declare class SimulatorsController {
     private readonly simulatorsService;
     constructor(simulatorsService: SimulatorsService);
-    evaluateShadowing(targetSentence: string, transcript?: string): Promise<any>;
-    quickOutputReply(message: string, storyTitle: string): Promise<any>;
+    evaluateShadowing(body: EvaluateShadowingDto): Promise<any>;
+    quickOutputReply(body: QuickOutputReplyDto): Promise<any>;
 }

@@ -46,6 +46,12 @@ export class User {
   @Column({ default: 0 })
   streakCount: number;
 
+  @Column({ type: 'varchar', default: 'en' })
+  uiLocale: string; // 'en' | 'es' | 'fr' | 'de'
+
+  @Column({ type: 'varchar', default: 'system' })
+  themeMode: string; // 'light' | 'dark' | 'system'
+
   @Column({ type: 'date', nullable: true })
   lastActiveDate: string;
 

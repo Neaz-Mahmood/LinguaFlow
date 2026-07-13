@@ -15,6 +15,8 @@ export declare class User {
     goals: string[];
     contentRatios: Record<string, number>;
     streakCount: number;
+    uiLocale: string;
+    themeMode: string;
     lastActiveDate: string;
     createdAt: Date;
     flashcards: Flashcard[];

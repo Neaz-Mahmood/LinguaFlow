@@ -13,10 +13,14 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersController = void 0;
+const openapi = require("@nestjs/swagger");
 const common_1 = require("@nestjs/common");
+const swagger_1 = require("@nestjs/swagger");
 const user_entity_1 = require("../../entities/user.entity");
 const current_user_decorator_1 = require("../auth/decorators/current-user.decorator");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
+const onboard_user_dto_1 = require("./dto/onboard-user.dto");
+const update_preferences_dto_1 = require("./dto/update-preferences.dto");
 const users_service_1 = require("./users.service");
 let UsersController = class UsersController {
     usersService;
@@ -26,6 +30,10 @@ let UsersController = class UsersController {
     async get(user) {
         return this.usersService.getUserById(user.id);
     }
+    async updatePreferences(user, data) {
+        const updated = await this.usersService.updatePreferences(user.id, data);
+        return { status: 'success', user: updated };
+    }
     async onboard(user, data) {
         const updated = await this.usersService.onboardUser(user.id, data);
         return { status: 'success', user: updated };
@@ -34,20 +42,37 @@ let UsersController = class UsersController {
 exports.UsersController = UsersController;
 __decorate([
     (0, common_1.Get)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Get the current user profile' }),
+    openapi.ApiResponse({ status: 200, type: require("../../entities/user.entity").User }),
     __param(0, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [user_entity_1.User]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "get", null);
 __decorate([
-    (0, common_1.Post)('onboard'),
+    (0, common_1.Patch)('preferences'),
+    (0, swagger_1.ApiOperation)({ summary: 'Update UI locale and theme preferences' }),
+    openapi.ApiResponse({ status: 200 }),
     __param(0, (0, current_user_decorator_1.CurrentUser)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [user_entity_1.User, Object]),
+    __metadata("design:paramtypes", [user_entity_1.User,
+        update_preferences_dto_1.UpdatePreferencesDto]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "updatePreferences", null);
+__decorate([
+    (0, common_1.Post)('onboard'),
+    (0, swagger_1.ApiOperation)({ summary: 'Complete onboarding and set learning profile' }),
+    openapi.ApiResponse({ status: 201 }),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [user_entity_1.User, onboard_user_dto_1.OnboardUserDto]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "onboard", null);
 exports.UsersController = UsersController = __decorate([
+    (0, swagger_1.ApiTags)('user'),
+    (0, swagger_1.ApiBearerAuth)('access-token'),
     (0, common_1.Controller)('api/user'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __metadata("design:paramtypes", [users_service_1.UsersService])

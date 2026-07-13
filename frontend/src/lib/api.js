@@ -105,3 +105,17 @@ export async function fetchMe() {
   }
   return res.json();
 }
+
+export async function updatePreferences(prefs) {
+  const res = await apiFetch('/api/user/preferences', {
+    method: 'PATCH',
+    body: JSON.stringify(prefs),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text || 'Failed to update preferences');
+  }
+
+  return res.json();
+}

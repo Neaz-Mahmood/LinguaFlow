@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../../entities/user.entity';
 import { FlowSession } from '../../entities/flow-session.entity';
+import { UpdatePreferencesDto } from './dto/update-preferences.dto';
 
 @Injectable()
 export class UsersService {
@@ -19,6 +20,22 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
     return user;
+  }
+
+  async updatePreferences(
+    userId: number,
+    data: UpdatePreferencesDto,
+  ): Promise<User> {
+    const user = await this.getUserById(userId);
+
+    if (data.uiLocale !== undefined) {
+      user.uiLocale = data.uiLocale;
+    }
+    if (data.themeMode !== undefined) {
+      user.themeMode = data.themeMode;
+    }
+
+    return this.usersRepository.save(user);
   }
 
   async onboardUser(

@@ -1,14 +1,20 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { apiFetch } from '../lib/api';
+import { useTranslation } from 'react-i18next';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Button } from '@astryxdesign/core/Button';
+import { Heading } from '@astryxdesign/core/Heading';
+import { Text } from '@astryxdesign/core/Text';
+import { apiFetch } from '../../lib/api';
 
 export default function ComprehensibleInput({ onComplete }) {
+  const { t } = useTranslation();
   const [stories, setStories] = useState([]);
   const [currentStoryIdx, setCurrentStoryIdx] = useState(0);
   const [selectedWord, setSelectedWord] = useState(null);
   const [tooltipPos, setTooltipPos] = useState({ top: 0, left: 0 });
   const [showFullTranslation, setShowFullTranslation] = useState(false);
   const [minedWords, setMinedWords] = useState(new Set());
-  const [notification, setNotification] = useState("");
+  const [notification, setNotification] = useState('');
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -17,18 +23,21 @@ export default function ComprehensibleInput({ onComplete }) {
 
   const fetchStories = async () => {
     try {
-      const res = await apiFetch("/api/stories");
+      const res = await apiFetch('/api/stories');
       if (res.ok) {
         const data = await res.json();
         setStories(data);
       }
     } catch (err) {
-      console.error("Error fetching stories:", err);
+      console.error('Error fetching stories:', err);
     }
   };
 
   const cleanWord = (word) => {
-    return word.toLowerCase().replace(/[¡!¿?,\.\'\";\(\)]/g, "").trim();
+    return word
+      .toLowerCase()
+      .replace(/[¡!¿?,\.\'\";\(\)]/g, '')
+      .trim();
   };
 
   const handleWordClick = (e, rawWord) => {
@@ -36,27 +45,25 @@ export default function ComprehensibleInput({ onComplete }) {
     const word = cleanWord(rawWord);
     if (!word || !story) return;
 
-    // Find translation
-    const translation = story.words[word] || story.words[word.toLowerCase()] || "Translation not found";
-    
-    // Find context sentence
-    let contextSentence = "";
-    let contextTranslation = "";
+    const translation =
+      story.words[word] || story.words[word.toLowerCase()] || t('input.translationNotFound');
+
+    let contextSentence = '';
+    let contextTranslation = '';
     if (story.sentences) {
-      const match = story.sentences.find(s => cleanWord(s.target).includes(word));
+      const match = story.sentences.find((s) => cleanWord(s.target).includes(word));
       if (match) {
         contextSentence = match.target;
         contextTranslation = match.english;
       }
     }
 
-    // Get click coordinates
     const rect = e.target.getBoundingClientRect();
     const containerRect = containerRef.current.getBoundingClientRect();
-    
+
     setTooltipPos({
       top: rect.bottom - containerRect.top + 8,
-      left: Math.max(10, Math.min(rect.left - containerRect.left, containerRect.width - 260))
+      left: Math.max(10, Math.min(rect.left - containerRect.left, containerRect.width - 260)),
     });
 
     setSelectedWord({
@@ -64,7 +71,7 @@ export default function ComprehensibleInput({ onComplete }) {
       clean: word,
       translation,
       contextSentence,
-      contextTranslation
+      contextTranslation,
     });
   };
 
@@ -72,33 +79,32 @@ export default function ComprehensibleInput({ onComplete }) {
     if (!selectedWord) return;
 
     try {
-      const res = await apiFetch("/api/flashcards/mine", {
-        method: "POST",
+      const res = await apiFetch('/api/flashcards/mine', {
+        method: 'POST',
         body: JSON.stringify({
           word: selectedWord.clean,
           translation: selectedWord.translation,
           context_sentence: selectedWord.contextSentence,
-          context_translation: selectedWord.contextTranslation
-        })
+          context_translation: selectedWord.contextTranslation,
+        }),
       });
 
       if (res.ok) {
-        setMinedWords(prev => {
+        setMinedWords((prev) => {
           const next = new Set(prev);
           next.add(selectedWord.clean);
           return next;
         });
-        setNotification(`Mined "${selectedWord.clean}" into Flashcards!`);
-        setTimeout(() => setNotification(""), 3000);
+        setNotification(t('input.wordMined', { word: selectedWord.clean }));
+        setTimeout(() => setNotification(''), 3000);
       }
     } catch (err) {
-      console.error("Error mining word:", err);
+      console.error('Error mining word:', err);
     } finally {
       setSelectedWord(null);
     }
   };
 
-  // Close tooltip on clicking elsewhere
   useEffect(() => {
     const closeTooltip = () => setSelectedWord(null);
     window.addEventListener('click', closeTooltip);
@@ -107,9 +113,9 @@ export default function ComprehensibleInput({ onComplete }) {
 
   const handleNextStep = async () => {
     try {
-      await apiFetch("/api/flow-session/update", {
-        method: "POST",
-        body: JSON.stringify({ comprehensible_input_completed: true })
+      await apiFetch('/api/flow-session/update', {
+        method: 'POST',
+        body: JSON.stringify({ comprehensible_input_completed: true }),
       });
     } catch (err) {
       console.error(err);
@@ -119,15 +125,16 @@ export default function ComprehensibleInput({ onComplete }) {
 
   if (stories.length === 0) {
     return (
-      <div className="card">
-        <p style={{ textAlign: 'center' }}>Loading story list...</p>
+      <div className="lf-card">
+        <Text display="block" justify="center">
+          {t('input.loading')}
+        </Text>
       </div>
     );
   }
 
   const story = stories[currentStoryIdx];
 
-  // Render text with clickable words
   const renderStoryText = () => {
     const paragraphs = story.content_target.split('\n');
     return paragraphs.map((para, pIdx) => {
@@ -140,8 +147,7 @@ export default function ComprehensibleInput({ onComplete }) {
             return (
               <span key={wIdx}>
                 <span
-                  className="interactive-word"
-                  style={isMined ? { borderBottomColor: 'var(--success)', color: 'var(--success)' } : {}}
+                  className={`interactive-word${isMined ? ' is-mined' : ''}`}
                   onClick={(e) => handleWordClick(e, w)}
                 >
                   {w}
@@ -155,15 +161,13 @@ export default function ComprehensibleInput({ onComplete }) {
   };
 
   return (
-    <div className="card" ref={containerRef} style={{ animation: 'fadeIn 0.3s ease-out' }}>
+    <div className="lf-card" ref={containerRef} style={{ animation: 'fadeIn 0.3s ease-out' }}>
       <div className="story-header">
-        <span className="story-level-badge">{story.level} Comprehensible Input</span>
-        <h2 className="story-title" style={{ marginTop: '0.5rem' }}>{story.title}</h2>
+        <Badge label={t('input.badge', { level: story.level })} variant="cyan" />
+        <Heading level={2}>{story.title}</Heading>
       </div>
 
-      <div className="story-body">
-        {renderStoryText()}
-      </div>
+      <div className="story-body">{renderStoryText()}</div>
 
       {selectedWord && (
         <div
@@ -173,25 +177,24 @@ export default function ComprehensibleInput({ onComplete }) {
         >
           <div className="tooltip-target">{selectedWord.raw}</div>
           <div className="tooltip-translation">{selectedWord.translation}</div>
-          <button className="tooltip-mine-btn" onClick={handleMineWord}>
-            {minedWords.has(selectedWord.clean) ? "✓ Added to SRS" : "Add to Flashcards (Mine)"}
-          </button>
+          <Button
+            label={
+              minedWords.has(selectedWord.clean) ? t('input.alreadyMined') : t('input.mineWord')
+            }
+            variant="primary"
+            size="sm"
+            onClick={handleMineWord}
+          />
         </div>
       )}
 
-      {notification && (
-        <div className="mined-notification">
-          🌊 {notification}
-        </div>
-      )}
+      {notification && <div className="mined-notification">{notification}</div>}
 
-      <button
-        className="play-sentence-btn"
+      <Button
+        label={showFullTranslation ? t('input.hideTranslation') : t('input.showTranslation')}
+        variant="secondary"
         onClick={() => setShowFullTranslation(!showFullTranslation)}
-        style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
-      >
-        {showFullTranslation ? "Hide English Translation" : "Show English Translation"}
-      </button>
+      />
 
       {showFullTranslation && (
         <div className="translation-box" style={{ animation: 'fadeIn 0.2s ease-out' }}>
@@ -200,17 +203,13 @@ export default function ComprehensibleInput({ onComplete }) {
       )}
 
       <div className="btn-row" style={{ marginTop: '2.5rem' }}>
-        <button
-          className="btn btn-secondary"
+        <Button
+          label={t('input.nextStory')}
+          variant="secondary"
           onClick={() => setCurrentStoryIdx((currentStoryIdx + 1) % stories.length)}
-          disabled={stories.length <= 1}
-        >
-          Next Story
-        </button>
-
-        <button className="btn btn-primary" onClick={handleNextStep}>
-          Mark Read & Continue
-        </button>
+          isDisabled={stories.length <= 1}
+        />
+        <Button label={t('input.completeInput')} variant="primary" onClick={handleNextStep} />
       </div>
     </div>
   );
