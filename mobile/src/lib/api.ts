@@ -11,6 +11,17 @@ export type AuthUser = {
   goals?: string[];
 };
 
+function parseErrorMessage(text: string, status: number): string {
+  try {
+    const json = JSON.parse(text) as { message?: string | string[] };
+    if (typeof json.message === 'string') return json.message;
+    if (Array.isArray(json.message)) return json.message.join(', ');
+  } catch {
+    // fall through
+  }
+  return text || `Request failed: ${status}`;
+}
+
 export async function apiFetch<T = unknown>(
   path: string,
   options: RequestInit = {},
@@ -32,7 +43,7 @@ export async function apiFetch<T = unknown>(
 
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(text || `Request failed: ${res.status}`);
+    throw new Error(parseErrorMessage(text, res.status));
   }
 
   return res.json() as Promise<T>;

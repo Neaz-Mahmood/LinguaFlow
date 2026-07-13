@@ -56,6 +56,48 @@ export async function signInWithGoogleIdToken(idToken) {
   return data;
 }
 
+async function parseAuthError(res, fallback) {
+  const text = await res.text();
+  try {
+    const json = JSON.parse(text);
+    if (typeof json.message === 'string') return json.message;
+    if (Array.isArray(json.message)) return json.message.join(', ');
+  } catch {
+    // fall through
+  }
+  return text || fallback;
+}
+
+export async function signUpWithEmail(email, password) {
+  const res = await apiFetch('/api/auth/signup', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+  });
+
+  if (!res.ok) {
+    throw new Error(await parseAuthError(res, 'Sign-up failed'));
+  }
+
+  const data = await res.json();
+  setToken(data.accessToken);
+  return data;
+}
+
+export async function signInWithEmail(email, password) {
+  const res = await apiFetch('/api/auth/signin', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+  });
+
+  if (!res.ok) {
+    throw new Error(await parseAuthError(res, 'Sign-in failed'));
+  }
+
+  const data = await res.json();
+  setToken(data.accessToken);
+  return data;
+}
+
 export async function fetchMe() {
   const res = await apiFetch('/api/auth/me');
   if (!res.ok) {

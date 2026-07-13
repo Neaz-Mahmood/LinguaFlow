@@ -14,16 +14,16 @@ LinguaFlow is a language-learning MVP built on **polyglot methodologies** (Steph
 
 ```mermaid
 graph TD
-  subgraph Frontend (Port 5173)
+  subgraph frontend ["Frontend (Port 5173)"]
     ReactApp[React + Vite client]
   end
 
-  subgraph Backend (Port 8000)
+  subgraph backend ["Backend (Port 8000)"]
     NestApp[NestJS Backend API]
     TypeORM[TypeORM service]
   end
 
-  subgraph Database (Port 5432)
+  subgraph database ["Database (Port 5432)"]
     PG[(PostgreSQL Docker)]
   end
 

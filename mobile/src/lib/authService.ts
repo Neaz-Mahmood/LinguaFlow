@@ -10,6 +10,8 @@ export type GoogleAuthResult = {
   needsOnboarding: boolean;
 };
 
+export type EmailAuthResult = GoogleAuthResult;
+
 export function configureGoogleAuth() {
   GoogleSignin.configure({
     webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
@@ -47,6 +49,30 @@ export async function signInWithGoogleNative(): Promise<GoogleAuthResult> {
     body: JSON.stringify({ idToken }),
   });
 
+  await storeToken(data.accessToken);
+  return data;
+}
+
+export async function signUpWithEmail(
+  email: string,
+  password: string,
+): Promise<EmailAuthResult> {
+  const data = await apiFetch<EmailAuthResult>('/api/auth/signup', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+  });
+  await storeToken(data.accessToken);
+  return data;
+}
+
+export async function signInWithEmail(
+  email: string,
+  password: string,
+): Promise<EmailAuthResult> {
+  const data = await apiFetch<EmailAuthResult>('/api/auth/signin', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+  });
   await storeToken(data.accessToken);
   return data;
 }

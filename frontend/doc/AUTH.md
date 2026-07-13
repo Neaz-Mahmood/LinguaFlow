@@ -1,9 +1,9 @@
 # Frontend docs
 
-## Google Sign-In (web)
+## Authentication (web)
 
-The Vite app uses Google Identity Services via `@react-oauth/google`. The browser
-returns an ID token (`credential`), which is exchanged with NestJS for a JWT.
+The Vite app supports email/password and Google Identity Services via
+`@react-oauth/google`. Both paths exchange credentials with NestJS for a JWT.
 
 ### Environment (`.env`)
 
@@ -16,8 +16,8 @@ Copy from `.env.example` if needed. Restart Vite after changing env vars.
 
 ### Flow
 
-1. `SignIn` → Google button → ID token
-2. `POST /api/auth/google` → store JWT in `localStorage` (`linguaflow_access_token`)
+1. `SignIn` → email/password form **or** Google button
+2. `POST /api/auth/signup`, `/api/auth/signin`, or `/api/auth/google` → store JWT in `localStorage` (`linguaflow_access_token`)
 3. `apiFetch` attaches `Authorization: Bearer …` on all API calls
 4. Route gate in `App.jsx`:
    - no token → Sign-In
@@ -26,7 +26,7 @@ Copy from `.env.example` if needed. Restart Vite after changing env vars.
 
 ### Key files
 
-- `src/lib/api.js` — token helpers + `apiFetch`
-- `src/components/SignIn.jsx` — Google login UI
+- `src/lib/api.js` — token helpers + `apiFetch` + auth helpers
+- `src/components/SignIn.jsx` — email/password + Google login UI
 - `src/App.jsx` — auth / onboarding / flow routing
 - `src/main.jsx` — `GoogleOAuthProvider`

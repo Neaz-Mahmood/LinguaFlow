@@ -6,8 +6,10 @@ import {
   configureGoogleAuth,
   fetchMe,
   getStoredToken,
+  signInWithEmail,
   signInWithGoogleNative,
   signOut,
+  signUpWithEmail,
 } from './src/lib/authService';
 import SignInScreen from './src/screens/SignInScreen';
 import OnboardingScreen from './src/screens/OnboardingScreen';
@@ -26,6 +28,13 @@ export default function App() {
     bootstrap();
   }, []);
 
+  const routeForAuth = (authUser: AuthUser, needsOnboarding: boolean) => {
+    setUser(authUser);
+    setView(
+      needsOnboarding || !authUser.onboardingCompleted ? 'onboarding' : 'flow',
+    );
+  };
+
   const bootstrap = async () => {
     try {
       const token = await getStoredToken();
@@ -35,23 +44,52 @@ export default function App() {
       }
 
       const me = await fetchMe(token);
-      setUser(me.user);
-      setView(me.needsOnboarding || !me.user.onboardingCompleted ? 'onboarding' : 'flow');
+      routeForAuth(me.user, me.needsOnboarding);
     } catch {
       await signOut();
       setView('auth');
     }
   };
 
-  const handleSignIn = async () => {
+  const handleGoogleSignIn = async () => {
     setSigningIn(true);
     setError(null);
     try {
       const result = await signInWithGoogleNative();
-      setUser(result.user);
-      setView(result.needsOnboarding ? 'onboarding' : 'flow');
+      routeForAuth(result.user, result.needsOnboarding);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Google sign-in failed');
+    } finally {
+      setSigningIn(false);
+    }
+  };
+
+  const handleEmailAuth = async (
+    mode: 'signin' | 'signup',
+    email: string,
+    password: string,
+  ) => {
+    if (!email || password.length < 8) {
+      setError('Enter a valid email and a password of at least 8 characters.');
+      return;
+    }
+
+    setSigningIn(true);
+    setError(null);
+    try {
+      const result =
+        mode === 'signup'
+          ? await signUpWithEmail(email, password)
+          : await signInWithEmail(email, password);
+      routeForAuth(result.user, result.needsOnboarding);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : mode === 'signup'
+            ? 'Sign-up failed'
+            : 'Sign-in failed',
+      );
     } finally {
       setSigningIn(false);
     }
@@ -75,7 +113,12 @@ export default function App() {
   if (view === 'auth') {
     return (
       <>
-        <SignInScreen loading={signingIn} error={error} onSignIn={handleSignIn} />
+        <SignInScreen
+          loading={signingIn}
+          error={error}
+          onGoogleSignIn={handleGoogleSignIn}
+          onEmailAuth={handleEmailAuth}
+        />
         <StatusBar style="light" />
       </>
     );

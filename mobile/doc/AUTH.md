@@ -1,7 +1,14 @@
-# Mobile Google Sign-In Setup
+# Mobile Auth Setup
 
-Native Google auth uses the ID-token exchange pattern: the OS returns a signed
-Google ID token, which is posted to NestJS `POST /api/auth/google`.
+Native auth supports email/password and Google. Both exchange credentials with
+NestJS and store the LinguaFlow JWT in SecureStore.
+
+## Endpoints used
+
+- `POST /api/auth/signup` — `{ email, password }`
+- `POST /api/auth/signin` — `{ email, password }`
+- `POST /api/auth/google` — `{ idToken }`
+- `GET /api/auth/me` — Bearer JWT
 
 ## Google Cloud Console
 
@@ -33,7 +40,7 @@ npx expo run:android
 ```
 
 Google Sign-In requires a **dev client or production build**; it does not work
-in Expo Go.
+in Expo Go. Email/password works in Expo Go when the API URL is reachable.
 
 ## Android SHA-1
 
@@ -47,13 +54,13 @@ Add that SHA-1 to the Android OAuth client in Google Cloud Console.
 ## Flow
 
 1. `configureGoogleAuth()` on app start
-2. `GoogleSignin.signIn()` → `idToken`
-3. `POST /api/auth/google` with `{ idToken }`
-4. Store Nest JWT in SecureStore
-5. Route: `needsOnboarding` → Onboarding placeholder; else Daily Flow placeholder
+2. Email form → `signup` / `signin`, **or** `GoogleSignin.signIn()` → `idToken` → `/api/auth/google`
+3. Store Nest JWT in SecureStore
+4. Route: `needsOnboarding` → Onboarding; else Daily Flow
 
 ## Key files
 
-- `src/lib/authService.ts` — Google configure / sign-in / SecureStore
+- `src/lib/authService.ts` — Google + email auth / SecureStore
 - `src/lib/api.ts` — Nest API helper
+- `src/screens/SignInScreen.tsx` — email/password + Google UI
 - `App.tsx` — auth → onboarding → flow shell
