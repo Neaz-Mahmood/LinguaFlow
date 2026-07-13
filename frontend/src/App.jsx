@@ -1,100 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
 import { Button } from '@astryxdesign/core/Button';
 import { Text } from '@astryxdesign/core/Text';
 import { HStack } from '@astryxdesign/core/Layout';
-import Onboarding from './components/Onboarding';
-import DailyFlowContainer from './components/DailyFlowContainer';
-import SignIn from './components/SignIn';
-import PreferencesControls from './preferences/PreferencesControls';
-import { usePreferences } from './preferences/PreferencesProvider';
-import { apiFetch, clearToken, fetchMe, getToken } from './lib/api';
-
-const VIEW_STATES = {
-  AUTH: 'auth',
-  ONBOARDING: 'onboarding',
-  FLOW: 'flow',
-};
+import Onboarding from './features/onboarding/Onboarding';
+import DailyFlowContainer from './features/daily-flow/DailyFlowContainer';
+import SignIn from './features/auth/SignIn';
+import PreferencesControls from './features/preferences/PreferencesControls';
+import { useAuthSession, VIEW_STATES } from './hooks/useAuthSession';
 
 export default function App() {
   const { t } = useTranslation();
-  const { applyFromUser } = usePreferences();
-  const [viewState, setViewState] = useState(VIEW_STATES.AUTH);
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    bootstrap();
-  }, []);
-
-  const routeForUser = (authUser, needsOnboarding) => {
-    setUser(authUser);
-    applyFromUser(authUser);
-    if (needsOnboarding || !authUser?.onboardingCompleted) {
-      setViewState(VIEW_STATES.ONBOARDING);
-    } else {
-      setViewState(VIEW_STATES.FLOW);
-    }
-  };
-
-  const bootstrap = async () => {
-    try {
-      if (!getToken()) {
-        setViewState(VIEW_STATES.AUTH);
-        return;
-      }
-
-      const me = await fetchMe();
-      routeForUser(me.user, me.needsOnboarding);
-    } catch {
-      clearToken();
-      setViewState(VIEW_STATES.AUTH);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleAuthSuccess = (data) => {
-    routeForUser(data.user, data.needsOnboarding);
-  };
-
-  const handleOnboardingComplete = (updatedUser) => {
-    setUser(updatedUser);
-    applyFromUser(updatedUser);
-    setViewState(VIEW_STATES.FLOW);
-  };
-
-  const handleSignOut = () => {
-    clearToken();
-    setUser(null);
-    setViewState(VIEW_STATES.AUTH);
-    toast.success(t('auth.signedOut'));
-  };
-
-  const resetSession = async () => {
-    if (confirm(t('app.resetConfirm'))) {
-      setLoading(true);
-      try {
-        await apiFetch('/api/user/onboard', {
-          method: 'POST',
-          body: JSON.stringify({
-            target_language: user?.targetLanguage || 'Spanish',
-            native_language: user?.nativeLanguage || 'English',
-            current_level: user?.currentLevel || 'A1',
-            daily_commitment: user?.dailyCommitment || 20,
-            strategy_preference: user?.strategyPreference || 'input-heavy',
-            goals: user?.goals || [],
-          }),
-        });
-        window.location.reload();
-      } catch (err) {
-        console.error(err);
-        setViewState(VIEW_STATES.ONBOARDING);
-        setLoading(false);
-      }
-    }
-  };
+  const {
+    viewState,
+    loading,
+    bootstrap,
+    handleAuthSuccess,
+    handleOnboardingComplete,
+    handleSignOut,
+    resetSession,
+    openOnboarding,
+  } = useAuthSession();
 
   if (loading) {
     return (
@@ -136,7 +62,7 @@ export default function App() {
               label={t('common.setProfile')}
               variant="primary"
               size="sm"
-              onClick={() => setViewState(VIEW_STATES.ONBOARDING)}
+              onClick={openOnboarding}
             />
             <Button
               label={t('common.signOut')}
@@ -154,7 +80,7 @@ export default function App() {
         )}
 
         {viewState === VIEW_STATES.FLOW && (
-          <DailyFlowContainer onResetProfile={() => setViewState(VIEW_STATES.ONBOARDING)} />
+          <DailyFlowContainer onResetProfile={openOnboarding} />
         )}
       </main>
     </div>

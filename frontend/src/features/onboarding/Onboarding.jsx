@@ -8,7 +8,7 @@ import { HStack, VStack } from '@astryxdesign/core/Layout';
 import { SelectableCard } from '@astryxdesign/core/SelectableCard';
 import { Text } from '@astryxdesign/core/Text';
 import { ToggleButton, ToggleButtonGroup } from '@astryxdesign/core/ToggleButton';
-import { apiFetch } from '../lib/api';
+import { apiFetch } from '../../lib/api';
 
 const LANGUAGE_IDS = ['Spanish', 'French', 'German', 'Japanese'];
 const LANGUAGE_FLAGS = {

@@ -2,23 +2,22 @@ import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Toast from 'react-native-toast-message';
-import { Button, Screen, Text, TextField } from '../components/ui';
+import { Button, Screen, Text, TextField } from '../../components/ui';
 import PreferencesControls from '../preferences/PreferencesControls';
-import { spacing, useAppTheme } from '../theme';
+import { spacing } from '../../theme';
+import { useAppTheme } from '../../hooks/useAppTheme';
 import {
   fieldErrorsFromZod,
   getSignInSchema,
   getSignUpSchema,
-  SignUpInput,
-} from '../lib/authSchemas';
-
-type Mode = 'signin' | 'signup';
+} from '../../lib/authSchemas';
+import { AuthMode, SignUpInput } from '../../model';
 
 type Props = {
   loading: boolean;
   onGoogleSignIn: () => void;
   onEmailAuth: (
-    mode: Mode,
+    mode: AuthMode,
     payload: { email: string; password: string; name?: string },
   ) => void;
 };
@@ -30,7 +29,7 @@ export default function SignInScreen({
 }: Props) {
   const { t } = useTranslation();
   const { colors } = useAppTheme();
-  const [mode, setMode] = useState<Mode>('signin');
+  const [mode, setMode] = useState<AuthMode>('signin');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

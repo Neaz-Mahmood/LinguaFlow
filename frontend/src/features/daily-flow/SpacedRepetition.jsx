@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@astryxdesign/core/Button';
 import { Heading } from '@astryxdesign/core/Heading';
 import { Text } from '@astryxdesign/core/Text';
-import { apiFetch } from '../lib/api';
+import { apiFetch } from '../../lib/api';
 
 export default function SpacedRepetition({ onComplete }) {
   const { t } = useTranslation();

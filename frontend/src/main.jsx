@@ -7,7 +7,8 @@ import { Toaster } from 'sonner'
 import './i18n'
 import './index.css'
 import App from './App.jsx'
-import { PreferencesProvider, usePreferences } from './preferences/PreferencesProvider.jsx'
+import { PreferencesProvider } from './features/preferences/PreferencesProvider.jsx'
+import { usePreferences } from './hooks/usePreferences.js'
 
 const googleClientId = import.meta.env.VITE_GOOGLE_WEB_CLIENT_ID || ''
 

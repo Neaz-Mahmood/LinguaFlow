@@ -1,124 +1,29 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { useTranslation } from 'react-i18next';
 import Toast from 'react-native-toast-message';
 import './src/i18n';
-import { AuthUser } from './src/lib/api';
-import {
-  configureGoogleAuth,
-  fetchMe,
-  getStoredToken,
-  signInWithEmail,
-  signInWithGoogleNative,
-  signOut,
-  signUpWithEmail,
-} from './src/lib/authService';
-import SignInScreen from './src/screens/SignInScreen';
-import OnboardingScreen from './src/screens/OnboardingScreen';
-import DailyFlowScreen from './src/screens/DailyFlowScreen';
-import { PreferencesProvider, usePreferences } from './src/preferences/PreferencesProvider';
-import { ThemeProvider, useAppTheme } from './src/theme';
-
-type ViewState = 'loading' | 'auth' | 'onboarding' | 'flow';
+import SignInScreen from './src/features/auth/SignInScreen';
+import OnboardingScreen from './src/features/onboarding/OnboardingScreen';
+import DailyFlowScreen from './src/features/daily-flow/DailyFlowScreen';
+import { PreferencesProvider } from './src/features/preferences/PreferencesProvider';
+import { ThemeProvider } from './src/theme';
+import { useAppTheme } from './src/hooks/useAppTheme';
+import { usePreferences } from './src/hooks/usePreferences';
+import { useAuthSession } from './src/hooks/useAuthSession';
 
 function AppShell() {
-  const { t } = useTranslation();
   const { colorScheme, colors } = useAppTheme();
-  const { ready, applyFromUser } = usePreferences();
-  const [view, setView] = useState<ViewState>('loading');
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [signingIn, setSigningIn] = useState(false);
-
-  useEffect(() => {
-    configureGoogleAuth();
-  }, []);
-
-  useEffect(() => {
-    if (!ready) return;
-    bootstrap();
-  }, [ready]);
-
-  const routeForAuth = (authUser: AuthUser, needsOnboarding: boolean) => {
-    setUser(authUser);
-    applyFromUser(authUser);
-    setView(
-      needsOnboarding || !authUser.onboardingCompleted ? 'onboarding' : 'flow',
-    );
-  };
-
-  const bootstrap = async () => {
-    try {
-      const token = await getStoredToken();
-      if (!token) {
-        setView('auth');
-        return;
-      }
-
-      const me = await fetchMe(token);
-      routeForAuth(me.user, me.needsOnboarding);
-    } catch {
-      await signOut();
-      setView('auth');
-    }
-  };
-
-  const handleGoogleSignIn = async () => {
-    setSigningIn(true);
-    try {
-      const result = await signInWithGoogleNative();
-      Toast.show({
-        type: 'success',
-        text1: t('auth.signedInSuccess'),
-      });
-      routeForAuth(result.user, result.needsOnboarding);
-    } catch (err) {
-      Toast.show({
-        type: 'error',
-        text1: t('auth.signInFailed'),
-        text2: err instanceof Error ? err.message : undefined,
-      });
-    } finally {
-      setSigningIn(false);
-    }
-  };
-
-  const handleEmailAuth = async (
-    mode: 'signin' | 'signup',
-    payload: { email: string; password: string; name?: string },
-  ) => {
-    setSigningIn(true);
-    try {
-      const result =
-        mode === 'signup'
-          ? await signUpWithEmail(payload.email, payload.password, payload.name ?? '')
-          : await signInWithEmail(payload.email, payload.password);
-      Toast.show({
-        type: 'success',
-        text1:
-          mode === 'signup' ? t('auth.accountCreated') : t('auth.signedInSuccess'),
-      });
-      routeForAuth(result.user, result.needsOnboarding);
-    } catch (err) {
-      Toast.show({
-        type: 'error',
-        text1: mode === 'signup' ? t('auth.authFailed') : t('auth.signInFailed'),
-        text2: err instanceof Error ? err.message : undefined,
-      });
-    } finally {
-      setSigningIn(false);
-    }
-  };
-
-  const handleSignOut = async () => {
-    await signOut();
-    setUser(null);
-    setView('auth');
-    Toast.show({
-      type: 'success',
-      text1: t('auth.signedOut'),
-    });
-  };
+  const {
+    ready,
+    view,
+    user,
+    signingIn,
+    handleGoogleSignIn,
+    handleEmailAuth,
+    handleSignOut,
+    completeOnboarding,
+  } = useAuthSession();
 
   const statusStyle = colorScheme === 'dark' ? 'light' : 'dark';
 
@@ -148,7 +53,7 @@ function AppShell() {
         <>
           <OnboardingScreen
             user={user}
-            onComplete={() => setView('flow')}
+            onComplete={completeOnboarding}
             onSignOut={handleSignOut}
           />
           <StatusBar style={statusStyle} />

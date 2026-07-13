@@ -5,7 +5,7 @@ import { Heading } from '@astryxdesign/core/Heading';
 import { Text } from '@astryxdesign/core/Text';
 import { TextInput } from '@astryxdesign/core/TextInput';
 import { HStack, VStack } from '@astryxdesign/core/Layout';
-import { apiFetch } from '../lib/api';
+import { apiFetch } from '../../lib/api';
 
 export default function Shadowing({ onComplete }) {
   const { t } = useTranslation();

@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { HStack, VStack } from '@astryxdesign/core/Layout';
 import { SegmentedControl, SegmentedControlItem } from '@astryxdesign/core/SegmentedControl';
 import { Selector } from '@astryxdesign/core/Selector';
-import { LOCALES } from '../i18n';
-import { usePreferences } from './PreferencesProvider';
+import { LOCALES } from '../../i18n';
+import { usePreferences } from '../../hooks/usePreferences';
 
 export default function PreferencesControls({ compact = false }) {
   const { t } = useTranslation();

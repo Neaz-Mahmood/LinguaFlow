@@ -10,8 +10,8 @@ import {
   signInWithEmail,
   signInWithGoogleIdToken,
   signUpWithEmail,
-} from '../lib/api';
-import { fieldErrorsFromZod, getSignInSchema, getSignUpSchema } from '../lib/authSchemas';
+} from '../../lib/api';
+import { fieldErrorsFromZod, getSignInSchema, getSignUpSchema } from '../../lib/authSchemas';
 import PreferencesControls from '../preferences/PreferencesControls';
 
 export default function SignIn({ onSuccess }) {

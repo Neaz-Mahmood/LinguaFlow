@@ -1,10 +1,10 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Button, Card, Screen, Text } from '../components/ui';
+import { Button, Card, Screen, Text } from '../../components/ui';
 import PreferencesControls from '../preferences/PreferencesControls';
-import { spacing } from '../theme';
-import { AuthUser } from '../lib/api';
+import { spacing } from '../../theme';
+import { AuthUser } from '../../model';
 
 type Props = {
   user: AuthUser;

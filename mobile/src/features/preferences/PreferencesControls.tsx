@@ -1,10 +1,12 @@
 import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Text } from '../components/ui';
-import { LOCALES, AppLocale } from '../i18n';
-import { spacing, useAppTheme, ThemeMode } from '../theme';
-import { usePreferences } from './PreferencesProvider';
+import { Text } from '../../components/ui';
+import { LOCALES } from '../../i18n';
+import { spacing, ThemeMode } from '../../theme';
+import { useAppTheme } from '../../hooks/useAppTheme';
+import { usePreferences } from '../../hooks/usePreferences';
+import { AppLocale } from '../../model';
 
 const THEME_OPTIONS: ThemeMode[] = ['light', 'dark', 'system'];
 

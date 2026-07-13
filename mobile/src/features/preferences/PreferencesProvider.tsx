@@ -7,10 +7,10 @@ import React, {
   useState,
 } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import i18n, { DEFAULT_LOCALE, deviceLocale, isValidLocale, AppLocale } from '../i18n';
-import { ThemeMode } from '../theme';
-import { getStoredToken, updatePreferences } from '../lib/authService';
-import { AuthUser } from '../lib/api';
+import i18n, { DEFAULT_LOCALE, deviceLocale, isValidLocale } from '../../i18n';
+import { ThemeMode } from '../../theme';
+import { getStoredToken, updatePreferences } from '../../lib/authService';
+import { AppLocale, AuthUser } from '../../model';
 
 const LOCALE_KEY = 'linguaflow_ui_locale';
 const THEME_KEY = 'linguaflow_theme_mode';

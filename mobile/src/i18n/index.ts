@@ -1,13 +1,14 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import * as Localization from 'expo-localization';
+import type { AppLocale } from '../model';
 import en from './locales/en.json';
 import es from './locales/es.json';
 import fr from './locales/fr.json';
 import de from './locales/de.json';
 
-export const LOCALES = ['en', 'es', 'fr', 'de'] as const;
-export type AppLocale = (typeof LOCALES)[number];
+export type { AppLocale } from '../model';
+export const LOCALES: readonly AppLocale[] = ['en', 'es', 'fr', 'de'];
 export const DEFAULT_LOCALE: AppLocale = 'en';
 
 export function isValidLocale(value: unknown): value is AppLocale {

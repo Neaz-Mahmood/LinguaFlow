@@ -1,5 +1,8 @@
 import { z } from 'zod';
 import i18n from '../i18n';
+import type { SignInInput, SignUpInput } from '../model';
+
+export type { SignInInput, SignUpInput };
 
 export function getSignInSchema() {
   return z.object({
@@ -33,9 +36,6 @@ export const signInSchema = getSignInSchema();
 
 /** @deprecated Prefer getSignUpSchema() */
 export const signUpSchema = getSignUpSchema();
-
-export type SignInInput = z.infer<ReturnType<typeof getSignInSchema>>;
-export type SignUpInput = z.infer<ReturnType<typeof getSignUpSchema>>;
 
 export function formatZodError(error: z.ZodError): string {
   return error.issues.map((issue) => issue.message).join(', ');

@@ -9,7 +9,7 @@ import SpacedRepetition from './SpacedRepetition';
 import Shadowing from './Shadowing';
 import QuickOutput from './QuickOutput';
 import FlowCompletion from './FlowCompletion';
-import { apiFetch } from '../lib/api';
+import { apiFetch } from '../../lib/api';
 
 export default function DailyFlowContainer({ onResetProfile }) {
   const { t } = useTranslation();

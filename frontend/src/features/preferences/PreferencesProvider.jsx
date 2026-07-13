@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import i18n, { DEFAULT_LOCALE, isValidLocale } from '../i18n';
-import { getToken, updatePreferences } from '../lib/api';
+import i18n, { DEFAULT_LOCALE, isValidLocale } from '../../i18n';
+import { getToken, updatePreferences } from '../../lib/api';
 
 const LOCALE_KEY = 'linguaflow_ui_locale';
 const THEME_KEY = 'linguaflow_theme_mode';
