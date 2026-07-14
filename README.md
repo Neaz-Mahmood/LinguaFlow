@@ -68,7 +68,7 @@ docker compose up -d
    ```bash
    pnpm run start
    ```
-   *The backend will automatically synchronize the tables in PostgreSQL and seed them with initial Spanish stories for levels A1–B2 on its first boot. The API runs on **http://localhost:8000**.*
+   *The backend will automatically synchronize the tables in PostgreSQL and seed stories for Spanish, French, German, and Japanese (levels A1–B2) on boot when missing. The API runs on **http://localhost:8000**.*
 
 ---
 

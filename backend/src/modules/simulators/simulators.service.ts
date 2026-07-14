@@ -70,7 +70,7 @@ export class SimulatorsService {
     const msg = userMessage.toLowerCase().trim();
     const corrections: string[] = [];
 
-    // Simple rule-based Spanish grammar checks
+    // Lightweight Spanish heuristics (legacy Quick Output); other languages get general praise.
     if (msg.includes('yo gusta') || msg.includes('me gustar') || msg.includes('yo gustar')) {
       corrections.push('Use "me gusta" instead of "yo gusta" or "yo gustar" when expressing likes.');
     }
@@ -78,17 +78,33 @@ export class SimulatorsService {
       corrections.push('Use "está" (from *estar*) instead of "es" (from *ser*) for locations. For example: "está en la cafetería".');
     }
 
-    let reply = '¡Excelente intento! ';
-    if (msg.includes('café') || msg.includes('cafe') || msg.includes('croissant') || msg.includes('cruasán') || msg.includes('compra') || msg.includes('paga')) {
-      reply += `Has respondido correctamente sobre los detalles de la historia "${storyTitle}". `;
-    } else {
-      reply += '¡Muy bien expresado! Has usado vocabulario variado en tu respuesta. ';
-    }
-    reply += 'Sigue practicando todos los días para consolidar tu fluidez (Speak From Day One).';
+    const storyHints = [
+      'café',
+      'cafe',
+      'croissant',
+      'cruasán',
+      'compra',
+      'paga',
+      'kaffee',
+      'croissant',
+      'カフェ',
+      '買',
+    ];
+    const mentionsStory = storyHints.some((hint) => msg.includes(hint));
 
-    let correctionText = '✨ **Grammar:** Your response looks clean and grammatical. ¡Buen trabajo!';
+    let reply = 'Great attempt! ';
+    if (mentionsStory && storyTitle) {
+      reply += `You referenced details related to "${storyTitle}". `;
+    } else {
+      reply += 'Nice expression — keep expanding your vocabulary. ';
+    }
+    reply += 'Practice a little every day to build fluency (Speak From Day One).';
+
+    let correctionText =
+      '✨ **Grammar:** Your response looks clean. Keep going!';
     if (corrections.length > 0) {
-      correctionText = '💡 **Grammar Tip:**\n' + corrections.map((c) => `- ${c}`).join('\n');
+      correctionText =
+        '💡 **Grammar Tip:**\n' + corrections.map((c) => `- ${c}`).join('\n');
     }
 
     return {

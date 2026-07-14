@@ -5,6 +5,11 @@ import { FlowSession } from '../../entities/flow-session.entity';
 import { User } from '../../entities/user.entity';
 import { Story } from '../../entities/story.entity';
 import { Flashcard } from '../../entities/flashcard.entity';
+import {
+  defaultOutputPrompt,
+  defaultShadowPhrase,
+  normalizeTargetLanguage,
+} from '../../common/supported-languages';
 
 @Injectable()
 export class FlowSessionsService {
@@ -44,13 +49,17 @@ export class FlowSessionsService {
     const session = await this.getTodaySession(userId);
     const user = await this.usersRepository.findOne({ where: { id: userId } });
     const level = user ? user.currentLevel : 'A1';
+    const language = normalizeTargetLanguage(user?.targetLanguage);
 
-    const stories = await this.storiesRepository.find({ where: { level } });
+    const stories = await this.storiesRepository.find({
+      where: { level, language },
+    });
     const story = stories[0]
       ? {
           id: stories[0].id,
           title: stories[0].title,
           level: stories[0].level,
+          language: stories[0].language,
           content_target: stories[0].contentTarget,
           content_english: stories[0].contentEnglish,
           words: stories[0].wordsJson ? JSON.parse(stories[0].wordsJson) : {},
@@ -71,20 +80,18 @@ export class FlowSessionsService {
     const shadowPhrase =
       story && story.sentences && story.sentences[0]
         ? story.sentences[0]
-        : {
-            target: 'Sofía va a la cafetería todas las mañanas.',
-            english: 'Sofía goes to the coffee shop every morning.',
-          };
+        : defaultShadowPhrase(language);
 
     const outputPrompt = story
-      ? `¿Qué compró el personaje principal en la historia "${story.title}"?`
-      : '¿Qué hiciste hoy? Responde en español.';
+      ? defaultOutputPrompt(language, story.title)
+      : defaultOutputPrompt(language);
 
     return {
       story,
       dueCards,
       shadowPhrase,
       outputPrompt,
+      targetLanguage: language,
       streakCount: user ? user.streakCount : 0,
       stepsCompleted: session.stepsCompleted,
       session,

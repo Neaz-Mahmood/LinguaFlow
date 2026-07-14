@@ -13,6 +13,11 @@ export class Story {
   @Index()
   level: string; // A1, A2, B1, B2
 
+  /** Target language of the story content (Spanish, French, German, Japanese). */
+  @Column({ default: 'Spanish' })
+  @Index()
+  language: string;
+
   @Column('text')
   contentTarget: string;
 

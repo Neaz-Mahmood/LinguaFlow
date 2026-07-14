@@ -1,0 +1,227 @@
+/*
+ * LinguaFlow brand palette (https://coolors.co/2ec0f9-67aaf9-9bbdf9-c4e0f9-b95f89)
+ * --lf-sky:       #2ec0f9  primary accent / highlights
+ * --lf-blue:      #67aaf9  secondary accent / categorical cyan
+ * --lf-soft-blue: #9bbdf9  muted surfaces / secondary text (dark)
+ * --lf-pale-blue: #c4e0f9  light backgrounds / primary text tint (dark)
+ * --lf-mauve:     #b95f89  secondary categorical / purple accent
+ */
+
+@layer astryx-theme {
+  [data-astryx-theme='gothic'] {
+    --lf-sky: #2ec0f9;
+    --lf-blue: #67aaf9;
+    --lf-soft-blue: #9bbdf9;
+    --lf-pale-blue: #c4e0f9;
+    --lf-mauve: #b95f89;
+    --lf-mauve-dark: #9a4d73;
+    --lf-ink: #0f1826;
+    --lf-ink-muted: #2d4a6e;
+  }
+
+  /* Dark mode — explicit or system-default when prefers dark */
+  html[data-astryx-theme='gothic'][data-theme='dark'],
+  [data-astryx-theme='gothic'][data-theme='dark'] {
+    --color-accent: var(--lf-sky);
+    --color-accent-muted: color-mix(in srgb, var(--lf-sky) 18%, transparent);
+    --color-neutral: color-mix(in srgb, var(--lf-pale-blue) 10%, transparent);
+    --color-background-surface: var(--lf-ink);
+    --color-background-body: var(--lf-ink);
+    --color-overlay: color-mix(in srgb, var(--lf-ink) 80%, transparent);
+    --color-overlay-hover: color-mix(in srgb, var(--lf-pale-blue) 6%, transparent);
+    --color-overlay-pressed: color-mix(in srgb, var(--lf-pale-blue) 12%, transparent);
+    --color-background-muted: #1c2d47;
+    --color-text-primary: var(--lf-pale-blue);
+    --color-text-secondary: var(--lf-soft-blue);
+    --color-text-disabled: #5a7a9e;
+    --color-text-accent: var(--lf-sky);
+    --color-on-dark: var(--lf-pale-blue);
+    --color-on-light: var(--lf-ink);
+    --color-on-accent: var(--lf-ink);
+    --color-on-success: var(--lf-ink);
+    --color-on-error: var(--lf-pale-blue);
+    --color-on-warning: var(--lf-ink);
+    --color-icon-accent: var(--lf-sky);
+    --color-icon-primary: var(--lf-pale-blue);
+    --color-icon-secondary: var(--lf-soft-blue);
+    --color-icon-disabled: #5a7a9e;
+    --color-background-card: #162238;
+    --color-background-popover: #1c2d47;
+    --color-background-inverted: var(--lf-pale-blue);
+    --color-border: color-mix(in srgb, var(--lf-pale-blue) 14%, transparent);
+    --color-border-emphasized: #5a7a9e;
+    --color-skeleton: #5a7a9e;
+    --color-shadow: color-mix(in srgb, var(--lf-ink) 40%, transparent);
+    --color-tint-hover: white;
+    --color-background-cyan: var(--lf-blue);
+    --color-border-cyan: var(--lf-sky);
+    --color-icon-cyan: var(--lf-sky);
+    --color-text-cyan: var(--lf-ink);
+    --color-background-blue: var(--lf-blue);
+    --color-border-blue: var(--lf-sky);
+    --color-icon-blue: var(--lf-sky);
+    --color-text-blue: var(--lf-ink);
+    --color-background-purple: var(--lf-mauve);
+    --color-border-purple: var(--lf-mauve-dark);
+    --color-icon-purple: var(--lf-mauve);
+    --color-text-purple: var(--lf-pale-blue);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    html[data-astryx-theme='gothic']:not([data-theme]),
+    [data-astryx-theme='gothic']:not([data-theme]) {
+      --color-accent: var(--lf-sky);
+      --color-accent-muted: color-mix(in srgb, var(--lf-sky) 18%, transparent);
+      --color-neutral: color-mix(in srgb, var(--lf-pale-blue) 10%, transparent);
+      --color-background-surface: var(--lf-ink);
+      --color-background-body: var(--lf-ink);
+      --color-overlay: color-mix(in srgb, var(--lf-ink) 80%, transparent);
+      --color-overlay-hover: color-mix(in srgb, var(--lf-pale-blue) 6%, transparent);
+      --color-overlay-pressed: color-mix(in srgb, var(--lf-pale-blue) 12%, transparent);
+      --color-background-muted: #1c2d47;
+      --color-text-primary: var(--lf-pale-blue);
+      --color-text-secondary: var(--lf-soft-blue);
+      --color-text-disabled: #5a7a9e;
+      --color-text-accent: var(--lf-sky);
+      --color-on-dark: var(--lf-pale-blue);
+      --color-on-light: var(--lf-ink);
+      --color-on-accent: var(--lf-ink);
+      --color-on-success: var(--lf-ink);
+      --color-on-error: var(--lf-pale-blue);
+      --color-on-warning: var(--lf-ink);
+      --color-icon-accent: var(--lf-sky);
+      --color-icon-primary: var(--lf-pale-blue);
+      --color-icon-secondary: var(--lf-soft-blue);
+      --color-icon-disabled: #5a7a9e;
+      --color-background-card: #162238;
+      --color-background-popover: #1c2d47;
+      --color-background-inverted: var(--lf-pale-blue);
+      --color-border: color-mix(in srgb, var(--lf-pale-blue) 14%, transparent);
+      --color-border-emphasized: #5a7a9e;
+      --color-skeleton: #5a7a9e;
+      --color-shadow: color-mix(in srgb, var(--lf-ink) 40%, transparent);
+      --color-tint-hover: white;
+      --color-background-cyan: var(--lf-blue);
+      --color-border-cyan: var(--lf-sky);
+      --color-icon-cyan: var(--lf-sky);
+      --color-text-cyan: var(--lf-ink);
+      --color-background-blue: var(--lf-blue);
+      --color-border-blue: var(--lf-sky);
+      --color-icon-blue: var(--lf-sky);
+      --color-text-blue: var(--lf-ink);
+      --color-background-purple: var(--lf-mauve);
+      --color-border-purple: var(--lf-mauve-dark);
+      --color-icon-purple: var(--lf-mauve);
+      --color-text-purple: var(--lf-pale-blue);
+    }
+  }
+
+  /* Light mode — explicit or system-default when prefers light */
+  html[data-astryx-theme='gothic'][data-theme='light'],
+  [data-astryx-theme='gothic'][data-theme='light'] {
+    --color-accent: var(--lf-sky);
+    --color-accent-muted: color-mix(in srgb, var(--lf-sky) 14%, transparent);
+    --color-neutral: color-mix(in srgb, var(--lf-ink) 6%, transparent);
+    --color-background-surface: var(--lf-pale-blue);
+    --color-background-body: var(--lf-pale-blue);
+    --color-overlay: color-mix(in srgb, var(--lf-pale-blue) 85%, transparent);
+    --color-overlay-hover: color-mix(in srgb, var(--lf-ink) 4%, transparent);
+    --color-overlay-pressed: color-mix(in srgb, var(--lf-ink) 8%, transparent);
+    --color-background-muted: var(--lf-soft-blue);
+    --color-text-primary: var(--lf-ink);
+    --color-text-secondary: var(--lf-ink-muted);
+    --color-text-disabled: #6b8ab5;
+    --color-text-accent: var(--lf-sky);
+    --color-on-dark: var(--lf-pale-blue);
+    --color-on-light: var(--lf-ink);
+    --color-on-accent: var(--lf-ink);
+    --color-on-success: var(--lf-pale-blue);
+    --color-on-error: var(--lf-pale-blue);
+    --color-on-warning: var(--lf-ink);
+    --color-icon-accent: var(--lf-sky);
+    --color-icon-primary: var(--lf-ink);
+    --color-icon-secondary: var(--lf-ink-muted);
+    --color-icon-disabled: #6b8ab5;
+    --color-background-card: #e3f0fc;
+    --color-background-popover: #ffffff;
+    --color-background-inverted: var(--lf-ink);
+    --color-success: #5a7048;
+    --color-success-muted: #5a7048;
+    --color-error: #8a5c58;
+    --color-error-muted: #8a5c58;
+    --color-warning: #8a7a40;
+    --color-warning-muted: #8a7a40;
+    --color-border: color-mix(in srgb, var(--lf-ink) 12%, transparent);
+    --color-border-emphasized: #6b8ab5;
+    --color-skeleton: #6b8ab5;
+    --color-shadow: color-mix(in srgb, var(--lf-ink) 12%, transparent);
+    --color-tint-hover: black;
+    --color-background-cyan: var(--lf-blue);
+    --color-border-cyan: var(--lf-sky);
+    --color-icon-cyan: var(--lf-sky);
+    --color-text-cyan: var(--lf-ink);
+    --color-background-blue: var(--lf-blue);
+    --color-border-blue: var(--lf-sky);
+    --color-icon-blue: var(--lf-sky);
+    --color-text-blue: var(--lf-ink);
+    --color-background-purple: var(--lf-mauve);
+    --color-border-purple: var(--lf-mauve-dark);
+    --color-icon-purple: var(--lf-mauve);
+    --color-text-purple: var(--lf-ink);
+  }
+
+  @media (prefers-color-scheme: light) {
+    html[data-astryx-theme='gothic']:not([data-theme]),
+    [data-astryx-theme='gothic']:not([data-theme]) {
+      --color-accent: var(--lf-sky);
+      --color-accent-muted: color-mix(in srgb, var(--lf-sky) 14%, transparent);
+      --color-neutral: color-mix(in srgb, var(--lf-ink) 6%, transparent);
+      --color-background-surface: var(--lf-pale-blue);
+      --color-background-body: var(--lf-pale-blue);
+      --color-overlay: color-mix(in srgb, var(--lf-pale-blue) 85%, transparent);
+      --color-overlay-hover: color-mix(in srgb, var(--lf-ink) 4%, transparent);
+      --color-overlay-pressed: color-mix(in srgb, var(--lf-ink) 8%, transparent);
+      --color-background-muted: var(--lf-soft-blue);
+      --color-text-primary: var(--lf-ink);
+      --color-text-secondary: var(--lf-ink-muted);
+      --color-text-disabled: #6b8ab5;
+      --color-text-accent: var(--lf-sky);
+      --color-on-dark: var(--lf-pale-blue);
+      --color-on-light: var(--lf-ink);
+      --color-on-accent: var(--lf-ink);
+      --color-on-success: var(--lf-pale-blue);
+      --color-on-error: var(--lf-pale-blue);
+      --color-on-warning: var(--lf-ink);
+      --color-icon-accent: var(--lf-sky);
+      --color-icon-primary: var(--lf-ink);
+      --color-icon-secondary: var(--lf-ink-muted);
+      --color-icon-disabled: #6b8ab5;
+      --color-background-card: #e3f0fc;
+      --color-background-popover: #ffffff;
+      --color-background-inverted: var(--lf-ink);
+      --color-success: #5a7048;
+      --color-success-muted: #5a7048;
+      --color-error: #8a5c58;
+      --color-error-muted: #8a5c58;
+      --color-warning: #8a7a40;
+      --color-warning-muted: #8a7a40;
+      --color-border: color-mix(in srgb, var(--lf-ink) 12%, transparent);
+      --color-border-emphasized: #6b8ab5;
+      --color-skeleton: #6b8ab5;
+      --color-shadow: color-mix(in srgb, var(--lf-ink) 12%, transparent);
+      --color-tint-hover: black;
+      --color-background-cyan: var(--lf-blue);
+      --color-border-cyan: var(--lf-sky);
+      --color-icon-cyan: var(--lf-sky);
+      --color-text-cyan: var(--lf-ink);
+      --color-background-blue: var(--lf-blue);
+      --color-border-blue: var(--lf-sky);
+      --color-icon-blue: var(--lf-sky);
+      --color-text-blue: var(--lf-ink);
+      --color-background-purple: var(--lf-mauve);
+      --color-border-purple: var(--lf-mauve-dark);
+      --color-icon-purple: var(--lf-mauve);
+      --color-text-purple: var(--lf-ink);
+    }
+  }
+}
