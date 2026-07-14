@@ -66,10 +66,10 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
   const persist = useCallback(async (nextLocale: AppLocale, nextTheme: ThemeMode) => {
     setLocaleState(nextLocale);
     setThemeModeState(nextTheme);
-    await AsyncStorage.setMany({
-      [LOCALE_KEY]: nextLocale,
-      [THEME_KEY]: nextTheme,
-    });
+    await AsyncStorage.multiSet([
+      [LOCALE_KEY, nextLocale],
+      [THEME_KEY, nextTheme],
+    ]);
   }, []);
 
   const applyFromUser = useCallback((user: AuthUser) => {
@@ -77,10 +77,10 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
       const nextLocale = isValidLocale(user.uiLocale) ? user.uiLocale : prevLocale;
       setThemeModeState((prevTheme) => {
         const nextTheme = isThemeMode(user.themeMode) ? user.themeMode : prevTheme;
-        void AsyncStorage.setMany({
-          [LOCALE_KEY]: nextLocale,
-          [THEME_KEY]: nextTheme,
-        });
+        void AsyncStorage.multiSet([
+          [LOCALE_KEY, nextLocale],
+          [THEME_KEY, nextTheme],
+        ]);
         return nextTheme;
       });
       return nextLocale;
