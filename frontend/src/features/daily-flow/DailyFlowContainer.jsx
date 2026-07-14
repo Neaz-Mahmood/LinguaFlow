@@ -7,7 +7,7 @@ import { VStack } from '@astryxdesign/core/Layout';
 import ComprehensibleInput from './ComprehensibleInput';
 import SpacedRepetition from './SpacedRepetition';
 import Shadowing from './Shadowing';
-import QuickOutput from './QuickOutput';
+import ConversationPractice from './ConversationPractice';
 import FlowCompletion from './FlowCompletion';
 import { apiFetch } from '../../lib/api';
 
@@ -30,7 +30,7 @@ export default function DailyFlowContainer({ onResetProfile }) {
         setSessionData(data);
 
         const step = data.stepsCompleted || 0;
-        setCurrentStep(Math.min(step + 1, 5));
+        setCurrentStep(step >= 4 ? 4 : Math.min(step + 1, 5));
       }
     } catch (err) {
       console.error('Error loading session:', err);
@@ -118,7 +118,7 @@ export default function DailyFlowContainer({ onResetProfile }) {
       {currentStep === 1 && <ComprehensibleInput onComplete={handleStepComplete} />}
       {currentStep === 2 && <SpacedRepetition onComplete={handleStepComplete} />}
       {currentStep === 3 && <Shadowing onComplete={handleStepComplete} />}
-      {currentStep === 4 && <QuickOutput onComplete={handleStepComplete} />}
+      {currentStep === 4 && <ConversationPractice onComplete={handleStepComplete} />}
 
       {currentStep === 5 && (
         <FlowCompletion

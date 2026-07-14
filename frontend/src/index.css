@@ -788,3 +788,71 @@
     }
   }
 }
+
+  .conversation-card {
+    overflow: visible;
+  }
+
+  .conversation-chat {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    max-height: 32rem;
+    overflow-y: auto;
+    padding: var(--spacing-3);
+    background: var(--color-background-muted);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-element);
+  }
+
+  .conversation-bubble {
+    max-width: 82%;
+    padding: var(--spacing-3);
+    border-radius: var(--radius-element);
+    border: 1px solid var(--color-border);
+    white-space: pre-wrap;
+  }
+
+  .conversation-bubble.assistant {
+    align-self: flex-start;
+    background: var(--color-background-card);
+  }
+
+  .conversation-bubble.learner {
+    align-self: flex-end;
+    background: var(--color-accent-muted);
+    border-color: var(--color-border-emphasized);
+  }
+
+  .conversation-feedback-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    padding: var(--spacing-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-element);
+    background: var(--color-background-muted);
+  }
+
+  .conversation-score-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-2);
+  }
+
+  .conversation-score {
+    padding: var(--spacing-3);
+    text-align: center;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-element);
+  }
+
+  @media (max-width: 560px) {
+    .conversation-score-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .conversation-bubble {
+      max-width: 94%;
+    }
+  }
