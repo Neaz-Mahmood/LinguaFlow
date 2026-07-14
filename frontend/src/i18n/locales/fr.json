@@ -11,6 +11,11 @@
     "setProfile": "Profil",
     "loadingEngine": "Chargement du flux quotidien..."
   },
+  "layout": {
+    "copyright": "© {{year}} LinguaFlow",
+    "mainNav": "Navigation principale",
+    "siteFooter": "Pied de page"
+  },
   "preferences": {
     "language": "Langue",
     "theme": "Thème",

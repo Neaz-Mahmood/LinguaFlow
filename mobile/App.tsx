@@ -6,6 +6,7 @@ import './src/i18n';
 import SignInScreen from './src/features/auth/SignInScreen';
 import OnboardingScreen from './src/features/onboarding/OnboardingScreen';
 import DailyFlowScreen from './src/features/daily-flow/DailyFlowScreen';
+import { AppLayout } from './src/components/layout';
 import { PreferencesProvider } from './src/features/preferences/PreferencesProvider';
 import { ThemeProvider } from './src/theme';
 import { useAppTheme } from './src/hooks/useAppTheme';
@@ -62,7 +63,9 @@ function AppShell() {
 
       {view === 'flow' && user ? (
         <>
-          <DailyFlowScreen user={user} onSignOut={handleSignOut} />
+          <AppLayout onSignOut={handleSignOut}>
+            <DailyFlowScreen user={user} />
+          </AppLayout>
           <StatusBar style={statusStyle} />
         </>
       ) : null}

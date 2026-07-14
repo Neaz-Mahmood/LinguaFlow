@@ -3,99 +3,15 @@
 @import '@astryxdesign/core/reset.css';
 @import '@astryxdesign/core/astryx.css';
 @import '@astryxdesign/theme-gothic/theme.css';
+@import './theme/palette.css';
 
 /*
- * Gothic is dark-only upstream. Mode changes only set data-theme / color-scheme.
- * Provide inverted tokens so Light (and system-when-light) actually paint differently.
+ * LinguaFlow palette overrides live in theme/palette.css (Coolors:
+ * #2ec0f9 #67aaf9 #9bbdf9 #c4e0f9 #b95f89). Gothic upstream is dark-only;
+ * palette.css supplies light/dark token overrides via data-theme + prefers-color-scheme.
  */
-@layer astryx-theme {
-  html[data-astryx-theme='gothic'][data-theme='light'],
-  [data-astryx-theme='gothic'][data-theme='light'] {
-    --color-accent: #101314;
-    --color-accent-muted: rgba(16, 19, 20, 0.08);
-    --color-neutral: rgba(16, 19, 20, 0.06);
-    --color-background-surface: #e8f1f6;
-    --color-background-body: #e8f1f6;
-    --color-overlay: rgba(232, 241, 246, 0.8);
-    --color-overlay-hover: rgba(16, 19, 20, 0.04);
-    --color-overlay-pressed: rgba(16, 19, 20, 0.08);
-    --color-background-muted: #d5e2ea;
-    --color-text-primary: #101314;
-    --color-text-secondary: #495056;
-    --color-text-disabled: #96a0ab;
-    --color-text-accent: #101314;
-    --color-on-dark: #e8f1f6;
-    --color-on-light: #101314;
-    --color-on-accent: #e8f1f6;
-    --color-on-success: #e8f1f6;
-    --color-on-error: #e8f1f6;
-    --color-on-warning: #e8f1f6;
-    --color-icon-accent: #101314;
-    --color-icon-primary: #101314;
-    --color-icon-secondary: #495056;
-    --color-icon-disabled: #96a0ab;
-    --color-background-card: #f5f9fc;
-    --color-background-popover: #ffffff;
-    --color-background-inverted: #101314;
-    --color-success: #5a7048;
-    --color-success-muted: #5a7048;
-    --color-error: #8a5c58;
-    --color-error-muted: #8a5c58;
-    --color-warning: #8a7a40;
-    --color-warning-muted: #8a7a40;
-    --color-border: rgba(16, 19, 20, 0.12);
-    --color-border-emphasized: #96a0ab;
-    --color-skeleton: #96a0ab;
-    --color-shadow: rgba(16, 19, 20, 0.12);
-    --color-tint-hover: black;
-  }
-
-  @media (prefers-color-scheme: light) {
-    html[data-astryx-theme='gothic']:not([data-theme]),
-    [data-astryx-theme='gothic']:not([data-theme]) {
-      --color-accent: #101314;
-      --color-accent-muted: rgba(16, 19, 20, 0.08);
-      --color-neutral: rgba(16, 19, 20, 0.06);
-      --color-background-surface: #e8f1f6;
-      --color-background-body: #e8f1f6;
-      --color-overlay: rgba(232, 241, 246, 0.8);
-      --color-overlay-hover: rgba(16, 19, 20, 0.04);
-      --color-overlay-pressed: rgba(16, 19, 20, 0.08);
-      --color-background-muted: #d5e2ea;
-      --color-text-primary: #101314;
-      --color-text-secondary: #495056;
-      --color-text-disabled: #96a0ab;
-      --color-text-accent: #101314;
-      --color-on-dark: #e8f1f6;
-      --color-on-light: #101314;
-      --color-on-accent: #e8f1f6;
-      --color-on-success: #e8f1f6;
-      --color-on-error: #e8f1f6;
-      --color-on-warning: #e8f1f6;
-      --color-icon-accent: #101314;
-      --color-icon-primary: #101314;
-      --color-icon-secondary: #495056;
-      --color-icon-disabled: #96a0ab;
-      --color-background-card: #f5f9fc;
-      --color-background-popover: #ffffff;
-      --color-background-inverted: #101314;
-      --color-success: #5a7048;
-      --color-success-muted: #5a7048;
-      --color-error: #8a5c58;
-      --color-error-muted: #8a5c58;
-      --color-warning: #8a7a40;
-      --color-warning-muted: #8a7a40;
-      --color-border: rgba(16, 19, 20, 0.12);
-      --color-border-emphasized: #96a0ab;
-      --color-skeleton: #96a0ab;
-      --color-shadow: rgba(16, 19, 20, 0.12);
-      --color-tint-hover: black;
-    }
-  }
-}
 
 @layer product {
-  /* LinguaFlow product surface — tokens from Astryx gothic theme */
   html,
   body,
   #root {
@@ -124,13 +40,47 @@
     min-height: 100vh;
   }
 
-  .header {
+  .app-layout {
+    width: 100%;
+    min-height: 100vh;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2.5rem;
-    gap: 1rem;
-    flex-wrap: wrap;
+    flex-direction: column;
+  }
+
+  .app-navbar {
+    width: 100%;
+    flex-shrink: 0;
+    background-color: var(--color-background-surface);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .app-navbar nav {
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+    padding-inline: 2.5rem;
+  }
+
+  .app-main {
+    width: 100%;
+    max-width: 800px;
+    margin-inline: auto;
+    padding: 2rem 1.5rem;
+    box-sizing: border-box;
+  }
+
+  .app-footer {
+    width: 100%;
+    flex-shrink: 0;
+    background-color: var(--color-background-surface);
+  }
+
+  .app-footer > footer,
+  .app-footer > div {
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+    padding-inline: 2.5rem;
   }
 
   .logo {

@@ -11,6 +11,9 @@
     "setProfile": "Profil",
     "loadingEngine": "Täglicher Flow wird geladen..."
   },
+  "layout": {
+    "copyright": "© {{year}} LinguaFlow"
+  },
   "preferences": {
     "language": "Sprache",
     "theme": "Design",

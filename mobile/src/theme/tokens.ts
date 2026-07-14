@@ -1,7 +1,17 @@
 /**
- * Mobile tokens mirrored from @astryxdesign/theme-gothic (v0.1.4).
- * Keep aligned with frontend gothicTheme tokens when updating Astryx.
+ * LinguaFlow brand palette — keep aligned with frontend/src/theme/palette.css
+ * https://coolors.co/2ec0f9-67aaf9-9bbdf9-c4e0f9-b95f89
  */
+export const palette = {
+  sky: '#2ec0f9',
+  blue: '#67aaf9',
+  softBlue: '#9bbdf9',
+  paleBlue: '#c4e0f9',
+  mauve: '#b95f89',
+  mauveDark: '#9a4d73',
+  ink: '#0f1826',
+  inkMuted: '#2d4a6e',
+} as const;
 
 export type ColorTokens = {
   backgroundBody: string;
@@ -35,75 +45,75 @@ export type ColorTokens = {
 };
 
 export const darkColors: ColorTokens = {
-  backgroundBody: '#101314',
-  backgroundSurface: '#101314',
-  backgroundCard: '#1a1d20',
-  backgroundMuted: '#24292D',
-  backgroundPopover: '#24292D',
-  backgroundInverted: '#E8F1F6',
+  backgroundBody: palette.ink,
+  backgroundSurface: palette.ink,
+  backgroundCard: '#162238',
+  backgroundMuted: '#1c2d47',
+  backgroundPopover: '#1c2d47',
+  backgroundInverted: palette.paleBlue,
 
-  textPrimary: '#E8F1F6',
-  textSecondary: '#96A0AB',
-  textDisabled: '#495056',
-  textAccent: '#E8F1F6',
-  textPlaceholder: '#495056',
+  textPrimary: palette.paleBlue,
+  textSecondary: palette.softBlue,
+  textDisabled: '#5a7a9e',
+  textAccent: palette.sky,
+  textPlaceholder: '#5a7a9e',
 
-  accent: '#E8F1F6',
-  accentMuted: 'rgba(232, 241, 246, 0.12)',
-  onAccent: '#101314',
-  onDark: '#E8F1F6',
-  onLight: '#101314',
+  accent: palette.sky,
+  accentMuted: 'rgba(46, 192, 249, 0.18)',
+  onAccent: palette.ink,
+  onDark: palette.paleBlue,
+  onLight: palette.ink,
 
-  border: 'rgba(232, 241, 246, 0.1)',
-  borderEmphasized: '#495056',
+  border: 'rgba(196, 224, 249, 0.14)',
+  borderEmphasized: '#5a7a9e',
 
   success: '#b3c79a',
-  onSuccess: '#101314',
+  onSuccess: palette.ink,
   error: '#c6a6a2',
-  onError: '#101314',
+  onError: palette.paleBlue,
   warning: '#d3c490',
-  onWarning: '#101314',
+  onWarning: palette.ink,
 
-  cyan: '#a3c2cf',
-  purple: '#b29bc4',
-  overlayHover: 'rgba(232, 241, 246, 0.05)',
-  overlayPressed: 'rgba(232, 241, 246, 0.1)',
+  cyan: palette.sky,
+  purple: palette.mauve,
+  overlayHover: 'rgba(196, 224, 249, 0.06)',
+  overlayPressed: 'rgba(196, 224, 249, 0.12)',
 };
 
 export const lightColors: ColorTokens = {
-  backgroundBody: '#E8F1F6',
-  backgroundSurface: '#E8F1F6',
-  backgroundCard: '#F5F9FC',
-  backgroundMuted: '#D5E2EA',
+  backgroundBody: palette.paleBlue,
+  backgroundSurface: palette.paleBlue,
+  backgroundCard: '#e3f0fc',
+  backgroundMuted: palette.softBlue,
   backgroundPopover: '#FFFFFF',
-  backgroundInverted: '#101314',
+  backgroundInverted: palette.ink,
 
-  textPrimary: '#101314',
-  textSecondary: '#495056',
-  textDisabled: '#96A0AB',
-  textAccent: '#101314',
-  textPlaceholder: '#96A0AB',
+  textPrimary: palette.ink,
+  textSecondary: palette.inkMuted,
+  textDisabled: '#6b8ab5',
+  textAccent: palette.sky,
+  textPlaceholder: '#6b8ab5',
 
-  accent: '#101314',
-  accentMuted: 'rgba(16, 19, 20, 0.08)',
-  onAccent: '#E8F1F6',
-  onDark: '#E8F1F6',
-  onLight: '#101314',
+  accent: palette.sky,
+  accentMuted: 'rgba(46, 192, 249, 0.14)',
+  onAccent: palette.ink,
+  onDark: palette.paleBlue,
+  onLight: palette.ink,
 
-  border: 'rgba(16, 19, 20, 0.12)',
-  borderEmphasized: '#96A0AB',
+  border: 'rgba(15, 24, 38, 0.12)',
+  borderEmphasized: '#6b8ab5',
 
   success: '#5a7048',
-  onSuccess: '#E8F1F6',
+  onSuccess: palette.paleBlue,
   error: '#8a5c58',
-  onError: '#E8F1F6',
+  onError: palette.paleBlue,
   warning: '#8a7a40',
-  onWarning: '#E8F1F6',
+  onWarning: palette.ink,
 
-  cyan: '#3d6a7a',
-  purple: '#6a5280',
-  overlayHover: 'rgba(16, 19, 20, 0.04)',
-  overlayPressed: 'rgba(16, 19, 20, 0.08)',
+  cyan: palette.sky,
+  purple: palette.mauve,
+  overlayHover: 'rgba(15, 24, 38, 0.04)',
+  overlayPressed: 'rgba(15, 24, 38, 0.08)',
 };
 
 /** @deprecated Prefer useAppTheme().colors — defaults to dark */
