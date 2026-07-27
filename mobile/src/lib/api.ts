@@ -1,4 +1,8 @@
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8000';
+import { Platform } from 'react-native';
+
+const DEFAULT_API_URL =
+  Platform.OS === 'android' ? 'http://10.0.2.2:8000' : 'http://localhost:8000';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || DEFAULT_API_URL;
 
 function parseErrorMessage(text: string, status: number): string {
   try {
@@ -35,5 +39,10 @@ export async function apiFetch<T = unknown>(
     throw new Error(parseErrorMessage(text, res.status));
   }
 
-  return res.json() as Promise<T>;
+  const text = await res.text();
+  if (!text) {
+    return undefined as T;
+  }
+
+  return JSON.parse(text) as T;
 }

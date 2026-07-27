@@ -26,11 +26,11 @@ import { ConversationsModule } from './modules/conversations/conversations.modul
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         type: 'postgres',
-        host: config.get<string>('DB_HOST', '127.0.0.1'),
-        port: config.get<number>('DB_PORT', 5432),
-        username: config.get<string>('DB_USERNAME', 'postgres'),
-        password: config.get<string>('DB_PASSWORD', 'postgrespassword'),
-        database: config.get<string>('DB_DATABASE', 'linguaflow'),
+        host: config.get<string>('DB_HOST') || '127.0.0.1',
+        port: config.get<number>('DB_PORT') || 5432,
+        username: config.get<string>('DB_USERNAME') || 'postgres',
+        password: config.get<string>('DB_PASSWORD') || 'postgrespassword',
+        database: config.get<string>('DB_DATABASE') || 'linguaflow',
         entities: [
           User,
           Story,
@@ -39,7 +39,7 @@ import { ConversationsModule } from './modules/conversations/conversations.modul
           ConversationSession,
           ConversationMessage,
         ],
-        synchronize: config.get<string>('DB_SYNCHRONIZE', 'true') === 'true',
+        synchronize: config.get<string>('DB_SYNCHRONIZE') !== 'false',
       }),
     }),
     BullModule.forRootAsync({
@@ -47,8 +47,8 @@ import { ConversationsModule } from './modules/conversations/conversations.modul
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         connection: {
-          host: config.get<string>('REDIS_HOST', '127.0.0.1'),
-          port: config.get<number>('REDIS_PORT', 6379),
+          host: config.get<string>('REDIS_HOST') || '127.0.0.1',
+          port: config.get<number>('REDIS_PORT') || 6379,
         },
       }),
     }),

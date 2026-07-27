@@ -8,7 +8,8 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.linguaflow.app"
+      "bundleIdentifier": "com.linguaflow.app",
+      "useFrameworks": "static"
     },
     "android": {
       "package": "com.linguaflow.app",
