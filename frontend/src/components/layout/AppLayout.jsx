@@ -19,6 +19,7 @@ export default function AppLayout({
   onSignOut,
   resetSession,
   openOnboarding,
+  onNavigateToPricing,
 }) {
   return (
     <VStack className="app-layout" gap={0}>
@@ -28,6 +29,8 @@ export default function AppLayout({
           onSignOut={onSignOut}
           resetSession={resetSession}
           openOnboarding={openOnboarding}
+          onNavigateToPricing={onNavigateToPricing}
+          isLoggedIn={true}
         />
       </div>
 
