@@ -9,6 +9,7 @@ import './index.css'
 import App from './App.jsx'
 import { PreferencesProvider } from './features/preferences/PreferencesProvider.jsx'
 import { usePreferences } from './hooks/usePreferences.js'
+import { SubscriptionProvider } from './context/SubscriptionProvider.jsx'
 
 const googleClientId = import.meta.env.VITE_GOOGLE_WEB_CLIENT_ID || ''
 
@@ -28,7 +29,9 @@ function ThemedApp() {
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <PreferencesProvider>
-      <ThemedApp />
+      <SubscriptionProvider>
+        <ThemedApp />
+      </SubscriptionProvider>
     </PreferencesProvider>
   </StrictMode>,
 )

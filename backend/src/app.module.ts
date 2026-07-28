@@ -9,6 +9,11 @@ import { Flashcard } from './entities/flashcard.entity';
 import { FlowSession } from './entities/flow-session.entity';
 import { ConversationSession } from './entities/conversation-session.entity';
 import { ConversationMessage } from './entities/conversation-message.entity';
+import { VoiceQuota } from './entities/voice-quota.entity';
+import { VoiceSession } from './entities/voice-session.entity';
+import { VoiceUsageEvent } from './entities/voice-usage-event.entity';
+import { StripeCustomer } from './entities/stripe-customer.entity';
+import { StripeSubscription } from './entities/stripe-subscription.entity';
 
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
@@ -17,6 +22,9 @@ import { FlashcardsModule } from './modules/flashcards/flashcards.module';
 import { FlowSessionsModule } from './modules/flow-sessions/flow-sessions.module';
 import { SimulatorsModule } from './modules/simulators/simulators.module';
 import { ConversationsModule } from './modules/conversations/conversations.module';
+import { EntitlementsModule } from './modules/entitlements/entitlements.module';
+import { VoiceModule } from './modules/voice/voice.module';
+import { BillingModule } from './modules/billing/billing.module';
 
 @Module({
   imports: [
@@ -38,8 +46,16 @@ import { ConversationsModule } from './modules/conversations/conversations.modul
           FlowSession,
           ConversationSession,
           ConversationMessage,
+          VoiceQuota,
+          VoiceSession,
+          VoiceUsageEvent,
+          StripeCustomer,
+          StripeSubscription,
         ],
         synchronize: config.get<string>('DB_SYNCHRONIZE') !== 'false',
+        migrationsRun: config.get<string>('DB_MIGRATIONS_RUN') === 'true',
+        migrationsTableName: 'migrations',
+        migrations: [__dirname + '/migrations/*.{ts,js}'],
       }),
     }),
     BullModule.forRootAsync({
@@ -59,6 +75,9 @@ import { ConversationsModule } from './modules/conversations/conversations.modul
     FlowSessionsModule,
     SimulatorsModule,
     ConversationsModule,
+    EntitlementsModule,
+    VoiceModule,
+    BillingModule,
   ],
 })
 export class AppModule {}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@astryxdesign/core/Text';
 import Onboarding from './features/onboarding/Onboarding';
@@ -9,6 +9,9 @@ import Home from './features/home/Home';
 import LandingPage from './features/landing/LandingPage';
 import AppLayout from './components/layout/AppLayout';
 import { useAuthSession, VIEW_STATES } from './hooks/useAuthSession';
+import { useSubscription } from './context/SubscriptionProvider';
+import PracticeMinutesMeter from './components/PracticeMinutesMeter';
+import UpgradePrompt from './features/paywall/UpgradePrompt';
 
 export default function App() {
   const { t } = useTranslation();
@@ -23,8 +26,18 @@ export default function App() {
     resetSession,
     openOnboarding,
   } = useAuthSession();
+  const { refreshQuota } = useSubscription();
 
-  const [activePage, setActivePage] = useState('landing'); // 'landing' | 'pricing' | 'signin' | 'home' | 'flow'
+  const [activePage, setActivePage] = useState('landing');
+  const [showUpgrade, setShowUpgrade] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('billing') === 'success') {
+      refreshQuota();
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
 
   if (loading) {
     return (
@@ -103,7 +116,8 @@ export default function App() {
       openOnboarding={openOnboarding}
       onNavigateToPricing={() => setActivePage('pricing')}
     >
-      <div style={{ marginBottom: '1.5rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+      {showUpgrade && <UpgradePrompt reason="quota" onDismiss={() => setShowUpgrade(false)} />}
+      <div style={{ marginBottom: '1.5rem', display: 'flex', gap: '1rem', alignItems: 'center', justifyContent: 'space-between' }}>
         <button
           type="button"
           onClick={() => setActivePage('home')}
@@ -120,6 +134,7 @@ export default function App() {
         >
           ← Back to Dashboard
         </button>
+        <PracticeMinutesMeter onUpgradeClick={() => setShowUpgrade(true)} />
       </div>
       <DailyFlowContainer onResetProfile={openOnboarding} />
     </AppLayout>

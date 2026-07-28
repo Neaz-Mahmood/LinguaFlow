@@ -119,3 +119,66 @@ export async function updatePreferences(prefs) {
 
   return res.json();
 }
+
+export async function fetchQuota() {
+  const res = await apiFetch('/api/voice/quota');
+  if (!res.ok) throw new Error('Failed to fetch quota');
+  return res.json();
+}
+
+export async function createCheckoutSession(plan) {
+  const res = await apiFetch('/api/billing/checkout', {
+    method: 'POST',
+    body: JSON.stringify({ plan }),
+  });
+  if (!res.ok) throw new Error('Failed to create checkout session');
+  return res.json();
+}
+
+export async function openBillingPortal() {
+  const res = await apiFetch('/api/billing/portal', { method: 'POST' });
+  if (!res.ok) throw new Error('Failed to open billing portal');
+  return res.json();
+}
+
+export async function createVoiceSession(mode = 'standard') {
+  const res = await apiFetch('/api/voice/sessions', {
+    method: 'POST',
+    body: JSON.stringify({ mode }),
+  });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    const err = new Error(data.message || 'Failed to create voice session');
+    err.status = res.status;
+    err.code = data.code;
+    throw err;
+  }
+  return res.json();
+}
+
+export async function sendVoiceTurn(sessionId, audioBlob, clientTurnId) {
+  const form = new FormData();
+  form.append('audio', audioBlob, 'turn.webm');
+  form.append('clientTurnId', clientTurnId);
+  const res = await apiFetch(`/api/voice/sessions/${sessionId}/turns`, {
+    method: 'POST',
+    body: form,
+  });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    const err = new Error(data.message || 'Voice turn failed');
+    err.status = res.status;
+    err.code = data.code;
+    throw err;
+  }
+  return res.json();
+}
+
+export async function endVoiceSession(sessionId, reason = 'user') {
+  const res = await apiFetch(`/api/voice/sessions/${sessionId}/end`, {
+    method: 'POST',
+    body: JSON.stringify({ reason }),
+  });
+  if (!res.ok) throw new Error('Failed to end voice session');
+  return res.json();
+}

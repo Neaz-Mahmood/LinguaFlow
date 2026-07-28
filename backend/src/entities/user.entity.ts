@@ -55,6 +55,21 @@ export class User {
   @Column({ type: 'date', nullable: true })
   lastActiveDate: string;
 
+  @Column({ type: 'varchar', default: 'free' })
+  plan: 'free' | 'pro' | 'max';
+
+  @Column({ type: 'varchar', default: 'none' })
+  planStatus: 'active' | 'past_due' | 'canceled' | 'none';
+
+  @Column({ default: true })
+  emailVerified: boolean;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  onboardingBonusGrantedAt: Date | null;
+
+  @Column({ type: 'varchar', unique: true, nullable: true })
+  stripeCustomerId: string | null;
+
   @CreateDateColumn()
   createdAt: Date;
 
