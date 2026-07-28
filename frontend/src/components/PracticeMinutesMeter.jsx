@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSubscription } from '../../context/SubscriptionProvider';
+import { useSubscription } from '../context/SubscriptionProvider';
 
 export default function PracticeMinutesMeter() {
   const sub = useSubscription();

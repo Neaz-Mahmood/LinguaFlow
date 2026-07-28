@@ -34,7 +34,11 @@ export class OpenAiVoiceProvider extends VoiceAiProvider {
   }
 
   async transcribe(audio: Buffer, mimeType: string, language: string): Promise<{ text: string; userSpeakingSec: number }> {
-    const file = new File([audio], `audio.${mimeType.split('/')[1] || 'webm'}`, { type: mimeType });
+    const file = new File(
+      [new Uint8Array(audio)],
+      `audio.${mimeType.split('/')[1] || 'webm'}`,
+      { type: mimeType },
+    );
     const model = this.config.get<string>('OPENAI_STT_MODEL', 'gpt-4o-mini-transcribe');
     const started = Date.now();
     const response = await this.client.audio.transcriptions.create({

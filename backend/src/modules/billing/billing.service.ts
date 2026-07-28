@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  Logger,
-  NotFoundException,
-  RawBodyRequest,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -26,7 +20,7 @@ export class BillingService {
     @InjectRepository(StripeSubscription) private readonly subscriptions: Repository<StripeSubscription>,
   ) {
     this.stripe = new Stripe(config.get<string>('STRIPE_SECRET_KEY') || 'missing', {
-      apiVersion: '2025-06-30.basil',
+      apiVersion: '2025-02-24.acacia',
     });
   }
 

@@ -246,7 +246,7 @@ export class VoiceService {
 
     // 11. Cap session if quota was clamped or wall-clock exceeded
     const updatedSession = await this.voiceSessions.findOneOrFail({ where: { id: sessionId } });
-    let finalStatus = voiceSession.status;
+    let finalStatus: VoiceSessionStatus = voiceSession.status;
     if (!allowed || updatedSession.wallClockSeconds >= voiceSession.sessionCapSeconds) {
       await this.voiceSessions.update(sessionId, {
         status: VoiceSessionStatus.CAPPED,
