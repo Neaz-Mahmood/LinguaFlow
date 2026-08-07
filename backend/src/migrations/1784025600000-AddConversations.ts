@@ -6,15 +6,18 @@ export class AddConversations1784025600000 implements MigrationInterface {
   async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`);
     await queryRunner.query(
-      `CREATE TYPE "conversation_sessions_status_enum" AS ENUM ('active', 'assessment_queued', 'assessing', 'completed', 'assessment_failed')`,
+      `DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'conversation_sessions_status_enum') THEN
+        CREATE TYPE "conversation_sessions_status_enum" AS ENUM ('active', 'assessment_queued', 'assessing', 'completed', 'assessment_failed'); END IF; END $$`,
     );
     await queryRunner.query(
-      `CREATE TYPE "conversation_messages_role_enum" AS ENUM ('learner', 'assistant')`,
+      `DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'conversation_messages_role_enum') THEN
+        CREATE TYPE "conversation_messages_role_enum" AS ENUM ('learner', 'assistant'); END IF; END $$`,
     );
     await queryRunner.query(
-      `CREATE TYPE "conversation_messages_generation_status_enum" AS ENUM ('persisted', 'generating', 'failed')`,
+      `DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'conversation_messages_generation_status_enum') THEN
+        CREATE TYPE "conversation_messages_generation_status_enum" AS ENUM ('persisted', 'generating', 'failed'); END IF; END $$`,
     );
-    await queryRunner.query(`CREATE TABLE "conversation_sessions" (
+    await queryRunner.query(`CREATE TABLE IF NOT EXISTS "conversation_sessions" (
       "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "user_id" integer NOT NULL,
       "flow_session_id" integer NOT NULL, "target_language" varchar NOT NULL,
       "native_language" varchar NOT NULL, "cefr_level" varchar(2) NOT NULL,
@@ -30,9 +33,9 @@ export class AddConversations1784025600000 implements MigrationInterface {
       CONSTRAINT "FK_conversation_flow" FOREIGN KEY ("flow_session_id") REFERENCES "flow_sessions"("id") ON DELETE CASCADE
     )`);
     await queryRunner.query(
-      `CREATE INDEX "IDX_conversation_owner_created" ON "conversation_sessions" ("user_id", "created_at")`,
+      `CREATE INDEX IF NOT EXISTS "IDX_conversation_owner_created" ON "conversation_sessions" ("user_id", "created_at")`,
     );
-    await queryRunner.query(`CREATE TABLE "conversation_messages" (
+    await queryRunner.query(`CREATE TABLE IF NOT EXISTS "conversation_messages" (
       "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "session_id" uuid NOT NULL,
       "order_index" integer NOT NULL, "role" "conversation_messages_role_enum" NOT NULL,
       "content" text NOT NULL, "client_message_id" uuid,
@@ -44,35 +47,43 @@ export class AddConversations1784025600000 implements MigrationInterface {
       CONSTRAINT "FK_conversation_message_session" FOREIGN KEY ("session_id") REFERENCES "conversation_sessions"("id") ON DELETE CASCADE
     )`);
     await queryRunner.query(
-      `ALTER TABLE "flashcards" ADD "card_kind" varchar NOT NULL DEFAULT 'word'`,
+      `ALTER TABLE "flashcards" ADD COLUMN IF NOT EXISTS "card_kind" varchar NOT NULL DEFAULT 'word'`,
     );
     await queryRunner.query(
-      `ALTER TABLE "flashcards" ADD "conversation_session_id" uuid`,
+      `ALTER TABLE "flashcards" ADD COLUMN IF NOT EXISTS "conversation_session_id" uuid`,
     );
     await queryRunner.query(
-      `ALTER TABLE "flashcards" ADD "conversation_correction_id" varchar`,
+      `ALTER TABLE "flashcards" ADD COLUMN IF NOT EXISTS "conversation_correction_id" varchar`,
     );
     await queryRunner.query(
-      `CREATE UNIQUE INDEX "IDX_sentence_card_source" ON "flashcards" ("user_id", "conversation_session_id", "conversation_correction_id") WHERE "conversation_session_id" IS NOT NULL AND "conversation_correction_id" IS NOT NULL`,
+      `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_sentence_card_source" ON "flashcards" ("user_id", "conversation_session_id", "conversation_correction_id") WHERE "conversation_session_id" IS NOT NULL AND "conversation_correction_id" IS NOT NULL`,
     );
   }
 
   async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP INDEX "IDX_sentence_card_source"`);
+    await queryRunner.query(`DROP INDEX IF EXISTS "IDX_sentence_card_source"`);
     await queryRunner.query(
-      `ALTER TABLE "flashcards" DROP COLUMN "conversation_correction_id"`,
+      `ALTER TABLE "flashcards" DROP COLUMN IF EXISTS "conversation_correction_id"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "flashcards" DROP COLUMN "conversation_session_id"`,
+      `ALTER TABLE "flashcards" DROP COLUMN IF EXISTS "conversation_session_id"`,
     );
-    await queryRunner.query(`ALTER TABLE "flashcards" DROP COLUMN "card_kind"`);
-    await queryRunner.query(`DROP TABLE "conversation_messages"`);
-    await queryRunner.query(`DROP INDEX "IDX_conversation_owner_created"`);
-    await queryRunner.query(`DROP TABLE "conversation_sessions"`);
     await queryRunner.query(
-      `DROP TYPE "conversation_messages_generation_status_enum"`,
+      `ALTER TABLE "flashcards" DROP COLUMN IF EXISTS "card_kind"`,
     );
-    await queryRunner.query(`DROP TYPE "conversation_messages_role_enum"`);
-    await queryRunner.query(`DROP TYPE "conversation_sessions_status_enum"`);
+    await queryRunner.query(`DROP TABLE IF EXISTS "conversation_messages"`);
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "IDX_conversation_owner_created"`,
+    );
+    await queryRunner.query(`DROP TABLE IF EXISTS "conversation_sessions"`);
+    await queryRunner.query(
+      `DROP TYPE IF EXISTS "conversation_messages_generation_status_enum"`,
+    );
+    await queryRunner.query(
+      `DROP TYPE IF EXISTS "conversation_messages_role_enum"`,
+    );
+    await queryRunner.query(
+      `DROP TYPE IF EXISTS "conversation_sessions_status_enum"`,
+    );
   }
 }

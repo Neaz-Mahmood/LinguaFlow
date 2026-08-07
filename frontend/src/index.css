@@ -6,8 +6,7 @@
 @import './theme/palette.css';
 
 /*
- * LinguaFlow palette overrides live in theme/palette.css (Coolors:
- * #2ec0f9 #67aaf9 #9bbdf9 #c4e0f9 #b95f89). Gothic upstream is dark-only;
+ * LinguaFlow Soft-Tech EdTech design system overrides live in theme/palette.css (from DESIGN.md).
  * palette.css supplies light/dark token overrides via data-theme + prefers-color-scheme.
  */
 
@@ -32,12 +31,18 @@
   }
 
   .app-container {
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 2rem 1.5rem;
+    padding: var(--space-lg) var(--margin-mobile);
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+  }
+
+  @media (min-width: 1024px) {
+    .app-container {
+      padding: var(--space-xl) var(--margin-desktop);
+    }
   }
 
   .app-layout {
@@ -56,17 +61,24 @@
 
   .app-navbar nav {
     width: 100%;
-    max-width: none;
+    max-width: 1200px;
+    margin-inline: auto;
     box-sizing: border-box;
-    padding-inline: 2.5rem;
+    padding: 1rem var(--margin-desktop);
   }
 
   .app-main {
     width: 100%;
-    max-width: 800px;
+    max-width: 1200px;
     margin-inline: auto;
-    padding: 2rem 1.5rem;
+    padding: var(--space-lg) var(--margin-mobile);
     box-sizing: border-box;
+  }
+
+  @media (min-width: 1024px) {
+    .app-main {
+      padding: var(--space-xl) var(--margin-desktop);
+    }
   }
 
   .app-footer {
@@ -78,9 +90,10 @@
   .app-footer > footer,
   .app-footer > div {
     width: 100%;
-    max-width: none;
+    max-width: 1200px;
+    margin-inline: auto;
     box-sizing: border-box;
-    padding-inline: 2.5rem;
+    padding: 1rem var(--margin-desktop);
   }
 
   .logo {
@@ -93,12 +106,72 @@
     gap: 0.5rem;
   }
 
+  /* Soft-Tech EdTech Typography Tokens */
+  .display-lg {
+    font-family: var(--font-family-heading);
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 56px;
+    letter-spacing: -0.02em;
+  }
+
+  .headline-lg {
+    font-family: var(--font-family-heading);
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 40px;
+  }
+
+  .headline-lg-mobile {
+    font-family: var(--font-family-heading);
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 32px;
+  }
+
+  .title-md {
+    font-family: var(--font-family-heading);
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 28px;
+  }
+
+  .body-lg {
+    font-family: var(--font-family-body);
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 28px;
+  }
+
+  .body-md {
+    font-family: var(--font-family-body);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+  }
+
+  .label-md {
+    font-family: var(--font-family-mono);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  .label-sm {
+    font-family: var(--font-family-mono);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: 0.05em;
+  }
+
   .lf-card {
-    background: var(--color-background-card);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-container);
-    padding: 2.5rem;
-    box-shadow: var(--shadow-med);
+    background: var(--lf-surface-white);
+    border: 1px solid var(--lf-outline-variant);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
     position: relative;
     overflow: hidden;
   }

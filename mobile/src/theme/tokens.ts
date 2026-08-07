@@ -1,16 +1,22 @@
 /**
- * LinguaFlow brand palette — keep aligned with frontend/src/theme/palette.css
- * https://coolors.co/2ec0f9-67aaf9-9bbdf9-c4e0f9-b95f89
+ * LinguaFlow Soft-Tech EdTech brand palette (from frontend/DESIGN.md)
  */
 export const palette = {
-  sky: '#2ec0f9',
-  blue: '#67aaf9',
-  softBlue: '#9bbdf9',
-  paleBlue: '#c4e0f9',
-  mauve: '#b95f89',
-  mauveDark: '#9a4d73',
-  ink: '#0f1826',
-  inkMuted: '#2d4a6e',
+  deepNavy: '#1C2B33',
+  primary: '#07161e',
+  primaryContainer: '#1c2b33',
+  subtleGray: '#65676B',
+  secondary: '#5c5e62',
+  backgroundFaint: '#F0F2F5',
+  surfaceWhite: '#FFFFFF',
+  surface: '#f7f9fc',
+  onSurface: '#191c1e',
+  onSurfaceVariant: '#43474a',
+  outlineVariant: '#c3c7ca',
+  outline: '#73787b',
+  error: '#ba1a1a',
+  onError: '#ffffff',
+  tertiaryContainer: '#372516',
 } as const;
 
 export type ColorTokens = {
@@ -44,82 +50,82 @@ export type ColorTokens = {
   overlayPressed: string;
 };
 
-export const darkColors: ColorTokens = {
-  backgroundBody: palette.ink,
-  backgroundSurface: palette.ink,
-  backgroundCard: '#162238',
-  backgroundMuted: '#1c2d47',
-  backgroundPopover: '#1c2d47',
-  backgroundInverted: palette.paleBlue,
-
-  textPrimary: palette.paleBlue,
-  textSecondary: palette.softBlue,
-  textDisabled: '#5a7a9e',
-  textAccent: palette.sky,
-  textPlaceholder: '#5a7a9e',
-
-  accent: palette.sky,
-  accentMuted: 'rgba(46, 192, 249, 0.18)',
-  onAccent: palette.ink,
-  onDark: palette.paleBlue,
-  onLight: palette.ink,
-
-  border: 'rgba(196, 224, 249, 0.14)',
-  borderEmphasized: '#5a7a9e',
-
-  success: '#b3c79a',
-  onSuccess: palette.ink,
-  error: '#c6a6a2',
-  onError: palette.paleBlue,
-  warning: '#d3c490',
-  onWarning: palette.ink,
-
-  cyan: palette.sky,
-  purple: palette.mauve,
-  overlayHover: 'rgba(196, 224, 249, 0.06)',
-  overlayPressed: 'rgba(196, 224, 249, 0.12)',
-};
-
 export const lightColors: ColorTokens = {
-  backgroundBody: palette.paleBlue,
-  backgroundSurface: palette.paleBlue,
-  backgroundCard: '#e3f0fc',
-  backgroundMuted: palette.softBlue,
-  backgroundPopover: '#FFFFFF',
-  backgroundInverted: palette.ink,
+  backgroundBody: palette.backgroundFaint,
+  backgroundSurface: palette.surfaceWhite,
+  backgroundCard: palette.surfaceWhite,
+  backgroundMuted: '#f2f4f7',
+  backgroundPopover: palette.surfaceWhite,
+  backgroundInverted: palette.primary,
 
-  textPrimary: palette.ink,
-  textSecondary: palette.inkMuted,
-  textDisabled: '#6b8ab5',
-  textAccent: palette.sky,
-  textPlaceholder: '#6b8ab5',
+  textPrimary: palette.onSurface,
+  textSecondary: palette.onSurfaceVariant,
+  textDisabled: palette.outline,
+  textAccent: palette.deepNavy,
+  textPlaceholder: palette.subtleGray,
 
-  accent: palette.sky,
-  accentMuted: 'rgba(46, 192, 249, 0.14)',
-  onAccent: palette.ink,
-  onDark: palette.paleBlue,
-  onLight: palette.ink,
+  accent: palette.deepNavy,
+  accentMuted: 'rgba(28, 43, 51, 0.12)',
+  onAccent: '#FFFFFF',
+  onDark: palette.surfaceWhite,
+  onLight: palette.onSurface,
 
-  border: 'rgba(15, 24, 38, 0.12)',
-  borderEmphasized: '#6b8ab5',
+  border: palette.outlineVariant,
+  borderEmphasized: palette.subtleGray,
 
   success: '#5a7048',
-  onSuccess: palette.paleBlue,
-  error: '#8a5c58',
-  onError: palette.paleBlue,
+  onSuccess: palette.surfaceWhite,
+  error: palette.error,
+  onError: palette.onError,
   warning: '#8a7a40',
-  onWarning: palette.ink,
+  onWarning: palette.onSurface,
 
-  cyan: palette.sky,
-  purple: palette.mauve,
-  overlayHover: 'rgba(15, 24, 38, 0.04)',
-  overlayPressed: 'rgba(15, 24, 38, 0.08)',
+  cyan: palette.deepNavy,
+  purple: palette.tertiaryContainer,
+  overlayHover: 'rgba(25, 28, 30, 0.04)',
+  overlayPressed: 'rgba(25, 28, 30, 0.08)',
 };
 
-/** @deprecated Prefer useAppTheme().colors — defaults to dark */
-export const colors = darkColors;
+export const darkColors: ColorTokens = {
+  backgroundBody: palette.primary,
+  backgroundSurface: palette.primaryContainer,
+  backgroundCard: palette.primaryContainer,
+  backgroundMuted: '#2d3133',
+  backgroundPopover: palette.primaryContainer,
+  backgroundInverted: palette.surfaceWhite,
 
-/** Astryx spacing scale (4px base): spacing-1 = 4, spacing-2 = 8, … */
+  textPrimary: '#eff1f4',
+  textSecondary: '#83929c',
+  textDisabled: palette.outline,
+  textAccent: '#b9c9d3',
+  textPlaceholder: palette.outline,
+
+  accent: '#b9c9d3',
+  accentMuted: 'rgba(185, 201, 211, 0.18)',
+  onAccent: palette.primary,
+  onDark: '#eff1f4',
+  onLight: palette.primary,
+
+  border: palette.outline,
+  borderEmphasized: palette.outlineVariant,
+
+  success: '#b3c79a',
+  onSuccess: palette.primary,
+  error: '#ffdad6',
+  onError: '#93000a',
+  warning: '#d3c490',
+  onWarning: palette.primary,
+
+  cyan: '#b9c9d3',
+  purple: palette.tertiaryContainer,
+  overlayHover: 'rgba(239, 241, 244, 0.06)',
+  overlayPressed: 'rgba(239, 241, 244, 0.12)',
+};
+
+/** Default colors preset — defaults to light mode for Soft-Tech EdTech */
+export const colors = lightColors;
+
+/** Spacing scale (4px base): space-xs = 4, space-sm = 8, space-md = 16, space-lg = 24, space-xl = 32, space-2xl = 48, space-3xl = 64 */
 export const spacing = {
   0: 0,
   0.5: 2,
@@ -134,30 +140,97 @@ export const spacing = {
   10: 40,
   12: 48,
   16: 64,
+  xs: 4,
+  sm: 8,
+  md: 16,
+  lg: 24,
+  xl: 32,
+  '2xl': 48,
+  '3xl': 64,
 } as const;
 
 export const radius = {
-  none: 2,
+  none: 0,
+  sm: 4,
   inner: 4,
+  DEFAULT: 8,
   element: 8,
-  container: 12,
+  md: 12,
+  container: 16,
+  lg: 16,
+  xl: 24,
   page: 24,
   full: 9999,
 } as const;
 
 export const typography = {
   fontFamily: {
-    body: 'System',
-    heading: 'System',
+    heading: 'Hanken Grotesk',
+    body: 'Be Vietnam Pro',
+    mono: 'JetBrains Mono',
+  },
+  presets: {
+    displayLg: {
+      fontFamily: 'Hanken Grotesk',
+      fontSize: 48,
+      fontWeight: '700' as const,
+      lineHeight: 56,
+      letterSpacing: -0.96,
+    },
+    headlineLg: {
+      fontFamily: 'Hanken Grotesk',
+      fontSize: 32,
+      fontWeight: '600' as const,
+      lineHeight: 40,
+    },
+    headlineLgMobile: {
+      fontFamily: 'Hanken Grotesk',
+      fontSize: 24,
+      fontWeight: '600' as const,
+      lineHeight: 32,
+    },
+    titleMd: {
+      fontFamily: 'Hanken Grotesk',
+      fontSize: 20,
+      fontWeight: '500' as const,
+      lineHeight: 28,
+    },
+    bodyLg: {
+      fontFamily: 'Be Vietnam Pro',
+      fontSize: 18,
+      fontWeight: '400' as const,
+      lineHeight: 28,
+    },
+    bodyMd: {
+      fontFamily: 'Be Vietnam Pro',
+      fontSize: 16,
+      fontWeight: '400' as const,
+      lineHeight: 24,
+    },
+    labelMd: {
+      fontFamily: 'JetBrains Mono',
+      fontSize: 14,
+      fontWeight: '500' as const,
+      lineHeight: 20,
+      letterSpacing: 0.7,
+    },
+    labelSm: {
+      fontFamily: 'JetBrains Mono',
+      fontSize: 12,
+      fontWeight: '500' as const,
+      lineHeight: 16,
+      letterSpacing: 0.6,
+    },
   },
   size: {
     xs: 10,
-    sm: 13,
+    sm: 12,
     base: 16,
-    lg: 20,
-    xl: 25,
-    '2xl': 31,
-    '3xl': 39,
+    lg: 18,
+    xl: 20,
+    '2xl': 24,
+    '3xl': 32,
+    '4xl': 48,
   },
   weight: {
     normal: '400' as const,
@@ -172,7 +245,7 @@ export function getColorsForScheme(scheme: 'light' | 'dark'): ColorTokens {
 }
 
 export const theme = {
-  colors: darkColors,
+  colors: lightColors,
   spacing,
   radius,
   typography,
